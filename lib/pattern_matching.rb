@@ -1,6 +1,6 @@
-require 'pattern_matching/version'
-
 module PatternMatching
+
+  VERSION = '0.0.1'
 
   def self.included(base)
 

@@ -1,8 +1,7 @@
 $LOAD_PATH << File.expand_path('../lib', __FILE__)
 
-require 'pattern_matching/version'
+require 'pattern_matching'
 require 'date'
-require 'rbconfig'
 
 Gem::Specification.new do |s|
   s.name        = 'pattern_matching'
