@@ -29,6 +29,8 @@ describe PatternMatching do
         clazz.defn(:foo)
       }.should_not raise_error
     end
+
+    it 'does not define the real function more than once'
   end
 
   context 'function with no parameters' do
