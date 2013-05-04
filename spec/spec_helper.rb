@@ -1,20 +1,11 @@
 require 'simplecov'
 SimpleCov.start do
-  project_name 'ratistics'
-  add_filter '/data/'
+  project_name 'PatternMatching'
   add_filter '/spec/'
   add_filter '/tasks/'
 end
 
-jruby = (0 == (RbConfig::CONFIG['ruby_install_name']=~ /^jruby$/i))
-windows = (RbConfig::CONFIG['host_os'] =~ /mswin32/i || RbConfig::CONFIG['host_os'] =~ /mingw32/i)
-ar = !(jruby || windows)
-
-require 'ratistics'
-
-require 'rspec'
-require 'hamster' unless windows
-require 'active_record' if ar
+require 'pattern_matching'
 
 # import all the support files
 Dir[File.join(File.dirname(__FILE__), 'support/**/*.rb')].each { |f| require File.expand_path(f) }

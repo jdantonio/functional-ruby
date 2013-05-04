@@ -6,9 +6,44 @@ PATH
 GEM
   remote: http://rubygems.org/
   specs:
+    awesome_print (1.0.2)
+    boson (1.2.4)
+    clipboard (1.0.5)
+    coderay (1.0.9)
     countloc (0.4.0)
     diff-lcs (1.2.4)
+    every_day_irb (1.4.0)
+    fancy_irb (0.7.3)
+      paint (>= 0.8.1)
+      unicode-display_width (>= 0.1.1)
+    ffi (1.8.1)
+    g (1.7.2)
+    hirb (0.7.1)
+    interactive_editor (0.0.10)
+      spoon (>= 0.0.1)
+    irbtools (1.4.0)
+      awesome_print (~> 1.0.2)
+      boson (~> 1.2.4)
+      clipboard (~> 1.0.1)
+      coderay (~> 1.0.8)
+      every_day_irb (>= 1.4.0)
+      fancy_irb (>= 0.7.3)
+      g (>= 1.7.1)
+      hirb (~> 0.7.0)
+      interactive_editor (>= 0.0.10)
+      method_locator (>= 0.0.4)
+      method_source (>= 0.8.1)
+      methodfinder (>= 1.2.5)
+      ori (~> 0.1.0)
+      paint (>= 0.8.5)
+      wirb (>= 0.4.3)
+      zucker (>= 12.1)
+    method_locator (0.0.4)
+    method_source (0.8.1)
+    methodfinder (1.2.5)
     multi_json (1.7.2)
+    ori (0.1.0)
+    paint (0.8.6)
     rake (10.0.4)
     redcarpet (2.2.2)
     rspec (2.13.0)
@@ -23,7 +58,14 @@ GEM
       multi_json (~> 1.0)
       simplecov-html (~> 0.7.1)
     simplecov-html (0.7.1)
+    spoon (0.0.3)
+      ffi
+    terminal-notifier (1.4.2)
+    unicode-display_width (0.1.1)
+    wirb (1.0.1)
+      paint
     yard (0.8.6.1)
+    zucker (13.1)
 
 PLATFORMS
   ruby
@@ -31,9 +73,11 @@ PLATFORMS
 DEPENDENCIES
   bundler
   countloc
+  irbtools
   pattern_matching!
   rake
   redcarpet
   rspec
   simplecov
+  terminal-notifier
   yard

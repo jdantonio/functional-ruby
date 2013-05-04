@@ -2,13 +2,16 @@ source "http://rubygems.org"
 
 gemspec
 
-# create API documentation
-gem 'yard', :platforms => :ruby
-gem 'redcarpet', :platforms => :ruby
-#gem 'github-markup'
+group :development do
+  gem 'yard', :platforms => :ruby
+  gem 'redcarpet', :platforms => :ruby
+end
 
-# testing
-gem 'rake'
-gem 'rspec'
-gem 'simplecov'
-gem 'countloc'
+group :testing do
+  gem 'rake'
+  gem 'rspec'
+  gem 'simplecov'
+  gem 'countloc'
+  gem 'irbtools'
+  gem 'terminal-notifier'
+end
