@@ -1,0 +1,39 @@
+PATH
+  remote: .
+  specs:
+    pattern_matching (0.0.1)
+
+GEM
+  remote: http://rubygems.org/
+  specs:
+    countloc (0.4.0)
+    diff-lcs (1.2.4)
+    multi_json (1.7.2)
+    rake (10.0.4)
+    redcarpet (2.2.2)
+    rspec (2.13.0)
+      rspec-core (~> 2.13.0)
+      rspec-expectations (~> 2.13.0)
+      rspec-mocks (~> 2.13.0)
+    rspec-core (2.13.1)
+    rspec-expectations (2.13.0)
+      diff-lcs (>= 1.1.3, < 2.0)
+    rspec-mocks (2.13.1)
+    simplecov (0.7.1)
+      multi_json (~> 1.0)
+      simplecov-html (~> 0.7.1)
+    simplecov-html (0.7.1)
+    yard (0.8.6.1)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  bundler
+  countloc
+  pattern_matching!
+  rake
+  redcarpet
+  rspec
+  simplecov
+  yard
