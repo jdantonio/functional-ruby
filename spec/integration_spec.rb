@@ -29,8 +29,8 @@ describe 'integration' do
     defn(:greet, :female, _) { |name|
       "Hello, Ms. #{name}!"
     }
-    defn(:greet, _, _) { |_, name|
-      "Hello, #{name}!"
+    defn(:greet, nil, _) { |name|
+      "Goodbye, #{name}!"
     }
     defn(:greet, _, _) { |_, name|
       "Hello, #{name}!"
@@ -71,6 +71,9 @@ describe 'integration' do
     defn(:concat, String, String) { |first, second|
       first + second
     }
+    defn(:concat, Integer, _) { |first, second|
+      first + second.to_i
+    }
   end
 
   let(:name) { 'Pattern Matcher' }
@@ -83,6 +86,7 @@ describe 'integration' do
   specify { subject.greet(:male, 'Jerry').should eq 'Hello, Mr. Jerry!' }
   specify { subject.greet(:female, 'Jeri').should eq 'Hello, Ms. Jeri!' }
   specify { subject.greet(:unknown, 'Jerry').should eq 'Hello, Jerry!' }
+  specify { subject.greet(nil, 'Jerry').should eq 'Goodbye, Jerry!' }
 
   specify { subject.hashable(:male, {foo: :bar}, :female).should eq :foo_bar }
   specify { subject.hashable(:male, {foo: :baz}, :female).should eq :foo_unbound }
@@ -98,5 +102,6 @@ describe 'integration' do
   specify { subject.concat(1, 1).should eq 2 }
   specify { subject.concat(1, 'shoe').should eq '1 shoe' }
   specify { subject.concat('shoe', 'fly').should eq 'shoefly' }
+  specify { subject.concat(1, 2.9).should eq 3 }
 
 end

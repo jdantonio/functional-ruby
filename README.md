@@ -63,8 +63,28 @@ Ruby:
     defn(:greet, :female, _) { |name|
       "Hello, Ms. #{name}!"
     }
+    defn(:greet, nil, _) { |name|
+      "Goodbye, #{name}!"
+    }
     defn(:greet, _, _) { |_, name|
       "Hello, #{name}!"
+    }
+
+### Matching by Class/Datatype
+
+Ruby:
+
+    defn(:concat, Integer, Integer) { |first, second|
+      first + second
+    }
+    defn(:concat, Integer, String) { |first, second|
+      "#{first} #{second}"
+    }
+    defn(:concat, String, String) { |first, second|
+      first + second
+    }
+    defn(:concat, Integer, _) { |first, second|
+      first + second.to_i
     }
 
 ### Matching a Hash Parameter

@@ -148,7 +148,17 @@ describe PatternMatching do
 
   context 'function with one parameter' do
 
-    it 'matches a boolean argument' do
+    it 'matches a nil parameter' do
+
+      subject.defn(:foo, nil) { 'expected' }
+      subject.new.foo(nil).should eq 'expected'
+
+      lambda {
+        subject.new.foo('no match should be found')
+      }.should raise_error(NoMethodError)
+    end
+
+    it 'matches a boolean parameter' do
 
       subject.defn(:foo, true) { 'expected' }
       subject.defn(:foo, false) { 'false case' }
@@ -161,7 +171,7 @@ describe PatternMatching do
       }.should raise_error(NoMethodError)
     end
 
-    it 'matches a symbol argument' do
+    it 'matches a symbol parameter' do
 
       subject.defn(:foo, :bar) { 'expected' }
       subject.new.foo(:bar).should eq 'expected'
@@ -171,7 +181,7 @@ describe PatternMatching do
       }.should raise_error(NoMethodError)
     end
 
-    it 'matches a number argument' do
+    it 'matches a number parameter' do
 
       subject.defn(:foo, 10) { 'expected' }
       subject.new.foo(10).should eq 'expected'
@@ -181,7 +191,7 @@ describe PatternMatching do
       }.should raise_error(NoMethodError)
     end
 
-    it 'matches a string argument' do
+    it 'matches a string parameter' do
 
       subject.defn(:foo, 'bar') { 'expected' }
       subject.new.foo('bar').should eq 'expected'
@@ -191,7 +201,7 @@ describe PatternMatching do
       }.should raise_error(NoMethodError)
     end
 
-    it 'matches an array argument' do
+    it 'matches an array parameter' do
 
       subject.defn(:foo, [1, 2, 3]) { 'expected' }
       subject.new.foo([1, 2, 3]).should eq 'expected'
@@ -201,7 +211,7 @@ describe PatternMatching do
       }.should raise_error(NoMethodError)
     end
 
-    it 'matches a hash argument' do
+    it 'matches a hash parameter' do
 
       subject.defn(:foo, bar: 1, baz: 2) { 'expected' }
       subject.new.foo(bar: 1, baz: 2).should eq 'expected'
@@ -211,7 +221,7 @@ describe PatternMatching do
       }.should raise_error(NoMethodError)
     end
 
-    it 'matches an object argument' do
+    it 'matches an object parameter' do
 
       subject.defn(:foo, OpenStruct.new(foo: :bar)) { 'expected' }
       subject.new.foo(OpenStruct.new(foo: :bar)).should eq 'expected'
@@ -221,7 +231,7 @@ describe PatternMatching do
       }.should raise_error(NoMethodError)
     end
 
-    it 'matches a variable argument' do
+    it 'matches an unbound parameter' do
 
       subject.defn(:foo, PatternMatching::UNBOUND) {|arg| arg }
       subject.new.foo(:foo).should eq :foo
