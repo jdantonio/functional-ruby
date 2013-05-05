@@ -4,9 +4,11 @@ A gem for adding Erlang-style pattern matching to Ruby.
 
 ## Examples
 
-Some examples are taked from [Syntax in defnctions: Pattern Matching](http://learnyousomeerlang.com/syntax-in-defnctions). in [Learn You Some Erlang for Great Good!](http://learnyousomeerlang.com/). Others are unique to this README.
+For more examples see the integration tests in *spec/integration_spec.rb*.
 
 ### Simple Function
+
+This example is based on [Syntax in defnctions: Pattern Matching](http://learnyousomeerlang.com/syntax-in-defnctions) in [Learn You Some Erlang for Great Good!](http://learnyousomeerlang.com/).
 
 Erlang:
 
@@ -19,18 +21,23 @@ Erlang:
 
 Ruby:
 
-    defn greet(:male, name) {
-      puts "Hello, Mr. #{name}!"
+    defn(:greet, _) do |name|
+      "Hello, #{name}!"
+    end
+
+    defn(:greet, :male, _) { |name|
+      "Hello, Mr. #{name}!"
     }
-    defn greet(:female, name) {
-      puts "Hello, Ms. #{name}!"
+    defn(:greet, :female, _) { |name|
+      "Hello, Ms. #{name}!"
     }
-    defn greet(_, name) {
-      puts "Hello, Ms. #{name}!"
+    defn(:greet, _, _) { |_, name|
+      "Hello, #{name}!"
     }
 
 ### Simple Function with Overloading
 
+This example is based on [Syntax in defnctions: Pattern Matching](http://learnyousomeerlang.com/syntax-in-defnctions) in [Learn You Some Erlang for Great Good!](http://learnyousomeerlang.com/).
 
 Erlang:
 
@@ -58,4 +65,21 @@ Ruby:
     }
     defn(:greet, _, _) { |_, name|
       "Hello, #{name}!"
+    }
+
+### Matching a Hash Parameter
+
+Ruby:
+
+    defn(:hashable, {foo: :bar}) { |opts|
+      # matches any hash with key :foo and value :bar
+      :foo_bar
+    }
+    defn(:hashable, {foo: _}) { |opts|
+      # matches any hash with :key foo regardless of value
+      :foo_unbound
+    }
+    defn(:hashable, {}) { |opts|
+      # matches any hash
+      :unbound_unbound
     }

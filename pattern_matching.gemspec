@@ -4,7 +4,7 @@ require 'pattern_matching'
 require 'date'
 
 Gem::Specification.new do |s|
-  s.name        = 'pattern_matching'
+  s.name        = 'pattern-matching'
   s.version     = PatternMatching::VERSION
   s.platform    = Gem::Platform::RUBY
   s.author      = "Jerry D'Antonio"

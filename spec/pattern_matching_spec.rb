@@ -77,6 +77,28 @@ describe PatternMatching do
     end
   end
 
+  context 'parameter count' do
+
+    it 'does not match a call with not enough arguments' do
+
+      subject.defn(:foo, true) { 'true case' }
+
+      lambda {
+        subject.new.foo()
+      }.should raise_error(NoMethodError)
+    end
+
+    it 'does not match a call with too many arguments' do
+
+      subject.defn(:foo, true) { 'true case' }
+
+      lambda {
+        subject.new.foo(true, false)
+      }.should raise_error(NoMethodError)
+    end
+
+  end
+
   context 'function with one parameter' do
     
     it 'matches a boolean argument' do
@@ -138,7 +160,7 @@ describe PatternMatching do
       subject.new.foo(bar: 1, baz: 2).should eq 'true case'
 
       lambda {
-        subject.new.foo(foo: 0, bar: 1, baz: 2)
+        subject.new.foo(foo: 0, bar: 1)
       }.should raise_error(NoMethodError)
     end
 
@@ -195,6 +217,52 @@ describe PatternMatching do
       subject.new.foo(:male, :female).should eq :male
     end
 
+    context 'functions with hash arguments' do
+
+      it 'matches when all hash keys and values match' do
+
+        subject.defn(:foo, {bar: :baz}) { true }
+        subject.new.foo(bar: :baz).should be_true
+        
+        lambda {
+          subject.new.foo({one: :two})
+        }.should raise_error(NoMethodError)
+      end
+
+      it 'matches when the pattern uses an empty hash' do
+
+        subject.defn(:foo, {}) { true }
+        subject.new.foo(bar: :baz).should be_true
+      end
+
+      it 'matches when every pattern key/value are in the argument' do
+
+        subject.defn(:foo, {bar: :baz}) { true }
+        subject.new.foo(foo: :bar, bar: :baz).should be_true
+      end
+
+      it 'matches when all keys with unbound values in the pattern have an argument' do
+
+        subject.defn(:foo, {bar: PatternMatching::UNBOUND}) { true }
+        subject.new.foo(bar: :baz).should be_true
+      end
+
+      it 'passes the matched hash to the block' do
+
+        subject.defn(:foo, {bar: PatternMatching::UNBOUND}) { |args| args }
+        subject.new.foo(bar: :baz).should == {bar: :baz}
+      end
+
+      it 'does not match a non-hash argument' do
+
+        subject.defn(:foo, {}) { true }
+
+        lambda {
+          subject.new.foo(:bar)
+        }.should raise_error(NoMethodError)
+      end
+
+    end
   end
 
 end

@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    pattern_matching (0.0.1)
+    pattern-matching (0.0.1)
 
 GEM
   remote: http://rubygems.org/
@@ -74,7 +74,7 @@ DEPENDENCIES
   bundler
   countloc
   irbtools
-  pattern_matching!
+  pattern-matching!
   rake
   redcarpet
   rspec

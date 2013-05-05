@@ -32,6 +32,19 @@ describe 'integration' do
     defn(:greet, _, _) { |_, name|
       "Hello, #{name}!"
     }
+    defn(:greet, _, _) { |_, name|
+      "Hello, #{name}!"
+    }
+
+    defn(:hashable, _, {foo: :bar}, _) { |_, opts, _|
+      :foo_bar
+    }
+    defn(:hashable, _, {foo: _}, _) { |_, opts, _|
+      :foo_unbound
+    }
+    defn(:hashable, _, {}, _) { |_, opts, _|
+      :unbound_unbound
+    }
   end
 
   subject { Foo.new }
@@ -43,5 +56,10 @@ describe 'integration' do
   specify { subject.greet(:male, 'Jerry').should eq 'Hello, Mr. Jerry!' }
   specify { subject.greet(:female, 'Jeri').should eq 'Hello, Ms. Jeri!' }
   specify { subject.greet(:unknown, 'Jerry').should eq 'Hello, Jerry!' }
+
+  specify { subject.hashable(:male, {foo: :bar}, :female).should eq :foo_bar }
+  specify { subject.hashable(:male, {foo: :baz}, :female).should eq :foo_unbound }
+  specify { subject.hashable(:male, {foo: :bar, bar: :baz}, :female).should eq :foo_bar }
+  specify { subject.hashable(:male, {bar: :baz}, :female).should eq :unbound_unbound }
 
 end

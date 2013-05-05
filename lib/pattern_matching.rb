@@ -11,7 +11,17 @@ module PatternMatching
     def __match_pattern__(args, pattern) # :nodoc:
       return unless args.length == pattern.length
       pattern.each_with_index do |p, i|
-        return false unless p == UNBOUND || p == args[i]
+        arg = args[i]
+        if p.is_a?(Hash) && arg.is_a?(Hash)
+          next if p.empty?
+          p.each do |key, value|
+            return false unless arg.has_key?(key)
+            next if value == UNBOUND
+            return false unless arg[key] == value
+          end
+          next
+        end
+        return false unless p == UNBOUND || p == arg
       end
       return true
     end
@@ -37,7 +47,7 @@ module PatternMatching
       else
         argv = []
         match.first.each_with_index do |p, i|
-          argv << args.first[i] if p == UNBOUND
+          argv << args.first[i] if p == UNBOUND || p.is_a?(Hash)
         end
         return [:ok, match.last.call(*argv)]
       end
@@ -68,7 +78,7 @@ module PatternMatching
             begin
               super(*args, &block)
             rescue NoMethodError
-              raise NoMethodError.new("no method `#{func}` matching `#{args}` found for #{self.class}")
+              raise NoMethodError.new("no method `#{func}` matching #{args} found for class #{self.class}")
             end
           end
         end
