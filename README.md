@@ -1,4 +1,4 @@
-# PatternMatching
+# PatternMatching [![Build Status](https://secure.travis-ci.org/jdantonio/pattern_matching.png)](http://travis-ci.org/jdantonio/pattern_matching?branch=master) [![Dependency Status](https://gemnasium.com/jdantonio/pattern_matching.png)](https://gemnasium.com/jdantonio/pattern_matching)
 
 A gem for adding Erlang-style pattern matching to Ruby.
 
