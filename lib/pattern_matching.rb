@@ -2,9 +2,19 @@ module PatternMatching
 
   VERSION = '0.0.1'
 
+  UNBOUND = Unbound = Class.new
+
   def self.included(base)
 
     base.instance_variable_set(:@__function_pattern_matches__, Hash.new)
+
+    def __match_pattern__(args, pattern)
+      return unless args.length == pattern.length
+      pattern.each_with_index do |p, i|
+        return false unless p == UNBOUND || p == args[i]
+      end
+      return true
+    end
 
     def __pattern_match__(func, *args, &block)
       clazz = self.class
@@ -15,7 +25,7 @@ module PatternMatching
       # scan through all patterns for this function
       match = nil
       matchers.each do |matcher|
-        if args.first == matcher.first
+        if __match_pattern__(args.first, matcher.first)
           match = matcher.last
           break(matcher.last)
         end
@@ -30,6 +40,10 @@ module PatternMatching
     end
 
     class << base
+
+      def _()
+        return UNBOUND
+      end
 
       def __add_pattern_for(func, *args, &block)
         block = Proc.new{} unless block_given?

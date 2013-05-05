@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'ostruct'
 
 describe PatternMatching do
 
@@ -92,32 +93,75 @@ describe PatternMatching do
     end
 
     it 'matches a symbol argument' do
-      pending
+
+      subject.defn(:foo, :bar) { 'true case' }
+      subject.new.foo(:bar).should eq 'true case'
+
+      lambda {
+        subject.new.foo(:baz)
+      }.should raise_error(NoMethodError)
     end
 
     it 'matches a number argument' do
-      pending
+
+      subject.defn(:foo, 10) { 'true case' }
+      subject.new.foo(10).should eq 'true case'
+
+      lambda {
+        subject.new.foo(11.0)
+      }.should raise_error(NoMethodError)
     end
 
     it 'matches a string argument' do
-      pending
+
+      subject.defn(:foo, 'bar') { 'true case' }
+      subject.new.foo('bar').should eq 'true case'
+
+      lambda {
+        subject.new.foo('baz')
+      }.should raise_error(NoMethodError)
     end
 
-    it 'matches a array argument' do
-      pending
+    it 'matches an array argument' do
+
+      subject.defn(:foo, [1, 2, 3]) { 'true case' }
+      subject.new.foo([1, 2, 3]).should eq 'true case'
+
+      lambda {
+        subject.new.foo([3, 4, 5])
+      }.should raise_error(NoMethodError)
     end
 
     it 'matches a hash argument' do
-      pending
+
+      subject.defn(:foo, bar: 1, baz: 2) { 'true case' }
+      subject.new.foo(bar: 1, baz: 2).should eq 'true case'
+
+      lambda {
+        subject.new.foo(foo: 0, bar: 1, baz: 2)
+      }.should raise_error(NoMethodError)
     end
 
-    it 'matches a object argument' do
-      pending
+    it 'matches an object argument' do
+
+      subject.defn(:foo, OpenStruct.new(foo: :bar)) { 'true case' }
+      subject.new.foo(OpenStruct.new(foo: :bar)).should eq 'true case'
+
+      lambda {
+        subject.new.foo(OpenStruct.new(bar: :baz))
+      }.should raise_error(NoMethodError)
     end
 
     it 'matches a variable argument' do
-      pending
+
+      subject.defn(:foo, PatternMatching::UNBOUND) { 'true case' }
+      subject.new.foo(:foo).should eq 'true case'
     end
   end
+
+  #class Foo
+    #include PatternMatching
+    #defn(:foo, _) { true }
+  #end
 
 end
