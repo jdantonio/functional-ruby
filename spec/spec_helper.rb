@@ -1,10 +1,3 @@
-require 'simplecov'
-SimpleCov.start do
-  project_name 'PatternMatching'
-  add_filter '/spec/'
-  add_filter '/tasks/'
-end
-
 require 'pattern_matching'
 
 # import all the support files

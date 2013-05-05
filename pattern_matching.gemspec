@@ -10,12 +10,12 @@ Gem::Specification.new do |s|
   s.author      = "Jerry D'Antonio"
   s.email       = 'jerry.dantonio@gmail.com'
   s.homepage    = 'https://github.com/jdantonio/pattern_matching/'
-  s.summary     = 'Erlang-style pattern matching to Ruby.'
+  s.summary     = 'Erlang-style pattern matching to Ruby classes.'
   s.license     = 'MIT'
   s.date        = Date.today.to_s
 
   s.description = <<-EOF
-    A gem for adding Erlang-style pattern matching to Ruby.
+    A gem for adding Erlang-style pattern matching to Ruby classes.
   EOF
 
   s.files            = Dir['README*', 'LICENSE*', 'CHANGELOG*']

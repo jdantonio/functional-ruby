@@ -10,7 +10,6 @@ end
 group :testing do
   gem 'rake'
   gem 'rspec'
-  gem 'simplecov'
   gem 'countloc'
   gem 'irbtools'
   gem 'terminal-notifier'
