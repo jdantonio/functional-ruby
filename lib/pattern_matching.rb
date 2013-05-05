@@ -8,7 +8,7 @@ module PatternMatching
 
     base.instance_variable_set(:@__function_pattern_matches__, Hash.new)
 
-    def __match_pattern__(args, pattern)
+    def __match_pattern__(args, pattern) # :nodoc:
       return unless args.length == pattern.length
       pattern.each_with_index do |p, i|
         return false unless p == UNBOUND || p == args[i]
@@ -16,7 +16,7 @@ module PatternMatching
       return true
     end
 
-    def __pattern_match__(func, *args, &block)
+    def __pattern_match__(func, *args, &block) # :nodoc:
       clazz = self.class
 
       matchers = clazz.instance_variable_get(:@__function_pattern_matches__)
@@ -26,8 +26,8 @@ module PatternMatching
       match = nil
       matchers.each do |matcher|
         if __match_pattern__(args.first, matcher.first)
-          match = matcher.last
-          break(matcher.last)
+          match = matcher
+          break(matcher)
         end
       end
 
@@ -35,17 +35,21 @@ module PatternMatching
       if match.nil?
         [:nomatch, nil]
       else
-        return [:ok, match.call(*args.first)]
+        argv = []
+        match.first.each_with_index do |p, i|
+          argv << args.first[i] if p == UNBOUND
+        end
+        return [:ok, match.last.call(*argv)]
       end
     end
 
     class << base
 
-      def _()
+      def _() # :nodoc:
         return UNBOUND
       end
 
-      def __add_pattern_for(func, *args, &block)
+      def __add_pattern_for__(func, *args, &block) # :nodoc:
         block = Proc.new{} unless block_given?
         matchers = self.instance_variable_get(:@__function_pattern_matches__)
         matchers[func] = [] unless matchers.has_key?(func)
@@ -55,7 +59,7 @@ module PatternMatching
       def defn(func, *args, &block)
 
         block = Proc.new{} unless block_given?
-        __add_pattern_for(func, *args, &block)
+        __add_pattern_for__(func, *args, &block)
 
         unless self.instance_methods(false).include?(func)
           self.send(:define_method, func) do |*args, &block|

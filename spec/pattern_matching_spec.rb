@@ -159,9 +159,42 @@ describe PatternMatching do
     end
   end
 
-  #class Foo
-    #include PatternMatching
-    #defn(:foo, _) { true }
-  #end
+  context 'function with two parameters' do
+
+    it 'matches two bound arguments' do
+
+      subject.defn(:foo, :male, :female){ 'true case' }
+      subject.new.foo(:male, :female).should eq 'true case'
+
+      lambda {
+        subject.new.foo(1, 2)
+      }.should raise_error(NoMethodError)
+    end
+
+    it 'matches two unbound arguments' do
+
+      subject.defn(:foo, PatternMatching::UNBOUND, PatternMatching::UNBOUND) do |first, second|
+        [first, second]
+      end
+      subject.new.foo(:male, :female).should eq [:male, :female]
+    end
+
+    it 'matches when the first argument is bound and the second is not' do
+
+      subject.defn(:foo, :male, PatternMatching::UNBOUND) do |second|
+        second
+      end
+      subject.new.foo(:male, :female).should eq :female
+    end
+
+    it 'matches when the second argument is bound and the first is not' do
+
+      subject.defn(:foo, PatternMatching::UNBOUND, :female) do |first|
+        first
+      end
+      subject.new.foo(:male, :female).should eq :male
+    end
+
+  end
 
 end

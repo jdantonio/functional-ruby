@@ -46,16 +46,16 @@ Erlang:
 
 Ruby:
 
-    defn greet(name) {
-      puts "Hello, #{name}!"
-    }
+    defn(:greet, _) do |name|
+      "Hello, #{name}!"
+    end
 
-    defn greet(:male, name) {
-      puts "Hello, Mr. #{name}!"
+    defn(:greet, :male, _) { |name|
+      "Hello, Mr. #{name}!"
     }
-    defn greet(:female, name) {
-      puts "Hello, Ms. #{name}!"
+    defn(:greet, :female, _) { |name|
+      "Hello, Ms. #{name}!"
     }
-    defn greet(_, name) {
-      puts "Hello, #{name}!"
+    defn(:greet, _, _) { |_, name|
+      "Hello, #{name}!"
     }
