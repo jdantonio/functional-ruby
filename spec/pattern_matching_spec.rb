@@ -30,7 +30,22 @@ describe PatternMatching do
       }.should_not raise_error
     end
 
-    it 'does not define the real function more than once'
+    it 'defers unmatched calls to the superclass' do
+      
+      class UnmatchedCallTesterSuperclass
+        def foo(bar)
+          return bar
+        end
+      end
+
+      class UnmatchedCallTesterSubclass  < UnmatchedCallTesterSuperclass
+        include PatternMatching
+        defn(:foo) { 'baz' }
+      end
+
+      subject = UnmatchedCallTesterSubclass.new
+      subject.foo(:bar).should eq :bar
+    end
   end
 
   context 'function with no parameters' do
@@ -52,7 +67,51 @@ describe PatternMatching do
 
       lambda {
         obj.foo(1)
-      }.should raise_error(ArgumentError)
+      }.should raise_error(NoMethodError)
+    end
+  end
+
+  context 'function with one parameter' do
+    
+    it 'matches a boolean argument' do
+
+      subject.defn(:foo, true) { 'true case' }
+      subject.defn(:foo, false) { 'false case' }
+
+      subject.new.foo(true).should eq 'true case'
+      subject.new.foo(false).should eq 'false case'
+
+      lambda {
+        subject.new.foo('no match should be found')
+      }.should raise_error(NoMethodError)
+    end
+
+    it 'matches a symbol argument' do
+      pending
+    end
+
+    it 'matches a number argument' do
+      pending
+    end
+
+    it 'matches a string argument' do
+      pending
+    end
+
+    it 'matches a array argument' do
+      pending
+    end
+
+    it 'matches a hash argument' do
+      pending
+    end
+
+    it 'matches a object argument' do
+      pending
+    end
+
+    it 'matches a variable argument' do
+      pending
     end
   end
 
