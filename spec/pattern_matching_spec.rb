@@ -154,8 +154,8 @@ describe PatternMatching do
 
     it 'matches a variable argument' do
 
-      subject.defn(:foo, PatternMatching::UNBOUND) { 'true case' }
-      subject.new.foo(:foo).should eq 'true case'
+      subject.defn(:foo, PatternMatching::UNBOUND) {|arg| arg }
+      subject.new.foo(:foo).should eq :foo
     end
   end
 
