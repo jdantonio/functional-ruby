@@ -69,6 +69,11 @@ describe PatternMatching do
         obj.foo(1)
       }.should raise_error(NoMethodError)
     end
+
+    it 'returns the correct value' do
+      subject.defn(:foo){ true }
+      subject.new.foo.should be_true
+    end
   end
 
   context 'function with one parameter' do
