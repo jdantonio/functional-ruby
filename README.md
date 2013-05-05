@@ -2,15 +2,23 @@
 
 A gem for adding Erlang-style pattern matching to Ruby classes.
 
-*NOTE: This is a work in progress. I will push to RubyGems.org when it has enough features to be useful in real software.*
+*NOTE: This is a work in progress. Expect changes.*
 
-## WTF?
+## Introduction
 
 [Ruby](http://www.ruby-lang.org/en/) is my favorite programming by far. As much as I love Ruby I've always been a little disappointed that Ruby doesn't support function overloading. Function overloading tends to reduce branching and keep functions signatures simpler. No sweat, I learned to do without. Then I started programming in [Erlang](http://www.erlang.org/)…
 
 I've really started to enjoy working in Erlang. Erlang is good at all the things Ruby is bad at and vice versa. Together, Ruby and Erlang make me happy. My favotite Erlang feature is, without question, [pattern matching](http://learnyousomeerlang.com/syntax-in-functions#pattern-matching). Pattern matching is like function overloading cranked to 11. So one day I was musing on Twitter and one of my friends responded with "Build it!" So I did. And here it is.
 
-## Features
+### Goals
+
+* Stay true to the spirit of Erlang pattern matching, if not the semantics
+* Keep the semantics as idiomatic Ruby as possible
+* Support features that make sense in Ruby
+* Exclude features that only make sense in Erlang
+* Avoid using #method_missing
+
+### Features
 
 * Basic pattern matching for instance methods.
 * Parameter count matching
@@ -28,6 +36,9 @@ I've really started to enjoy working in Erlang. Erlang is good at all the things
 * Variable-length argument lists
 * Matching against array elements
 * Guard clauses
+* Support class methods
+* Support module instance methods
+* Support module methods
 
 ## Install
 
@@ -47,7 +58,7 @@ MRI 1.9.x and above. Anything else and your mileage may vary.
 
 For more examples see the integration tests in *spec/integration_spec.rb*.
 
-### Simple Function
+### Simple Functions
 
 This example is based on [Syntax in defnctions: Pattern Matching](http://learnyousomeerlang.com/syntax-in-defnctions) in [Learn You Some Erlang for Great Good!](http://learnyousomeerlang.com/).
 
@@ -82,7 +93,7 @@ Ruby:
       }
     end
 
-### Simple Function with Overloading
+### Simple Functions with Overloading
 
 This example is based on [Syntax in defnctions: Pattern Matching](http://learnyousomeerlang.com/syntax-in-defnctions) in [Learn You Some Erlang for Great Good!](http://learnyousomeerlang.com/).
 
