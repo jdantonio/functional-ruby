@@ -36,7 +36,7 @@ describe PatternMatching do
 
     it 'does not match a call with not enough arguments' do
 
-      subject.defn(:foo, true) { 'true case' }
+      subject.defn(:foo, true) { 'expected' }
 
       lambda {
         subject.new.foo()
@@ -45,7 +45,7 @@ describe PatternMatching do
 
     it 'does not match a call with too many arguments' do
 
-      subject.defn(:foo, true) { 'true case' }
+      subject.defn(:foo, true) { 'expected' }
 
       lambda {
         subject.new.foo(true, false)
@@ -76,9 +76,9 @@ describe PatternMatching do
     it 'can call another match from within a match' do
 
       subject.defn(:foo, :bar) { |arg| foo(:baz) }
-      subject.defn(:foo, :baz) { |arg| 'true case' }
+      subject.defn(:foo, :baz) { |arg| 'expected' }
 
-      subject.new.foo(:bar).should eq 'true case'
+      subject.new.foo(:bar).should eq 'expected'
     end
 
     it 'can call a superclass method from within a match' do
@@ -96,6 +96,25 @@ describe PatternMatching do
 
       subject = RecursiveCallTesterSubclass.new
       subject.foo(:bar).should eq :baz
+    end
+  end
+
+  context 'datatypes' do
+
+    it 'matches an argument of the class given in the match parameter' do
+
+      subject.defn(:foo, Integer) { 'expected' }
+      subject.new.foo(100).should eq 'expected'
+
+      lambda {
+        subject.new.foo('hello')
+      }.should raise_error(NoMethodError)
+    end
+
+    it 'passes the matched argument to the block' do
+
+      subject.defn(:foo, Integer) { |arg| arg }
+      subject.new.foo(100).should eq 100
     end
   end
 
@@ -131,10 +150,10 @@ describe PatternMatching do
 
     it 'matches a boolean argument' do
 
-      subject.defn(:foo, true) { 'true case' }
+      subject.defn(:foo, true) { 'expected' }
       subject.defn(:foo, false) { 'false case' }
 
-      subject.new.foo(true).should eq 'true case'
+      subject.new.foo(true).should eq 'expected'
       subject.new.foo(false).should eq 'false case'
 
       lambda {
@@ -144,8 +163,8 @@ describe PatternMatching do
 
     it 'matches a symbol argument' do
 
-      subject.defn(:foo, :bar) { 'true case' }
-      subject.new.foo(:bar).should eq 'true case'
+      subject.defn(:foo, :bar) { 'expected' }
+      subject.new.foo(:bar).should eq 'expected'
 
       lambda {
         subject.new.foo(:baz)
@@ -154,8 +173,8 @@ describe PatternMatching do
 
     it 'matches a number argument' do
 
-      subject.defn(:foo, 10) { 'true case' }
-      subject.new.foo(10).should eq 'true case'
+      subject.defn(:foo, 10) { 'expected' }
+      subject.new.foo(10).should eq 'expected'
 
       lambda {
         subject.new.foo(11.0)
@@ -164,8 +183,8 @@ describe PatternMatching do
 
     it 'matches a string argument' do
 
-      subject.defn(:foo, 'bar') { 'true case' }
-      subject.new.foo('bar').should eq 'true case'
+      subject.defn(:foo, 'bar') { 'expected' }
+      subject.new.foo('bar').should eq 'expected'
 
       lambda {
         subject.new.foo('baz')
@@ -174,8 +193,8 @@ describe PatternMatching do
 
     it 'matches an array argument' do
 
-      subject.defn(:foo, [1, 2, 3]) { 'true case' }
-      subject.new.foo([1, 2, 3]).should eq 'true case'
+      subject.defn(:foo, [1, 2, 3]) { 'expected' }
+      subject.new.foo([1, 2, 3]).should eq 'expected'
 
       lambda {
         subject.new.foo([3, 4, 5])
@@ -184,8 +203,8 @@ describe PatternMatching do
 
     it 'matches a hash argument' do
 
-      subject.defn(:foo, bar: 1, baz: 2) { 'true case' }
-      subject.new.foo(bar: 1, baz: 2).should eq 'true case'
+      subject.defn(:foo, bar: 1, baz: 2) { 'expected' }
+      subject.new.foo(bar: 1, baz: 2).should eq 'expected'
 
       lambda {
         subject.new.foo(foo: 0, bar: 1)
@@ -194,8 +213,8 @@ describe PatternMatching do
 
     it 'matches an object argument' do
 
-      subject.defn(:foo, OpenStruct.new(foo: :bar)) { 'true case' }
-      subject.new.foo(OpenStruct.new(foo: :bar)).should eq 'true case'
+      subject.defn(:foo, OpenStruct.new(foo: :bar)) { 'expected' }
+      subject.new.foo(OpenStruct.new(foo: :bar)).should eq 'expected'
 
       lambda {
         subject.new.foo(OpenStruct.new(bar: :baz))
@@ -213,8 +232,8 @@ describe PatternMatching do
 
     it 'matches two bound arguments' do
 
-      subject.defn(:foo, :male, :female){ 'true case' }
-      subject.new.foo(:male, :female).should eq 'true case'
+      subject.defn(:foo, :male, :female){ 'expected' }
+      subject.new.foo(:male, :female).should eq 'expected'
 
       lambda {
         subject.new.foo(1, 2)

@@ -61,6 +61,16 @@ describe 'integration' do
     defn(:recurse, _) { |arg|
       arg
     }
+
+    defn(:concat, Integer, Integer) { |first, second|
+      first + second
+    }
+    defn(:concat, Integer, String) { |first, second|
+      "#{first} #{second}"
+    }
+    defn(:concat, String, String) { |first, second|
+      first + second
+    }
   end
 
   let(:name) { 'Pattern Matcher' }
@@ -84,5 +94,9 @@ describe 'integration' do
   specify { subject.recurse(:super).should eq 'Hello, World!' }
   specify { subject.recurse(:instance).should eq name }
   specify { subject.recurse(:foo).should eq :foo }
+
+  specify { subject.concat(1, 1).should eq 2 }
+  specify { subject.concat(1, 'shoe').should eq '1 shoe' }
+  specify { subject.concat('shoe', 'fly').should eq 'shoefly' }
 
 end
