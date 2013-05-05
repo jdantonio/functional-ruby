@@ -45,9 +45,26 @@ describe 'integration' do
     defn(:hashable, _, {}, _) { |_, opts, _|
       :unbound_unbound
     }
+
+    defn(:recurse) {
+      'w00t!'
+    }
+    defn(:recurse, :match) {
+      recurse()
+    }
+    defn(:recurse, :super) {
+      greet()
+    }
+    defn(:recurse, :instance) {
+      @name
+    }
+    defn(:recurse, _) { |arg|
+      arg
+    }
   end
 
-  subject { Foo.new }
+  let(:name) { 'Pattern Matcher' }
+  subject { Foo.new(name) }
 
   specify { subject.greet.should eq 'Hello, World!' }
 
@@ -61,5 +78,11 @@ describe 'integration' do
   specify { subject.hashable(:male, {foo: :baz}, :female).should eq :foo_unbound }
   specify { subject.hashable(:male, {foo: :bar, bar: :baz}, :female).should eq :foo_bar }
   specify { subject.hashable(:male, {bar: :baz}, :female).should eq :unbound_unbound }
+
+  specify { subject.recurse.should eq 'w00t!' }
+  specify { subject.recurse(:match).should eq 'w00t!' }
+  specify { subject.recurse(:super).should eq 'Hello, World!' }
+  specify { subject.recurse(:instance).should eq name }
+  specify { subject.recurse(:foo).should eq :foo }
 
 end

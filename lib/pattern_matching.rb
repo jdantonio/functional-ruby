@@ -49,7 +49,7 @@ module PatternMatching
         match.first.each_with_index do |p, i|
           argv << args.first[i] if p == UNBOUND || p.is_a?(Hash)
         end
-        return [:ok, match.last.call(*argv)]
+        return [:ok, self.instance_exec(*argv, &match.last)]
       end
     end
 

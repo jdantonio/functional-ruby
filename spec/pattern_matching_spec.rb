@@ -30,9 +30,34 @@ describe PatternMatching do
         clazz.defn(:foo)
       }.should_not raise_error
     end
+  end
+
+  context 'parameter count' do
+
+    it 'does not match a call with not enough arguments' do
+
+      subject.defn(:foo, true) { 'true case' }
+
+      lambda {
+        subject.new.foo()
+      }.should raise_error(NoMethodError)
+    end
+
+    it 'does not match a call with too many arguments' do
+
+      subject.defn(:foo, true) { 'true case' }
+
+      lambda {
+        subject.new.foo(true, false)
+      }.should raise_error(NoMethodError)
+    end
+
+  end
+
+  context 'recursion' do
 
     it 'defers unmatched calls to the superclass' do
-      
+
       class UnmatchedCallTesterSuperclass
         def foo(bar)
           return bar
@@ -46,6 +71,31 @@ describe PatternMatching do
 
       subject = UnmatchedCallTesterSubclass.new
       subject.foo(:bar).should eq :bar
+    end
+
+    it 'can call another match from within a match' do
+
+      subject.defn(:foo, :bar) { |arg| foo(:baz) }
+      subject.defn(:foo, :baz) { |arg| 'true case' }
+
+      subject.new.foo(:bar).should eq 'true case'
+    end
+
+    it 'can call a superclass method from within a match' do
+
+      class RecursiveCallTesterSuperclass
+        def foo(bar)
+          return bar
+        end
+      end
+
+      class RecursiveCallTesterSubclass  < RecursiveCallTesterSuperclass
+        include PatternMatching
+        defn(:foo, :bar) { foo(:baz) }
+      end
+
+      subject = RecursiveCallTesterSubclass.new
+      subject.foo(:bar).should eq :baz
     end
   end
 
@@ -77,30 +127,8 @@ describe PatternMatching do
     end
   end
 
-  context 'parameter count' do
-
-    it 'does not match a call with not enough arguments' do
-
-      subject.defn(:foo, true) { 'true case' }
-
-      lambda {
-        subject.new.foo()
-      }.should raise_error(NoMethodError)
-    end
-
-    it 'does not match a call with too many arguments' do
-
-      subject.defn(:foo, true) { 'true case' }
-
-      lambda {
-        subject.new.foo(true, false)
-      }.should raise_error(NoMethodError)
-    end
-
-  end
-
   context 'function with one parameter' do
-    
+
     it 'matches a boolean argument' do
 
       subject.defn(:foo, true) { 'true case' }
@@ -216,52 +244,51 @@ describe PatternMatching do
       end
       subject.new.foo(:male, :female).should eq :male
     end
+  end
 
-    context 'functions with hash arguments' do
+  context 'functions with hash arguments' do
 
-      it 'matches when all hash keys and values match' do
+    it 'matches when all hash keys and values match' do
 
-        subject.defn(:foo, {bar: :baz}) { true }
-        subject.new.foo(bar: :baz).should be_true
-        
-        lambda {
-          subject.new.foo({one: :two})
-        }.should raise_error(NoMethodError)
-      end
+      subject.defn(:foo, {bar: :baz}) { true }
+      subject.new.foo(bar: :baz).should be_true
 
-      it 'matches when the pattern uses an empty hash' do
+      lambda {
+        subject.new.foo({one: :two})
+      }.should raise_error(NoMethodError)
+    end
 
-        subject.defn(:foo, {}) { true }
-        subject.new.foo(bar: :baz).should be_true
-      end
+    it 'matches when the pattern uses an empty hash' do
 
-      it 'matches when every pattern key/value are in the argument' do
+      subject.defn(:foo, {}) { true }
+      subject.new.foo(bar: :baz).should be_true
+    end
 
-        subject.defn(:foo, {bar: :baz}) { true }
-        subject.new.foo(foo: :bar, bar: :baz).should be_true
-      end
+    it 'matches when every pattern key/value are in the argument' do
 
-      it 'matches when all keys with unbound values in the pattern have an argument' do
+      subject.defn(:foo, {bar: :baz}) { true }
+      subject.new.foo(foo: :bar, bar: :baz).should be_true
+    end
 
-        subject.defn(:foo, {bar: PatternMatching::UNBOUND}) { true }
-        subject.new.foo(bar: :baz).should be_true
-      end
+    it 'matches when all keys with unbound values in the pattern have an argument' do
 
-      it 'passes the matched hash to the block' do
+      subject.defn(:foo, {bar: PatternMatching::UNBOUND}) { true }
+      subject.new.foo(bar: :baz).should be_true
+    end
 
-        subject.defn(:foo, {bar: PatternMatching::UNBOUND}) { |args| args }
-        subject.new.foo(bar: :baz).should == {bar: :baz}
-      end
+    it 'passes the matched hash to the block' do
 
-      it 'does not match a non-hash argument' do
+      subject.defn(:foo, {bar: PatternMatching::UNBOUND}) { |args| args }
+      subject.new.foo(bar: :baz).should == {bar: :baz}
+    end
 
-        subject.defn(:foo, {}) { true }
+    it 'does not match a non-hash argument' do
 
-        lambda {
-          subject.new.foo(:bar)
-        }.should raise_error(NoMethodError)
-      end
+      subject.defn(:foo, {}) { true }
 
+      lambda {
+        subject.new.foo(:bar)
+      }.should raise_error(NoMethodError)
     end
   end
 
