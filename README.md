@@ -175,6 +175,31 @@ end
 foo.greet('Jerry', "I'm not going to tell you my middle name!", "D'Antonio") #=> "Hello, Jerry D'Antonio!"
 ```
 
+Superclass polymorphism is supported as well. If an object cannot match a method
+signature it will defer to the parent class
+
+
+```ruby
+class Bar
+  def greet
+    return 'Hello, World!'
+  end
+end
+
+class Foo < Bar
+  include PatternMatching
+
+  defn(:greet, _) do |name|
+    "Hello, #{name}!"
+  end
+end
+
+...
+
+foo.greet('Jerry') #=> "Hello, Jerry!"
+foo.greet          #=> "Hello, World!"
+```
+
 ### Blocks and Procs and Lambdas, oh my!
 
 When using this gem it is critical to remember that `defn` takes a block and
