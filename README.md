@@ -6,7 +6,7 @@ A gem for adding Erlang-style pattern matching to Ruby classes.
 
 The project is hosted on the following sites:
 
-* [RubyGems project page](https://rubygems.org/gems/pattern_matching)
+* [RubyGems project page](https://rubygems.org/gems/pattern-matching)
 * [Source code on GitHub](https://github.com/jdantonio/pattern_matching)
 * [Continuous integration on Travis-CI](https://travis-ci.org/jdantonio/pattern_matching)
 * [Dependency tracking on Gemnasium](https://gemnasium.com/jdantonio/pattern_matching)
