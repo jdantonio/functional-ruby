@@ -16,7 +16,7 @@ I've really started to enjoy working in Erlang. Erlang is good at all the things
 * Keep the semantics as idiomatic Ruby as possible
 * Support features that make sense in Ruby
 * Exclude features that only make sense in Erlang
-* Avoid using #method_missing
+* Avoid using *method_missing*
 
 ### Features
 
@@ -40,6 +40,10 @@ I've really started to enjoy working in Erlang. Erlang is good at all the things
 * Support module instance methods
 * Support module methods
 
+## Supported Ruby versions
+
+MRI 1.9.x and above. Anything else and your mileage may vary.
+
 ## Install
 
 ```shell
@@ -54,9 +58,57 @@ gem 'pattern-matching'
 
 and run `bundle install` from your shell.
 
-## Supported Ruby versions
+## Usage
 
-MRI 1.9.x and above. Anything else and your mileage may vary.
+First, familiarize yourself with Erlang [pattern matching](http://learnyousomeerlang.com/syntax-in-functions#pattern-matching).
+This gem may not make much sense if you don't understand how Erlang dispatches
+functions.
+
+In the Ruby class file where you want to use pattern matching, require the
+*pattern_matching* gem
+
+```ruby
+require 'pattern_matching'
+```
+
+Then include *PatternMatching* in your class
+
+```ruby
+require 'pattern_matching'
+
+class Foo
+  include PatternMatching
+
+  ...
+
+end
+```
+
+You can then define functions with *defn* instead of the normal *def* statement.
+The syntax for *defn* is
+
+```ruby
+defn(:symbol_name_of_function, *zero*, *or*, *more*, *parameters*) { |*block*, *arguments*|
+  # code to execute
+}
+```
+You can then call your new function just loke any other
+
+```ruby
+require 'pattern_matching'
+
+class Foo
+  include PatternMatching
+
+  defn(:hello) {
+    puts "Hello, World!"
+  }
+end
+
+foo = Foo.new
+foo.hello #=> "Hello, World!"
+```
+
 
 ## Examples
 
