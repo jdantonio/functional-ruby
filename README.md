@@ -4,6 +4,14 @@ A gem for adding Erlang-style pattern matching to Ruby classes.
 
 *NOTE: This is a work in progress. Expect changes.*
 
+The project is hosted on the following sites:
+
+* [RubyGems project page](https://rubygems.org/gems/pattern_matching)
+* [Source code on GitHub](https://github.com/jdantonio/pattern_matching)
+* [Continuous integration on Travis-CI](https://travis-ci.org/jdantonio/pattern_matching)
+* [Dependency tracking on Gemnasium](https://gemnasium.com/jdantonio/pattern_matching)
+* [Follow me on Twitter](https://twitter.com/jerrydantonio)
+
 ## Introduction
 
 [Ruby](http://www.ruby-lang.org/en/) is my favorite programming by far. As much as I love Ruby I've always been a little disappointed that Ruby doesn't support function overloading. Function overloading tends to reduce branching and keep functions signatures simpler. No sweat, I learned to do without. Then I started programming in [Erlang](http://www.erlang.org/)…
