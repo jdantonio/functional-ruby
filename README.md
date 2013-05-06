@@ -71,7 +71,7 @@ In the Ruby class file where you want to use pattern matching, require the
 require 'pattern_matching'
 ```
 
-Then include *PatternMatching* in your class
+Then include `PatternMatching` in your class
 
 ```ruby
 require 'pattern_matching'
@@ -84,11 +84,11 @@ class Foo
 end
 ```
 
-You can then define functions with *defn* instead of the normal *def* statement.
-The syntax for *defn* is
+You can then define functions with `defn` instead of the normal *def* statement.
+The syntax for `defn` is
 
 ```ruby
-defn(:symbol_name_of_function, *zero*, *or*, *more*, *parameters*) { |*block*, *arguments*|
+defn(:symbol_name_of_function, zero, or, more, parameters) { |block, arguments|
   # code to execute
 }
 ```
@@ -109,6 +109,81 @@ foo = Foo.new
 foo.hello #=> "Hello, World!"
 ```
 
+Patterns to match against are included in the parameter list
+
+```ruby
+defn(:greet, :male) {
+  puts "Hello, sir!"
+}
+
+defn(:greet, :female) {
+  puts "Hello, ma'am!"
+}
+
+...
+
+foo.hello(:male)   #=> "Hello, sir!"
+foo.hello(:female) #=> "Hello, ma'am!"
+
+```
+
+If a particular method call can not be matched a *NoMethodError* is thrown with
+a reasonably helpful error message
+
+```ruby
+foo.greet(:unknown) #=> NoMethodError: no method `greet` matching [:unknown] found for class Foo
+foo.greet           #=> NoMethodError: no method `greet` matching [] found for class Foo
+```
+
+Parameters that are expected to exist but that can take any value are considered
+*unbound* parameters. Unbound parameters are specified by the *_* underscore
+character
+
+```ruby
+defn(:greet, _) do |name|
+  "Hello, #{name}!"
+end
+
+...
+
+foo.greet('Jerry') #=> "Hello, Jerry!"
+```
+
+All unbound parameters will be passed to the block in the order they are specified in the definition
+
+```ruby
+defn(:greet, _, _) do |first, last|
+  "Hello, #{first} #{last}!"
+end
+
+...
+
+foo.greet('Jerry', "D'Antonio") #=> "Hello, Jerry D'Antonio!"
+```
+
+If for some reason you don't care about one or more unbound parameters within
+the block you can use the *_* underscore character in the block parameters list
+as well
+
+```ruby
+defn(:greet, _, _, _) do |first, _, last|
+  "Hello, #{first} #{last}!"
+end
+
+...
+
+foo.greet('Jerry', "I'm not going to tell you my middle name!", "D'Antonio") #=> "Hello, Jerry D'Antonio!"
+```
+
+### Blocks and Procs and Lambdas, oh my!
+
+When using this gem it is critical to remember that `defn` takes a block and
+that blocks in Ruby have special rules. There are [plenty](https://www.google.com/search?q=ruby+block+proc+lambda)
+of good tutorials on the web explaining [blocks](http://www.robertsosinski.com/2008/12/21/understanding-ruby-blocks-procs-and-lambdas/)
+and [Procs](https://coderwall.com/p/_-_mha) and [lambdas](http://railsguru.org/2010/03/learn-ruby-procs-blocks-lambda/)
+in Ruby. Please read them. Please don't submit a bug report if you use a
+`return` statement within your `defn` and your code blows up with a
+[LocalJumpError](http://ruby-doc.org/core-2.0/LocalJumpError.html). 
 
 ## Examples
 
@@ -247,3 +322,32 @@ class Foo
   }
 end
 ```
+
+## Copyright
+
+*PatternMatching* is Copyright &copy; 2013 [Jerry D'Antonio](https://twitter.com/jerrydantonio).
+It is free software and may be redistributed under the terms specified in the LICENSE file.
+
+## License
+
+Released under the MIT license.
+
+http://www.opensource.org/licenses/mit-license.php  
+
+> Permission is hereby granted, free of charge, to any person obtaining a copy  
+> of this software and associated documentation files (the "Software"), to deal  
+> in the Software without restriction, including without limitation the rights  
+> to use, copy, modify, merge, publish, distribute, sublicense, and/or sell  
+> copies of the Software, and to permit persons to whom the Software is  
+> furnished to do so, subject to the following conditions:  
+> 
+> The above copyright notice and this permission notice shall be included in  
+> all copies or substantial portions of the Software.  
+> 
+> THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR  
+> IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,  
+> FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE  
+> AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER  
+> LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,  
+> OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN  
+> THE SOFTWARE.  
