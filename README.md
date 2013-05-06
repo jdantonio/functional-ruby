@@ -49,7 +49,7 @@ gem install pattern-matching
 or add the following line to Gemfile:
 
 ```ruby
-gem 'pattern-matching
+gem 'pattern-matching'
 ```
 
 and run `bundle install` from your shell.
