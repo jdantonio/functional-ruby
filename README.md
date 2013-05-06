@@ -42,11 +42,15 @@ I've really started to enjoy working in Erlang. Erlang is good at all the things
 
 ## Install
 
-    gem install pattern-matching
+```shell
+gem install pattern-matching
+```
 
 or add the following line to Gemfile:
 
-    gem 'pattern-matching
+```ruby
+gem 'pattern-matching
+```
 
 and run `bundle install` from your shell.
 
@@ -64,34 +68,38 @@ This example is based on [Syntax in defnctions: Pattern Matching](http://learnyo
 
 Erlang:
 
-    greet(male, Name) ->
-      io:format("Hello, Mr. ~s!", [Name]);
-    greet(female, Name) ->
-      io:format("Hello, Mrs. ~s!", [Name]);
-    greet(_, Name) ->
-      io:format("Hello, ~s!", [Name]).
+```erlang
+greet(male, Name) ->
+  io:format("Hello, Mr. ~s!", [Name]);
+greet(female, Name) ->
+  io:format("Hello, Mrs. ~s!", [Name]);
+greet(_, Name) ->
+  io:format("Hello, ~s!", [Name]).
+```
 
 Ruby:
 
-    require 'pattern_matching'
+```ruby
+require 'pattern_matching'
 
-    class Foo
-      include PatternMatching
-  
-      defn(:greet, _) do |name|
-        "Hello, #{name}!"
-      end
-  
-      defn(:greet, :male, _) { |name|
-        "Hello, Mr. #{name}!"
-      }
-      defn(:greet, :female, _) { |name|
-        "Hello, Ms. #{name}!"
-      }
-      defn(:greet, _, _) { |_, name|
-        "Hello, #{name}!"
-      }
-    end
+class Foo
+  include PatternMatching
+
+  defn(:greet, _) do |name|
+    "Hello, #{name}!"
+  end
+
+  defn(:greet, :male, _) { |name|
+    "Hello, Mr. #{name}!"
+  }
+  defn(:greet, :female, _) { |name|
+    "Hello, Ms. #{name}!"
+  }
+  defn(:greet, _, _) { |_, name|
+    "Hello, #{name}!"
+  }
+end
+```
 
 ### Simple Functions with Overloading
 
@@ -99,83 +107,91 @@ This example is based on [Syntax in defnctions: Pattern Matching](http://learnyo
 
 Erlang:
 
-    greet(Name) ->
-      io:format("Hello, ~s!", [Name]).
+```erlang
+greet(Name) ->
+  io:format("Hello, ~s!", [Name]).
 
-    greet(male, Name) ->
-      io:format("Hello, Mr. ~s!", [Name]);
-    greet(female, Name) ->
-      io:format("Hello, Mrs. ~s!", [Name]);
-    greet(_, Name) ->
-      io:format("Hello, ~s!", [Name]).
+greet(male, Name) ->
+  io:format("Hello, Mr. ~s!", [Name]);
+greet(female, Name) ->
+  io:format("Hello, Mrs. ~s!", [Name]);
+greet(_, Name) ->
+  io:format("Hello, ~s!", [Name]).
+```
 
 Ruby:
 
-    require 'pattern_matching'
+```ruby
+require 'pattern_matching'
 
-    class Foo
-      include PatternMatching
-  
-      defn(:greet, _) do |name|
-        "Hello, #{name}!"
-      end
-  
-      defn(:greet, :male, _) { |name|
-        "Hello, Mr. #{name}!"
-      }
-      defn(:greet, :female, _) { |name|
-        "Hello, Ms. #{name}!"
-      }
-      defn(:greet, nil, _) { |name|
-        "Goodbye, #{name}!"
-      }
-      defn(:greet, _, _) { |_, name|
-        "Hello, #{name}!"
-      }
-    end
+class Foo
+  include PatternMatching
+
+  defn(:greet, _) do |name|
+    "Hello, #{name}!"
+  end
+
+  defn(:greet, :male, _) { |name|
+    "Hello, Mr. #{name}!"
+  }
+  defn(:greet, :female, _) { |name|
+    "Hello, Ms. #{name}!"
+  }
+  defn(:greet, nil, _) { |name|
+    "Goodbye, #{name}!"
+  }
+  defn(:greet, _, _) { |_, name|
+    "Hello, #{name}!"
+  }
+end
+```
 
 ### Matching by Class/Datatype
 
 Ruby:
 
-    require 'pattern_matching'
+```ruby
+require 'pattern_matching'
 
-    class Foo
-      include PatternMatching
-  
-      defn(:concat, Integer, Integer) { |first, second|
-        first + second
-      }
-      defn(:concat, Integer, String) { |first, second|
-        "#{first} #{second}"
-      }
-      defn(:concat, String, String) { |first, second|
-        first + second
-      }
-      defn(:concat, Integer, _) { |first, second|
-        first + second.to_i
-      }
-    end
+class Foo
+  include PatternMatching
+
+  defn(:concat, Integer, Integer) { |first, second|
+    first + second
+  }
+  defn(:concat, Integer, String) { |first, second|
+    "#{first} #{second}"
+  }
+  defn(:concat, String, String) { |first, second|
+    first + second
+  }
+  defn(:concat, Integer, _) { |first, second|
+    first + second.to_i
+  }
+end
+```
 
 ### Matching a Hash Parameter
 
 Ruby:
 
-    require 'pattern_matching'
+```ruby
+require 'pattern_matching'
 
-    class Foo
-      include PatternMatching
+class Foo
+  include PatternMatching
 
-      defn(:hashable, {foo: :bar}) { |opts|
-        # matches any hash with key :foo and value :bar
-        :foo_bar
-      }
-      defn(:hashable, {foo: _}) { |opts|
-        # matches any hash with :key foo regardless of value
-        :foo_unbound
-      }
-      defn(:hashable, {}) { |opts|
-        # matches any hash
-        :unbound_unbound
-      }
-    end
+  defn(:hashable, {foo: :bar}) { |opts|
+    # matches any hash with key :foo and value :bar
+    :foo_bar
+  }
+  defn(:hashable, {foo: _}) { |opts|
+    # matches any hash with :key foo regardless of value
+    :foo_unbound
+  }
+  defn(:hashable, {}) { |opts|
+    # matches any hash
+    :unbound_unbound
+  }
+end
+```
