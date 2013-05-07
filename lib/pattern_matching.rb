@@ -13,8 +13,7 @@ module PatternMatching
       pattern.each_with_index do |p, i|
         arg = args[i]
         next if p.is_a?(Class) && arg.is_a?(p)
-        if p.is_a?(Hash) && arg.is_a?(Hash)
-          next if p.empty?
+        if p.is_a?(Hash) && arg.is_a?(Hash) && ! p.empty?
           p.each do |key, value|
             return false unless arg.has_key?(key)
             next if value == UNBOUND
@@ -48,7 +47,13 @@ module PatternMatching
       else
         argv = []
         match.first.each_with_index do |p, i|
-          argv << args.first[i] if p == UNBOUND || p.is_a?(Class) || p.is_a?(Hash)
+          if p.is_a?(Hash) && p.values.include?(UNBOUND)
+            p.each do |key, value|
+              argv << args.first[i][key] if value == UNBOUND
+            end
+          elsif p.is_a?(Hash) || p == UNBOUND || p.is_a?(Class)
+            argv << args.first[i] 
+          end
         end
         return [:ok, self.instance_exec(*argv, &match.last)]
       end

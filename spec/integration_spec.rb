@@ -39,11 +39,17 @@ describe 'integration' do
     defn(:hashable, _, {foo: :bar}, _) { |_, opts, _|
       :foo_bar
     }
-    defn(:hashable, _, {foo: _}, _) { |_, opts, _|
-      :foo_unbound
+    defn(:hashable, _, {foo: _, bar: _}, _) { |_, f, b, _|
+      [f, b]
     }
-    defn(:hashable, _, {}, _) { |_, opts, _|
-      :unbound_unbound
+    defn(:hashable, _, {foo: _}, _) { |_, f, _|
+      f
+    }
+    defn(:hashable, _, {}, _) {
+      :empty
+    }
+    defn(:hashable, _, _, _) { |_, _, _|
+      :unbound
     }
 
     defn(:recurse) {
@@ -89,9 +95,11 @@ describe 'integration' do
   specify { subject.greet(nil, 'Jerry').should eq 'Goodbye, Jerry!' }
 
   specify { subject.hashable(:male, {foo: :bar}, :female).should eq :foo_bar }
-  specify { subject.hashable(:male, {foo: :baz}, :female).should eq :foo_unbound }
-  specify { subject.hashable(:male, {foo: :bar, bar: :baz}, :female).should eq :foo_bar }
-  specify { subject.hashable(:male, {bar: :baz}, :female).should eq :unbound_unbound }
+  specify { subject.hashable(:male, {foo: :baz}, :female).should eq :baz }
+  specify { subject.hashable(:male, {foo: 1, bar: 2}, :female).should eq [1, 2] }
+  specify { subject.hashable(:male, {foo: 1, baz: 2}, :female).should eq 1 }
+  specify { subject.hashable(:male, {bar: :baz}, :female).should eq :unbound }
+  specify { subject.hashable(:male, {}, :female).should eq :empty }
 
   specify { subject.recurse.should eq 'w00t!' }
   specify { subject.recurse(:match).should eq 'w00t!' }

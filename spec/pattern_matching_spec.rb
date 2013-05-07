@@ -277,6 +277,16 @@ describe PatternMatching do
 
   context 'functions with hash arguments' do
 
+    it 'matches an empty argument hash with an empty parameter hash' do
+
+      subject.defn(:foo, {}) { true }
+      subject.new.foo({}).should be_true
+
+      lambda {
+        subject.new.foo({one: :two})
+      }.should raise_error(NoMethodError)
+    end
+
     it 'matches when all hash keys and values match' do
 
       subject.defn(:foo, {bar: :baz}) { true }
@@ -285,12 +295,6 @@ describe PatternMatching do
       lambda {
         subject.new.foo({one: :two})
       }.should raise_error(NoMethodError)
-    end
-
-    it 'matches when the pattern uses an empty hash' do
-
-      subject.defn(:foo, {}) { true }
-      subject.new.foo(bar: :baz).should be_true
     end
 
     it 'matches when every pattern key/value are in the argument' do
@@ -305,9 +309,15 @@ describe PatternMatching do
       subject.new.foo(bar: :baz).should be_true
     end
 
+    it 'passes unbound values to the block' do
+
+      subject.defn(:foo, {bar: PatternMatching::UNBOUND}) {|arg| arg }
+      subject.new.foo(bar: :baz).should eq :baz
+    end
+
     it 'passes the matched hash to the block' do
 
-      subject.defn(:foo, {bar: PatternMatching::UNBOUND}) { |args| args }
+      subject.defn(:foo, {bar: :baz}) { |opts| opts }
       subject.new.foo(bar: :baz).should == {bar: :baz}
     end
 
