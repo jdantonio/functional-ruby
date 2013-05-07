@@ -81,8 +81,21 @@ describe 'integration' do
     defn(:concat, String, String) { |first, second|
       first + second
     }
-    defn(:concat, Integer, _) { |first, second|
+    defn(:concat, Integer, UNBOUND) { |first, second|
       first + second.to_i
+    }
+
+    defn(:all, :one, ALL) { |args|
+      args
+    }
+    defn(:all, :one, Integer, ALL) { |int, args|
+      [int, args]
+    }
+    defn(:all, 1, _, ALL) { |var, args|
+      [var, args]
+    }
+    defn(:all, ALL) { | args|
+      args
     }
   end
 
@@ -117,5 +130,11 @@ describe 'integration' do
   specify { subject.concat(1, 'shoe').should eq '1 shoe' }
   specify { subject.concat('shoe', 'fly').should eq 'shoefly' }
   specify { subject.concat(1, 2.9).should eq 3 }
+
+  specify { subject.all(:one, 'a', 'bee', :see).should == ['a', 'bee', :see] }
+  specify { subject.all(:one, 1, 'bee', :see).should == [1, 'bee', :see] }
+  specify { subject.all(1, 'a', 'bee', :see).should == ['a', ['bee', :see]] }
+  specify { subject.all('a', 'bee', :see).should == ['a', 'bee', :see] }
+  specify { lambda { subject.all }.should raise_error(NoMethodError) }
 
 end

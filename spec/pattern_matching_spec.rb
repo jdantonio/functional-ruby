@@ -337,4 +337,15 @@ describe PatternMatching do
     end
   end
 
+  context 'varaible-length argument lists' do
+
+    it 'supports ALL as the last parameter' do
+      
+      subject.defn(:foo, 1, 2, PatternMatching::ALL) { |args| args }
+      subject.new.foo(1, 2, 3).should == [3]
+      subject.new.foo(1, 2, :foo, :bar).should == [:foo, :bar]
+      subject.new.foo(1, 2, :foo, :bar, one: 1, two: 2).should == [:foo, :bar, {one: 1, two: 2}]
+    end
+  end
+
 end

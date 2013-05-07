@@ -42,7 +42,6 @@ I've really started to enjoy working in Erlang. Erlang is good at all the things
 
 ### To-do
 
-* Variable-length argument lists
 * Matching against array elements
 * Guard clauses
 * Support class methods
@@ -74,13 +73,13 @@ This gem may not make much sense if you don't understand how Erlang dispatches
 functions.
 
 In the Ruby class file where you want to use pattern matching, require the
-*pattern_matching* gem
+*pattern_matching* gem:
 
 ```ruby
 require 'pattern_matching'
 ```
 
-Then include `PatternMatching` in your class
+Then include `PatternMatching` in your class:
 
 ```ruby
 require 'pattern_matching'
@@ -94,14 +93,14 @@ end
 ```
 
 You can then define functions with `defn` instead of the normal *def* statement.
-The syntax for `defn` is
+The syntax for `defn` is:
 
 ```ruby
 defn(:symbol_name_of_function, zero, or, more, parameters) { |block, arguments|
   # code to execute
 }
 ```
-You can then call your new function just loke any other
+You can then call your new function just like any other:
 
 ```ruby
 require 'pattern_matching'
@@ -118,7 +117,7 @@ foo = Foo.new
 foo.hello #=> "Hello, World!"
 ```
 
-Patterns to match against are included in the parameter list
+Patterns to match against are included in the parameter list:
 
 ```ruby
 defn(:greet, :male) {
@@ -136,7 +135,7 @@ foo.hello(:female) #=> "Hello, ma'am!"
 ```
 
 If a particular method call can not be matched a *NoMethodError* is thrown with
-a reasonably helpful error message
+a reasonably helpful error message:
 
 ```ruby
 foo.greet(:unknown) #=> NoMethodError: no method `greet` matching [:unknown] found for class Foo
@@ -144,12 +143,16 @@ foo.greet           #=> NoMethodError: no method `greet` matching [] found for c
 ```
 
 Parameters that are expected to exist but that can take any value are considered
-*unbound* parameters. Unbound parameters are specified by the *_* underscore
-character
+*unbound* parameters. Unbound parameters are specified by the `_` underscore
+character or `UNBOUND`:
 
 ```ruby
 defn(:greet, _) do |name|
   "Hello, #{name}!"
+end
+
+defn(:greet, UNBOUND, UNBOUND) do |first, last|
+  "Hello, #{first} #{last}!"
 end
 
 ...
@@ -157,7 +160,7 @@ end
 foo.greet('Jerry') #=> "Hello, Jerry!"
 ```
 
-All unbound parameters will be passed to the block in the order they are specified in the definition
+All unbound parameters will be passed to the block in the order they are specified in the definition:
 
 ```ruby
 defn(:greet, _, _) do |first, last|
@@ -170,8 +173,8 @@ foo.greet('Jerry', "D'Antonio") #=> "Hello, Jerry D'Antonio!"
 ```
 
 If for some reason you don't care about one or more unbound parameters within
-the block you can use the *_* underscore character in the block parameters list
-as well
+the block you can use the `_` underscore character in the block parameters list
+as well:
 
 ```ruby
 defn(:greet, _, _, _) do |first, _, last|
@@ -183,7 +186,7 @@ end
 foo.greet('Jerry', "I'm not going to tell you my middle name!", "D'Antonio") #=> "Hello, Jerry D'Antonio!"
 ```
 
-Hash parameters can match against specific keys and either bound or unbound parameters. This allows for function dispatch by hash parameters without having to dig through the hash
+Hash parameters can match against specific keys and either bound or unbound parameters. This allows for function dispatch by hash parameters without having to dig through the hash:
 
 ```ruby
 defn(:hashable, {foo: :bar}) { |opts|
@@ -199,7 +202,7 @@ foo.hashable({foo: :bar})      #=> :foo_bar
 foo.hashable({foo: :baz})      #=> :baz
 ```
 
-The Ruby idiom of the final parameter being a hash is also supported
+The Ruby idiom of the final parameter being a hash is also supported:
 
 ```ruby
 defn(:options, _) { |opts|
@@ -211,8 +214,20 @@ defn(:options, _) { |opts|
 foo.options(bar: :baz, one: 1, many: 2)
 ```
 
+As is the Ruby idiom of variable-length argument lists. The constant `ALL` as the last parameter
+will match one or more arguments and pass them to the block as an array:
+
+```ruby
+defn(:baz, Integer, ALL) { |int, args|
+  [int, args]
+}
+defn(:baz, ALL) { |args|
+  args
+}
+```
+
 Superclass polymorphism is supported as well. If an object cannot match a method
-signature it will defer to the parent class
+signature it will defer to the parent class:
 
 ```ruby
 class Bar
@@ -234,6 +249,13 @@ end
 foo.greet('Jerry') #=> "Hello, Jerry!"
 foo.greet          #=> "Hello, World!"
 ```
+
+### Order Matters
+
+As with Erlang, the order of pattern matches is significant. Patterns will be matched
+*in the order declared* and the first match will be used. If a particular function call
+can be matched by more than one pattern, the *first matched pattern* will be used. It
+is the programmer's responsibility to ensure patterns are declared in the correct order.
 
 ### Blocks and Procs and Lambdas, oh my!
 
@@ -397,6 +419,31 @@ foo.hashable({foo: 1, bar: 2}) #=> [1, 2]
 foo.hashable({foo: 1, baz: 2}) #=> 1
 foo.hashable({bar: :baz})      #=> {bar: :baz}
 foo.hashable({})               #=> :empty 
+```
+
+### Variable Length Argument Lists with ALL
+
+```ruby
+defn(:all, :one, ALL) { |args|
+  args
+}
+defn(:all, :one, Integer, ALL) { |int, args|
+  [int, args]
+}
+defn(:all, 1, _, ALL) { |var, args|
+  [var, args]
+}
+defn(:all, ALL) { | args|
+  args
+}
+
+...
+
+foo.all(:one, 'a', 'bee', :see) #=> ['a', 'bee', :see]
+foo.all(:one, 1, 'bee', :see)   #=> [1, 'bee', :see]
+foo.all(1, 'a', 'bee', :see)    #=> ['a', ['bee', :see]]
+foo.all('a', 'bee', :see)       #=> ['a', 'bee', :see]
+foo.all()                       #=> NoMethodError: no method `all` matching [] found for class Foo
 ```
 
 ## Copyright

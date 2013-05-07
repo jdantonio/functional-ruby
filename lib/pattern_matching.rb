@@ -3,14 +3,17 @@ module PatternMatching
   VERSION = '0.0.1'
 
   UNBOUND = Unbound = Class.new
+  ALL = All = Class.new
 
   def self.included(base)
 
     base.instance_variable_set(:@__function_pattern_matches__, Hash.new)
 
     def __match_pattern__(args, pattern) # :nodoc:
-      return unless args.length == pattern.length
+      return unless (pattern.last == ALL && args.length >= pattern.length) \
+        || (args.length == pattern.length)
       pattern.each_with_index do |p, i|
+        break if p == ALL && i+1 == pattern.length
         arg = args[i]
         next if p.is_a?(Class) && arg.is_a?(p)
         if p.is_a?(Hash) && arg.is_a?(Hash) && ! p.empty?
@@ -28,12 +31,13 @@ module PatternMatching
 
     def __pattern_match__(func, *args, &block) # :nodoc:
       clazz = self.class
+      args = args.first
 
       # get the array of matchers for this function
       matchers = clazz.instance_variable_get(:@__function_pattern_matches__)[func]
 
       # scan through all patterns for this function
-      index = matchers.index{|matcher| __match_pattern__(args.first, matcher.first)}
+      index = matchers.index{|matcher| __match_pattern__(args, matcher.first)}
 
       if index.nil?
         [:nomatch, nil]
@@ -42,12 +46,14 @@ module PatternMatching
         argv = []
         match = matchers[index]
         match.first.each_with_index do |p, i|
-          if p.is_a?(Hash) && p.values.include?(UNBOUND)
+          if p == ALL && i == match.first.length-1
+            argv << args[(i..args.length)].reduce([]){|memo, arg| memo << arg }
+          elsif p.is_a?(Hash) && p.values.include?(UNBOUND)
             p.each do |key, value|
-              argv << args.first[i][key] if value == UNBOUND
+              argv << args[i][key] if value == UNBOUND
             end
           elsif p.is_a?(Hash) || p == UNBOUND || p.is_a?(Class)
-            argv << args.first[i] 
+            argv << args[i] 
           end
         end
         return [:ok, self.instance_exec(*argv, &match.last)]
@@ -55,6 +61,9 @@ module PatternMatching
     end
 
     class << base
+
+      UNBOUND = PatternMatching::UNBOUND
+      ALL = PatternMatching::ALL
 
       def _() # :nodoc:
         return UNBOUND
