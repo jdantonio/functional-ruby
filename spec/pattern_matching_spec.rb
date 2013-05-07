@@ -348,4 +348,46 @@ describe PatternMatching do
     end
   end
 
+  context 'guard clauses' do
+
+    it 'matches when the guard clause returns true' do
+
+      subject.defn(:old_enough, PatternMatching::UNBOUND){
+        true
+      }.when{|x| x > 16 }
+
+      subject.new.old_enough(20).should be_true
+    end
+
+    it 'does not match when the guard clause returns false' do
+
+      subject.defn(:old_enough, PatternMatching::UNBOUND){
+        true
+      }.when{|x| x > 16 }
+
+      lambda {
+        subject.new.old_enough(20)
+      }.should raise_error(NoMethodError)
+    end
+
+    it 'continues pattern matching when the guard clause returns false' do
+
+      subject.defn(:old_enough, PatternMatching::UNBOUND){
+        true
+      }.when{|x| x > 16 }
+
+      subject.defn(:old_enough, PatternMatching::UNBOUND) { false }
+
+      subject.new.old_enough(10).should be_false
+    end
+
+    it 'raises an exception when the guard clause does not have a block' do
+
+      lambda {
+        subject.defn(:foo).when
+      }.should raise_error(ArgumentError)
+    end
+
+  end
+
 end

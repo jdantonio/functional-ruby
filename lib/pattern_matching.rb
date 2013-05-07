@@ -73,13 +73,29 @@ module PatternMatching
         block = Proc.new{} unless block_given?
         matchers = self.instance_variable_get(:@__function_pattern_matches__)
         matchers[func] = [] unless matchers.has_key?(func)
-        matchers[func] << [args, block]
+        matchers[func] << [args, block, nil]
+        return matchers[func].last
       end
 
       def defn(func, *args, &block)
 
+        guard = Class.new do
+          def initialize(func, clazz, matcher)
+            @func = func
+            @clazz = clazz
+            @matcher = matcher
+          end
+          def when(&block)
+            unless block_given?
+              raise ArgumentError.new("block missing for `when` guard on function `#{@func}` of class #{@clazz}")
+            end
+            @matcher[@matcher.length-1] = block
+            return nil
+          end
+        end
+
         block = Proc.new{} unless block_given?
-        __add_pattern_for__(func, *args, &block)
+        pattern = __add_pattern_for__(func, *args, &block)
 
         unless self.instance_methods(false).include?(func)
           self.send(:define_method, func) do |*args, &block|
@@ -92,6 +108,8 @@ module PatternMatching
             end
           end
         end
+
+        return guard.new(func, self, pattern)
       end
 
     end

@@ -97,6 +97,25 @@ describe 'integration' do
     defn(:all, ALL) { | args|
       args
     }
+    
+    defn(:old_enough, _){ true }.when{|x| x >= 16 }
+    defn(:old_enough, _){ false }
+    
+    defn(:right_age, _) {
+      true
+    }.when{|x| x >= 16 && x <= 104 }
+    
+    defn(:right_age, _) {
+      false
+    }
+    
+    defn(:wrong_age, _) {
+      false
+    }.when{|x| x < 16 || x > 104 }
+    
+    defn(:wrong_age, _) {
+      true
+    }
   end
 
   let(:name) { 'Pattern Matcher' }
@@ -136,5 +155,16 @@ describe 'integration' do
   specify { subject.all(1, 'a', 'bee', :see).should == ['a', ['bee', :see]] }
   specify { subject.all('a', 'bee', :see).should == ['a', 'bee', :see] }
   specify { lambda { subject.all }.should raise_error(NoMethodError) }
+
+  specify { subject.old_enough(20).should be_true }
+  specify { subject.old_enough(10).should be_false }
+
+  specify { subject.right_age(20).should be_true }
+  specify { subject.right_age(10).should be_false }
+  specify { subject.right_age(110).should be_false }
+
+  specify { subject.wrong_age(20).should be_false }
+  specify { subject.wrong_age(10).should be_true }
+  specify { subject.wrong_age(110).should be_true }
 
 end

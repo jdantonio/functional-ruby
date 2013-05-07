@@ -25,7 +25,7 @@ I've really started to enjoy working in Erlang. Erlang is good at all the things
 * Support features that make sense in Ruby
 * Exclude features that only make sense in Erlang
 * Avoid using *method_missing*
-* Keep it small (currently at 72 LOC)
+* Keep it small (currently less than 100 LOC)
 
 ### Features
 
@@ -250,6 +250,25 @@ foo.greet('Jerry') #=> "Hello, Jerry!"
 foo.greet          #=> "Hello, World!"
 ```
 
+Guard clauses in Erlang are defined with `when` clauses between the parameter list and the function body.
+In Ruby, guard clauses are defined by chaining a call to `when` onto the the `defn` call and passing
+a block. If the guard clause evaluates to true then the function will match. If the guard evaluates
+to false the function will not match and pattern matching will continue:
+
+Erlang:
+
+```erlang
+old_enough(X) when X >= 16 -> true;
+old_enough(_) -> false.
+```
+
+Ruby:
+
+```ruby
+defn(:old_enough, _){ true }.when{|x| x >= 16 }
+defn(:old_enough, _){ false }
+```
+
 ### Order Matters
 
 As with Erlang, the order of pattern matches is significant. Patterns will be matched
@@ -444,6 +463,48 @@ foo.all(:one, 1, 'bee', :see)   #=> [1, 'bee', :see]
 foo.all(1, 'a', 'bee', :see)    #=> ['a', ['bee', :see]]
 foo.all('a', 'bee', :see)       #=> ['a', 'bee', :see]
 foo.all()                       #=> NoMethodError: no method `all` matching [] found for class Foo
+```
+
+### Guard Clauses
+
+These examples are based on [Syntax in defnctions: Pattern Matching](http://learnyousomeerlang.com/syntax-in-defnctions) in [Learn You Some Erlang for Great Good!](http://learnyousomeerlang.com/).
+
+Erlang:
+
+```erlang
+old_enough(X) when X >= 16 -> true;
+old_enough(_) -> false.
+
+right_age(X) when X >= 16, X =< 104 ->
+  true;
+right_age(_) ->
+  false.
+
+wrong_age(X) when X < 16; X > 104 ->
+  true;
+wrong_age(_) ->
+  false.
+```
+
+```ruby
+defn(:old_enough, _){ true }.when{|x| x >= 16 }
+defn(:old_enough, _){ false }
+
+defn(:right_age, _) {
+  true
+}.when{|x| x >= 16 && x <= 104 }
+
+defn(:right_age, _) {
+  false
+}
+
+defn(:wrong_age, _) {
+  false
+}.when{|x| x < 16 || x > 104 }
+
+defn(:wrong_age, _) {
+  true
+}
 ```
 
 ## Copyright
