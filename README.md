@@ -134,7 +134,6 @@ defn(:greet, :female) {
 
 foo.hello(:male)   #=> "Hello, sir!"
 foo.hello(:female) #=> "Hello, ma'am!"
-
 ```
 
 If a particular method call can not be matched a *NoMethodError* is thrown with
@@ -325,8 +324,6 @@ end
 
 ### Matching by Class/Datatype
 
-Ruby:
-
 ```ruby
 require 'pattern_matching'
 
@@ -350,28 +347,6 @@ end
 
 ### Matching a Hash Parameter
 
-Ruby:
-
-```ruby
-require 'pattern_matching'
-
-class Foo
-  include PatternMatching
-
-  defn(:hashable, {foo: :bar}) { |opts|
-    # matches any hash with key :foo and value :bar
-    :foo_bar
-  }
-  defn(:hashable, {foo: _}) { |opts|
-    # matches any hash with :key foo regardless of value
-    :foo_unbound
-  }
-  defn(:hashable, {}) { |opts|
-    # matches any hash
-    :unbound_unbound
-  }
-end
-```
 ```ruby
 require 'pattern_matching'
 
