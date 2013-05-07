@@ -25,7 +25,8 @@ I've really started to enjoy working in Erlang. Erlang is good at all the things
 * Support features that make sense in Ruby
 * Exclude features that only make sense in Erlang
 * Avoid using *method_missing*
-* Keep it small (currently less than 100 LOC)
+* Keep it small (currently arround 100 LOC)
+* Be as fast as reasonably possible
 
 ### Features
 
@@ -42,8 +43,6 @@ I've really started to enjoy working in Erlang. Erlang is good at all the things
 
 ### To-do
 
-* Matching against array elements
-* Guard clauses
 * Support class methods
 * Support module instance methods
 * Support module methods

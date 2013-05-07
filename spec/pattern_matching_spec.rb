@@ -366,7 +366,7 @@ describe PatternMatching do
       }.when{|x| x > 16 }
 
       lambda {
-        subject.new.old_enough(20)
+        subject.new.old_enough(10)
       }.should raise_error(NoMethodError)
     end
 

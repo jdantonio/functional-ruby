@@ -110,11 +110,11 @@ describe 'integration' do
     }
     
     defn(:wrong_age, _) {
-      false
+      true
     }.when{|x| x < 16 || x > 104 }
     
     defn(:wrong_age, _) {
-      true
+      false
     }
   end
 

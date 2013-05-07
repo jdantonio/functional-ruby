@@ -2,12 +2,14 @@ module PatternMatching
 
   VERSION = '0.1.0'
 
-  UNBOUND = Unbound = Class.new
-  ALL = All = Class.new
+  UNBOUND = Class.new
+  ALL = Class.new
 
   def self.included(base)
 
     base.instance_variable_set(:@__function_pattern_matches__, Hash.new)
+
+    private
 
     def __match_pattern__(args, pattern) # :nodoc:
       return unless (pattern.last == ALL && args.length >= pattern.length) \
@@ -29,6 +31,22 @@ module PatternMatching
       return true
     end
 
+    def __unbound_args__(match, args) # :nodoc:
+      argv = []
+      match.first.each_with_index do |p, i|
+        if p == ALL && i == match.first.length-1
+          argv << args[(i..args.length)].reduce([]){|memo, arg| memo << arg }
+        elsif p.is_a?(Hash) && p.values.include?(UNBOUND)
+          p.each do |key, value|
+            argv << args[i][key] if value == UNBOUND
+          end
+        elsif p.is_a?(Hash) || p == UNBOUND || p.is_a?(Class)
+          argv << args[i] 
+        end
+      end
+      return argv
+    end
+
     def __pattern_match__(func, *args, &block) # :nodoc:
       clazz = self.class
       args = args.first
@@ -37,44 +55,32 @@ module PatternMatching
       matchers = clazz.instance_variable_get(:@__function_pattern_matches__)[func]
 
       # scan through all patterns for this function
-      index = matchers.index{|matcher| __match_pattern__(args, matcher.first)}
-
-      if index.nil?
-        [:nomatch, nil]
-      else
-        # if a match is found call the block
-        argv = []
-        match = matchers[index]
-        match.first.each_with_index do |p, i|
-          if p == ALL && i == match.first.length-1
-            argv << args[(i..args.length)].reduce([]){|memo, arg| memo << arg }
-          elsif p.is_a?(Hash) && p.values.include?(UNBOUND)
-            p.each do |key, value|
-              argv << args[i][key] if value == UNBOUND
-            end
-          elsif p.is_a?(Hash) || p == UNBOUND || p.is_a?(Class)
-            argv << args[i] 
+      index = matchers.index do |matcher|
+        if __match_pattern__(args, matcher.first)
+          if matcher.last.nil?
+            true # no guard clause
+          else
+            self.instance_exec(*__unbound_args__(matcher, args), &matcher.last)
           end
         end
-        return [:ok, self.instance_exec(*argv, &match.last)]
+      end
+
+      if index.nil?
+        return [:nomatch, nil]
+      else
+        # if a match is found call the block
+        match = matchers[index]
+        argv = __unbound_args__(match, args)
+        return [:ok, self.instance_exec(*argv, &match[1])]
       end
     end
 
     class << base
 
-      UNBOUND = PatternMatching::UNBOUND
-      ALL = PatternMatching::ALL
+      public
 
       def _() # :nodoc:
         return UNBOUND
-      end
-
-      def __add_pattern_for__(func, *args, &block) # :nodoc:
-        block = Proc.new{} unless block_given?
-        matchers = self.instance_variable_get(:@__function_pattern_matches__)
-        matchers[func] = [] unless matchers.has_key?(func)
-        matchers[func] << [args, block, nil]
-        return matchers[func].last
       end
 
       def defn(func, *args, &block)
@@ -110,6 +116,16 @@ module PatternMatching
         end
 
         return guard.new(func, self, pattern)
+      end
+
+      private
+
+      def __add_pattern_for__(func, *args, &block) # :nodoc:
+        block = Proc.new{} unless block_given?
+        matchers = self.instance_variable_get(:@__function_pattern_matches__)
+        matchers[func] = [] unless matchers.has_key?(func)
+        matchers[func] << [args, block, nil]
+        return matchers[func].last
       end
 
     end
