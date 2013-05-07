@@ -43,7 +43,6 @@ I've really started to enjoy working in Erlang. Erlang is good at all the things
 ### To-do
 
 * Variable-length argument lists
-* Option hashes
 * Matching against array elements
 * Guard clauses
 * Support class methods
@@ -198,6 +197,18 @@ defn(:hashable, {foo: _}) { |f|
 
 foo.hashable({foo: :bar})      #=> :foo_bar
 foo.hashable({foo: :baz})      #=> :baz
+```
+
+The Ruby idiom of the final parameter being a hash is also supported
+
+```ruby
+defn(:options, _) { |opts|
+  opts
+}
+
+...
+
+foo.options(bar: :baz, one: 1, many: 2)
 ```
 
 Superclass polymorphism is supported as well. If an object cannot match a method

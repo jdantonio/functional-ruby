@@ -52,6 +52,10 @@ describe 'integration' do
       :unbound
     }
 
+    defn(:options, _) { |opts|
+      opts
+    }
+
     defn(:recurse) {
       'w00t!'
     }
@@ -93,6 +97,8 @@ describe 'integration' do
   specify { subject.greet(:female, 'Jeri').should eq 'Hello, Ms. Jeri!' }
   specify { subject.greet(:unknown, 'Jerry').should eq 'Hello, Jerry!' }
   specify { subject.greet(nil, 'Jerry').should eq 'Goodbye, Jerry!' }
+
+  specify { subject.options(bar: :baz, one: 1, many: 2).should == {bar: :baz, one: 1, many: 2} }
 
   specify { subject.hashable(:male, {foo: :bar}, :female).should eq :foo_bar }
   specify { subject.hashable(:male, {foo: :baz}, :female).should eq :baz }

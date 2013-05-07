@@ -329,6 +329,12 @@ describe PatternMatching do
         subject.new.foo(:bar)
       }.should raise_error(NoMethodError)
     end
+
+    it 'supports idiomatic has-as-last-argument syntax' do
+
+      subject.defn(:foo, PatternMatching::UNBOUND) { |opts| opts }
+      subject.new.foo(bar: :baz, one: 1, many: 2).should == {bar: :baz, one: 1, many: 2}
+    end
   end
 
 end
