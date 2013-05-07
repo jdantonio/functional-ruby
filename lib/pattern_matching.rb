@@ -1,6 +1,6 @@
 module PatternMatching
 
-  VERSION = '0.0.1'
+  VERSION = '0.1.0'
 
   UNBOUND = Unbound = Class.new
   ALL = All = Class.new
