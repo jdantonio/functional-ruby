@@ -185,38 +185,24 @@ end
 foo.greet('Jerry', "I'm not going to tell you my middle name!", "D'Antonio") #=> "Hello, Jerry D'Antonio!"
 ```
 
-Hashes parameters can match against specific keys and either bound or unbound parameters. This allows for function dispatch by hash parameters without having to dig through the hash
+Hash parameters can match against specific keys and either bound or unbound parameters. This allows for function dispatch by hash parameters without having to dig through the hash
 
 ```ruby
 defn(:hashable, {foo: :bar}) { |opts|
   :foo_bar
 }
-defn(:hashable, {foo: _, bar: _}) { |f, b|
-  [f, b]
-}
 defn(:hashable, {foo: _}) { |f|
   f
-}
-defn(:hashable, {}) { ||
-  :empty
-}
-defn(:hashable, _) { |opts|
-  opts
 }
 
 ...
 
 foo.hashable({foo: :bar})      #=> :foo_bar
 foo.hashable({foo: :baz})      #=> :baz
-foo.hashable({foo: 1, bar: 2}) #=> [1, 2] 
-foo.hashable({foo: 1, baz: 2}) #=> 1
-foo.hashable({bar: :baz})      #=> {bar: :baz}
-foo.hashable({})               #=> :empty 
 ```
 
 Superclass polymorphism is supported as well. If an object cannot match a method
 signature it will defer to the parent class
-
 
 ```ruby
 class Bar
@@ -385,6 +371,46 @@ class Foo
     :unbound_unbound
   }
 end
+```
+```ruby
+require 'pattern_matching'
+
+class Foo
+  include PatternMatching
+  
+  defn(:hashable, {foo: :bar}) { |opts|
+    # matches any hash with key :foo and value :bar
+    :foo_bar
+  }
+  defn(:hashable, {foo: _, bar: _}) { |f, b|
+    # matches any hash with keys :foo and :bar
+    # passes the values associated with those keys to the block
+    [f, b]
+  }
+  defn(:hashable, {foo: _}) { |f|
+    # matches any hash with key :foo
+    # passes the value associated with that key to the block
+    # must appear AFTER the prior match or it will override that one
+    f
+  }
+  defn(:hashable, {}) { ||
+    # matches an empty hash
+    :empty
+  }
+  defn(:hashable, _) { |opts|
+    # matches any hash (or any other value)
+    opts
+  }
+end
+
+...
+
+foo.hashable({foo: :bar})      #=> :foo_bar
+foo.hashable({foo: :baz})      #=> :baz
+foo.hashable({foo: 1, bar: 2}) #=> [1, 2] 
+foo.hashable({foo: 1, baz: 2}) #=> 1
+foo.hashable({bar: :baz})      #=> {bar: :baz}
+foo.hashable({})               #=> :empty 
 ```
 
 ## Copyright
