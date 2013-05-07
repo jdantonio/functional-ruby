@@ -29,23 +29,18 @@ module PatternMatching
     def __pattern_match__(func, *args, &block) # :nodoc:
       clazz = self.class
 
-      matchers = clazz.instance_variable_get(:@__function_pattern_matches__)
-      matchers = matchers[func]
+      # get the array of matchers for this function
+      matchers = clazz.instance_variable_get(:@__function_pattern_matches__)[func]
 
       # scan through all patterns for this function
-      match = nil
-      matchers.each do |matcher|
-        if __match_pattern__(args.first, matcher.first)
-          match = matcher
-          break(matcher)
-        end
-      end
+      index = matchers.index{|matcher| __match_pattern__(args.first, matcher.first)}
 
-      # if a match is found call the block
-      if match.nil?
+      if index.nil?
         [:nomatch, nil]
       else
+        # if a match is found call the block
         argv = []
+        match = matchers[index]
         match.first.each_with_index do |p, i|
           if p.is_a?(Hash) && p.values.include?(UNBOUND)
             p.each do |key, value|
