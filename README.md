@@ -14,9 +14,17 @@ The project is hosted on the following sites:
 
 ## Introduction
 
-[Ruby](http://www.ruby-lang.org/en/) is my favorite programming by far. As much as I love Ruby I've always been a little disappointed that Ruby doesn't support function overloading. Function overloading tends to reduce branching and keep functions signatures simpler. No sweat, I learned to do without. Then I started programming in [Erlang](http://www.erlang.org/)…
+[Ruby](http://www.ruby-lang.org/en/) is my favorite programming by far. As much as I love
+Ruby I've always been a little disappointed that Ruby doesn't support function overloading.
+Function overloading tends to reduce branching and keep function signatures simpler.
+No sweat, I learned to do without. Then I started programming in [Erlang](http://www.erlang.org/)...
 
-I've really started to enjoy working in Erlang. Erlang is good at all the things Ruby is bad at and vice versa. Together, Ruby and Erlang make me happy. My favotite Erlang feature is, without question, [pattern matching](http://learnyousomeerlang.com/syntax-in-functions#pattern-matching). Pattern matching is like function overloading cranked to 11. So one day I was musing on Twitter and one of my friends responded with "Build it!" So I did. And here it is.
+I've really started to enjoy working in Erlang. Erlang is good at all the things Ruby is bad
+at and vice versa. Together, Ruby and Erlang make me happy. My favorite Erlang feature is,
+without question, [pattern matching](http://learnyousomeerlang.com/syntax-in-functions#pattern-matching).
+Pattern matching is like function overloading cranked to 11. So one day I was musing on Twitter
+that I'd like to see Erlang-stype pattern matching in Ruby and one of my friends responded "Build it!"
+So I did. And here it is.
 
 ### Goals
 
@@ -32,14 +40,17 @@ I've really started to enjoy working in Erlang. Erlang is good at all the things
 
 * Basic pattern matching for instance methods.
 * Parameter count matching
-* Mathing against primitive values
+* Matching against primitive values
 * Matching by class/datatype
 * Matching against specific key/vaue pairs in hashes
 * Matching against the presence of keys within hashes
-* Reasonable error messages when no match is found
-* Dispatching to superclass methods when no match is found
+* Implicit hash for last parameter
+* Variable-length parameter lists
+* Guard clauses
 * Recursive calls to other pattern matches
 * Recursive calls to superclass methods
+* Dispatching to superclass methods when no match is found
+* Reasonable error messages when no match is found
 
 ### To-do
 
