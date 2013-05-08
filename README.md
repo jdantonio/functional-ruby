@@ -54,6 +54,8 @@ So I did. And here it is.
 
 ### To-do
 
+* Refactor (performance) of `when` match
+* Verify compatability with `initialize`
 * Support class methods
 * Support module instance methods
 * Support module methods
