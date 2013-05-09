@@ -120,9 +120,6 @@ describe 'integration' do
   let(:name) { 'Pattern Matcher' }
   subject { Foo.new(name) }
 
-  # add tests: used to throw ArgumentError, now NoMethodError
-  #Foo.new.greet(1,2,3,4,5,6,7)
-
   specify { subject.greet.should eq 'Hello, World!' }
 
   specify { subject.greet('Jerry').should eq 'Hello, Jerry!' }
@@ -131,6 +128,9 @@ describe 'integration' do
   specify { subject.greet(:female, 'Jeri').should eq 'Hello, Ms. Jeri!' }
   specify { subject.greet(:unknown, 'Jerry').should eq 'Hello, Jerry!' }
   specify { subject.greet(nil, 'Jerry').should eq 'Goodbye, Jerry!' }
+  specify {
+    lambda { Foo.new.greet(1,2,3,4,5,6,7) }.should raise_error(NoMethodError)
+  }
 
   specify { subject.options(bar: :baz, one: 1, many: 2).should == {bar: :baz, one: 1, many: 2} }
 
@@ -172,25 +172,35 @@ describe 'integration' do
   context 'inheritance' do
 
     class Baz < Foo
+      def boom_boom_room
+        'zoom zoom zoom'
+      end
       def who(first, last)
         [first, last].join(' ')
       end
     end
 
     class Fizzbuzz < Baz
+      include PatternMatching
       defn(:who, Integer) { |count|
         (1..count).each.reduce(:+)
       }
       defn(:who) { 0 }
     end
 
-    specify { Fizzbuzz.new.who('Jerry', "D'Antonio").should eq "Jerry D'Antonio" }
-    specify { Fizzbuzz.new.who(5).should eq 15 }
-    specify { Fizzbuzz.new.who().should eq 0 }
-
     specify { Fizzbuzz.new.greet(:male, 'Jerry').should eq 'Hello, Mr. Jerry!' }
     specify { Fizzbuzz.new.greet(:female, 'Jeri').should eq 'Hello, Ms. Jeri!' }
     specify { Fizzbuzz.new.greet(:unknown, 'Jerry').should eq 'Hello, Jerry!' }
     specify { Fizzbuzz.new.greet(nil, 'Jerry').should eq 'Goodbye, Jerry!' }
+
+    specify { Fizzbuzz.new.who(5).should eq 15 }
+    specify { Fizzbuzz.new.who().should eq 0 }
+    specify { 
+      lambda {
+        Fizzbuzz.new.who('Jerry', "D'Antonio")
+      }.should raise_error(NoMethodError)
+    }
+
+    specify { Fizzbuzz.new.boom_boom_room.should eq 'zoom zoom zoom' }
   end
 end

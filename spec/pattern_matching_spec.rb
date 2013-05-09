@@ -79,7 +79,7 @@ describe PatternMatching do
         end
       end
 
-      class UnmatchedCallTesterSubclass  < UnmatchedCallTesterSuperclass
+      class UnmatchedCallTesterSubclass < UnmatchedCallTesterSuperclass
         include PatternMatching
         defn(:foo) { 'baz' }
       end
@@ -104,7 +104,7 @@ describe PatternMatching do
         end
       end
 
-      class RecursiveCallTesterSubclass  < RecursiveCallTesterSuperclass
+      class RecursiveCallTesterSubclass < RecursiveCallTesterSuperclass
         include PatternMatching
         defn(:foo, :bar) { foo(:baz) }
       end

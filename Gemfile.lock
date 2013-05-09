@@ -17,6 +17,7 @@ GEM
       paint (>= 0.8.1)
       unicode-display_width (>= 0.1.1)
     ffi (1.8.1)
+    ffi (1.8.1-x86-mingw32)
     g (1.7.2)
     hirb (0.7.1)
     interactive_editor (0.0.10)
@@ -64,6 +65,7 @@ GEM
 
 PLATFORMS
   ruby
+  x86-mingw32
 
 DEPENDENCIES
   bundler

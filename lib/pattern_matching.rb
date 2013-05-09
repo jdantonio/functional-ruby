@@ -59,15 +59,7 @@ module PatternMatching
 
       # get the array of matchers for this function
       matchers = clazz.__function_pattern_matches__[func]
-      
-      # if function is not found, climb the superclass tree
-      if matchers.nil? 
-        clazz.ancestors.each do |parent|
-          return [:nomatch, parent] if parent.respond_to?(func) 
-          matchers = parent.__function_pattern_matches__[func]
-          break unless matchers.nil?
-        end
-      end
+      return [:nomatch, nil] if matchers.nil?
 
       # scan through all patterns for this function
       index = matchers.index do |matcher|
@@ -79,15 +71,12 @@ module PatternMatching
           end
         end
       end
+      return [:nomatch, nil] if index.nil?
 
-      if index.nil?
-        return [:nomatch, nil]
-      else
-        # if a match is found call the block
-        match = matchers[index]
-        argv = __unbound_args__(match, args)
-        return [:ok, self.instance_exec(*argv, &match[1])]
-      end
+      # if a match is found call the block
+      match = matchers[index]
+      argv = __unbound_args__(match, args)
+      return [:ok, self.instance_exec(*argv, &match[1])]
     end
 
     class << base
@@ -123,11 +112,7 @@ module PatternMatching
             result, value = __pattern_match__(func, args, block)
             return value if result == :ok
             begin
-              if value.nil?
-                super(*args, &block)
-              else
-                value.send(func, *args, &block)
-              end
+              super(*args, &block)
             rescue NoMethodError, ArgumentError
               raise NoMethodError.new("no method `#{func}` matching #{args} found for class #{self.class}")
             end
