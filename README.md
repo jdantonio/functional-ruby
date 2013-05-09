@@ -38,7 +38,8 @@ So I did. And here it is.
 
 ### Features
 
-* Basic pattern matching for instance methods.
+* Pattern matching for instance methods.
+* Pattern matching for object constructors.
 * Parameter count matching
 * Matching against primitive values
 * Matching by class/datatype
@@ -55,7 +56,8 @@ So I did. And here it is.
 ### To-do
 
 * Refactor (performance) of `when` match
-* Verify compatability with `initialize`
+* Verify inheritance of pattern-matched methods
+* Verify inclusion of pattern-matched methods
 * Support class methods
 * Support module instance methods
 * Support module methods
@@ -383,6 +385,19 @@ class Foo
   defn(:greet, _, _) { |_, name|
     "Hello, #{name}!"
   }
+end
+```
+
+### Constructor Overloading
+
+```ruby
+require 'pattern_matching'
+
+class Foo
+  include PatternMatching
+
+  defn(:initialize) { @name = 'baz' }
+  defn(:initialize, _) {|name| @name = name.to_s }
 end
 ```
 

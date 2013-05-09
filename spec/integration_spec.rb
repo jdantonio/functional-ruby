@@ -14,10 +14,9 @@ describe 'integration' do
     include PatternMatching
 
     attr_accessor :name
-
-    def initialize(name = 'baz')
-      @name = name
-    end
+    
+    defn(:initialize) { @name = 'baz' }
+    defn(:initialize, _) {|name| @name = name.to_s }
 
     defn(:greet, _) do |name|
       "Hello, #{name}!"
