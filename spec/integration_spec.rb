@@ -14,7 +14,7 @@ describe 'integration' do
     include PatternMatching
 
     attr_accessor :name
-    
+
     defn(:initialize) { @name = 'baz' }
     defn(:initialize, _) {|name| @name = name.to_s }
 
@@ -96,29 +96,32 @@ describe 'integration' do
     defn(:all, ALL) { | args|
       args
     }
-    
+
     defn(:old_enough, _){ true }.when{|x| x >= 16 }
     defn(:old_enough, _){ false }
-    
+
     defn(:right_age, _) {
       true
     }.when{|x| x >= 16 && x <= 104 }
-    
+
     defn(:right_age, _) {
       false
     }
-    
+
     defn(:wrong_age, _) {
       true
     }.when{|x| x < 16 || x > 104 }
-    
+
     defn(:wrong_age, _) {
       false
     }
-  end
+    end
 
   let(:name) { 'Pattern Matcher' }
   subject { Foo.new(name) }
+
+  # add tests: used to throw ArgumentError, now NoMethodError
+  #Foo.new.greet(1,2,3,4,5,6,7)
 
   specify { subject.greet.should eq 'Hello, World!' }
 
@@ -166,4 +169,28 @@ describe 'integration' do
   specify { subject.wrong_age(10).should be_true }
   specify { subject.wrong_age(110).should be_true }
 
+  context 'inheritance' do
+
+    class Baz < Foo
+      def who(first, last)
+        [first, last].join(' ')
+      end
+    end
+
+    class Fizzbuzz < Baz
+      defn(:who, Integer) { |count|
+        (1..count).each.reduce(:+)
+      }
+      defn(:who) { 0 }
+    end
+
+    specify { Fizzbuzz.new.who('Jerry', "D'Antonio").should eq "Jerry D'Antonio" }
+    specify { Fizzbuzz.new.who(5).should eq 15 }
+    specify { Fizzbuzz.new.who().should eq 0 }
+
+    specify { Fizzbuzz.new.greet(:male, 'Jerry').should eq 'Hello, Mr. Jerry!' }
+    specify { Fizzbuzz.new.greet(:female, 'Jeri').should eq 'Hello, Ms. Jeri!' }
+    specify { Fizzbuzz.new.greet(:unknown, 'Jerry').should eq 'Hello, Jerry!' }
+    specify { Fizzbuzz.new.greet(nil, 'Jerry').should eq 'Goodbye, Jerry!' }
+  end
 end

@@ -49,14 +49,13 @@ So I did. And here it is.
 * Variable-length parameter lists
 * Guard clauses
 * Recursive calls to other pattern matches
+* Recursive calls to superclass pattern_matches
 * Recursive calls to superclass methods
 * Dispatching to superclass methods when no match is found
 * Reasonable error messages when no match is found
 
 ### To-do
 
-* Refactor (performance) of `when` match
-* Verify inheritance of pattern-matched methods
 * Verify inclusion of pattern-matched methods
 * Support class methods
 * Support module instance methods

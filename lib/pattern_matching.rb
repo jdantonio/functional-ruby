@@ -1,3 +1,5 @@
+require 'pp'
+
 module PatternMatching
 
   VERSION = '0.2.0'
@@ -6,8 +8,12 @@ module PatternMatching
   ALL = Class.new
 
   def self.included(base)
+    
+    protected
 
-    base.instance_variable_set(:@__function_pattern_matches__, Hash.new)
+    def base.__function_pattern_matches__
+      @__function_pattern_matches__ ||= Hash.new
+    end
 
     private
 
@@ -52,7 +58,21 @@ module PatternMatching
       args = args.first
 
       # get the array of matchers for this function
-      matchers = clazz.instance_variable_get(:@__function_pattern_matches__)[func]
+      matchers = clazz.__function_pattern_matches__[func]
+      
+
+      # NOTE: Not the intended behavior
+      # Pattern matches in superclasses override concrete
+      # functions defined below them in the hierarchy
+      #return [:nomatch, nil] if matchers.nil?
+      
+      # if function is not found, climb the superclass tree
+      if matchers.nil? 
+        clazz.ancestors.each do |parent|
+          matchers = parent.__function_pattern_matches__[func]
+          break unless matchers.nil?
+        end
+      end
 
       # scan through all patterns for this function
       index = matchers.index do |matcher|
@@ -109,7 +129,7 @@ module PatternMatching
             return value if result == :ok
             begin
               super(*args, &block)
-            rescue NoMethodError
+            rescue NoMethodError, ArgumentError
               raise NoMethodError.new("no method `#{func}` matching #{args} found for class #{self.class}")
             end
           end
@@ -122,7 +142,7 @@ module PatternMatching
 
       def __add_pattern_for__(func, *args, &block) # :nodoc:
         block = Proc.new{} unless block_given?
-        matchers = self.instance_variable_get(:@__function_pattern_matches__)
+        matchers = self.__function_pattern_matches__
         matchers[func] = [] unless matchers.has_key?(func)
         matchers[func] << [args, block, nil]
         return matchers[func].last
