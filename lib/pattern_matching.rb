@@ -60,15 +60,10 @@ module PatternMatching
       # get the array of matchers for this function
       matchers = clazz.__function_pattern_matches__[func]
       
-
-      # NOTE: Not the intended behavior
-      # Pattern matches in superclasses override concrete
-      # functions defined below them in the hierarchy
-      #return [:nomatch, nil] if matchers.nil?
-      
       # if function is not found, climb the superclass tree
       if matchers.nil? 
         clazz.ancestors.each do |parent|
+          return [:nomatch, parent] if parent.respond_to?(func) 
           matchers = parent.__function_pattern_matches__[func]
           break unless matchers.nil?
         end
@@ -128,7 +123,11 @@ module PatternMatching
             result, value = __pattern_match__(func, args, block)
             return value if result == :ok
             begin
-              super(*args, &block)
+              if value.nil?
+                super(*args, &block)
+              else
+                value.send(func, *args, &block)
+              end
             rescue NoMethodError, ArgumentError
               raise NoMethodError.new("no method `#{func}` matching #{args} found for class #{self.class}")
             end
