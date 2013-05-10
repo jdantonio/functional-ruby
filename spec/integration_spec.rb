@@ -1,10 +1,7 @@
 require 'spec_helper'
 require 'ostruct'
 
-describe 'integration' do
-
   class Bar
-
     def greet
       return 'Hello, World!'
     end
@@ -115,7 +112,26 @@ describe 'integration' do
     defn(:wrong_age, _) {
       false
     }
+  end
+
+    class Baz < Foo
+      def boom_boom_room
+        'zoom zoom zoom'
+      end
+      def who(first, last)
+        [first, last].join(' ')
+      end
     end
+
+    class Fizzbuzz < Baz
+      include PatternMatching
+      defn(:who, Integer) { |count|
+        (1..count).each.reduce(:+)
+      }
+      defn(:who) { 0 }
+    end
+
+describe 'integration' do
 
   let(:name) { 'Pattern Matcher' }
   subject { Foo.new(name) }
@@ -170,23 +186,6 @@ describe 'integration' do
   specify { subject.wrong_age(110).should be_true }
 
   context 'inheritance' do
-
-    class Baz < Foo
-      def boom_boom_room
-        'zoom zoom zoom'
-      end
-      def who(first, last)
-        [first, last].join(' ')
-      end
-    end
-
-    class Fizzbuzz < Baz
-      include PatternMatching
-      defn(:who, Integer) { |count|
-        (1..count).each.reduce(:+)
-      }
-      defn(:who) { 0 }
-    end
 
     specify { Fizzbuzz.new.greet(:male, 'Jerry').should eq 'Hello, Mr. Jerry!' }
     specify { Fizzbuzz.new.greet(:female, 'Jeri').should eq 'Hello, Ms. Jeri!' }

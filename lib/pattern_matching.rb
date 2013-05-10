@@ -59,7 +59,7 @@ module PatternMatching
 
       # get the array of matchers for this function
       matchers = clazz.__function_pattern_matches__[func]
-      return [:nomatch, nil] if matchers.nil?
+      return [:nodef, nil] if matchers.nil?
 
       # scan through all patterns for this function
       index = matchers.index do |matcher|
@@ -71,12 +71,12 @@ module PatternMatching
           end
         end
       end
-      return [:nomatch, nil] if index.nil?
 
-      # if a match is found call the block
-      match = matchers[index]
-      argv = __unbound_args__(match, args)
-      return [:ok, self.instance_exec(*argv, &match[1])]
+      if index.nil?
+        return [:nomatch, nil]
+      else
+        return [:ok, matchers[index]]
+      end
     end
 
     class << base
@@ -108,13 +108,44 @@ module PatternMatching
         pattern = __add_pattern_for__(func, *args, &block)
 
         unless self.instance_methods(false).include?(func)
-          self.send(:define_method, func) do |*args, &block|
-            result, value = __pattern_match__(func, args, block)
-            return value if result == :ok
-            begin
+
+
+          #class_eval <<-RUBY
+            #def #{func}(*args, &block)
+              #result, match = __pattern_match__(:#{func}, args, block)
+              #if result == :ok
+                ##if a match is found call the block
+                #argv = __unbound_args__(match, args)
+                #return self.instance_exec(*argv, &match[1])
+              #elsif result == :nodef
+                #super
+              #else
+                #raise NoMethodError.new("no method `#{func}` matching \#{args} found for class \#{self.class}")
+              #end
+            #end
+          #RUBY
+
+
+          #self.define_method(func) do |*args, &block|
+          #self.send(:define_method, func) do |*args, &block|
+          define_method(func) do |*args, &block|
+            result, match = __pattern_match__(func, args, block)
+            if result == :ok
+              # if a match is found call the block
+              argv = __unbound_args__(match, args)
+              return self.instance_exec(*argv, &match[1])
+            elsif func == :initialize
+              # constructor is a special case
               super(*args, &block)
-            rescue NoMethodError, ArgumentError
-              raise NoMethodError.new("no method `#{func}` matching #{args} found for class #{self.class}")
+            elsif result == :nodef
+              # look for a superclass match
+              super(*args, &block)
+            else
+              #begin
+                #super(*args, &block)
+              #rescue NoMethodError, ArgumentError
+                raise NoMethodError.new("no method `#{func}` matching #{args} found for class #{self.class}")
+              #end
             end
           end
         end
