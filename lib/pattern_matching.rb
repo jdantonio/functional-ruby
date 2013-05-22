@@ -98,17 +98,12 @@ module PatternMatching
 
         unless self.instance_methods(false).include?(func)
 
-puts "!!!! #{self}"
           define_method(func) do |*args, &block|
-puts "here"
-            result, match = PatternMatching.__pattern_match__(self.class, func, args, block)
+            result, match = PatternMatching.__pattern_match__(self.method(func).owner, func, args, block)
             if result == :ok
               # if a match is found call the block
               argv = PatternMatching.__unbound_args__(match, args)
               return self.instance_exec(*argv, &match[1])
-            elsif func == :initialize
-              # constructor is a special case
-              super(*args, &block)
             elsif result == :nodef
               super(*args, &block)
             else

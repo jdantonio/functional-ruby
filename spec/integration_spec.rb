@@ -196,7 +196,7 @@ describe 'integration' do
     specify { Fizzbuzz.new.who().should eq 0 }
     specify { 
       lambda {
-        Fizzbuzz.new.who('Jerry', "D'Antonio")
+        Fizzbuzz.new.who('Jerry', 'secret middle name', "D'Antonio")
       }.should raise_error(NoMethodError)
     }
 
