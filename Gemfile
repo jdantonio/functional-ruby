@@ -1,11 +1,11 @@
-source "http://rubygems.org"
+source 'http://rubygems.org'
 
 gemspec
 
 group :development do
   gem 'yard', :platforms => :ruby
   gem 'redcarpet', :platforms => :ruby
-  gem 'debugger'
+  gem 'debugger', :platforms => :ruby
 end
 
 group :testing do
