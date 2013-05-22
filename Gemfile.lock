@@ -10,7 +10,14 @@ GEM
     boson (1.2.4)
     clipboard (1.0.5)
     coderay (1.0.9)
+    columnize (0.3.6)
     countloc (0.4.0)
+    debugger (1.6.0)
+      columnize (>= 0.3.1)
+      debugger-linecache (~> 1.2.0)
+      debugger-ruby_core_source (~> 1.2.1)
+    debugger-linecache (1.2.0)
+    debugger-ruby_core_source (1.2.2)
     diff-lcs (1.2.4)
     every_day_irb (1.4.0)
     fancy_irb (0.7.3)
@@ -70,6 +77,7 @@ PLATFORMS
 DEPENDENCIES
   bundler
   countloc
+  debugger
   irbtools
   pattern-matching!
   rake

@@ -114,22 +114,22 @@ require 'ostruct'
     }
   end
 
-    class Baz < Foo
-      def boom_boom_room
-        'zoom zoom zoom'
-      end
-      def who(first, last)
-        [first, last].join(' ')
-      end
+  class Baz < Foo
+    def boom_boom_room
+      'zoom zoom zoom'
     end
+    def who(first, last)
+      [first, last].join(' ')
+    end
+  end
 
-    class Fizzbuzz < Baz
-      include PatternMatching
-      defn(:who, Integer) { |count|
-        (1..count).each.reduce(:+)
-      }
-      defn(:who) { 0 }
-    end
+  class Fizzbuzz < Baz
+    include PatternMatching
+    defn(:who, Integer) { |count|
+      (1..count).each.reduce(:+)
+    }
+    defn(:who) { 0 }
+  end
 
 describe 'integration' do
 
