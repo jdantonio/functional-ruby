@@ -10,20 +10,12 @@ GEM
     boson (1.2.4)
     clipboard (1.0.5)
     coderay (1.0.9)
-    columnize (0.3.6)
     countloc (0.4.0)
-    debugger (1.6.0)
-      columnize (>= 0.3.1)
-      debugger-linecache (~> 1.2.0)
-      debugger-ruby_core_source (~> 1.2.1)
-    debugger-linecache (1.2.0)
-    debugger-ruby_core_source (1.2.2)
     diff-lcs (1.2.4)
     every_day_irb (1.4.0)
     fancy_irb (0.7.3)
       paint (>= 0.8.1)
       unicode-display_width (>= 0.1.1)
-    ffi (1.8.1)
     ffi (1.8.1-x86-mingw32)
     g (1.7.2)
     hirb (0.7.1)
@@ -52,7 +44,6 @@ GEM
     ori (0.1.0)
     paint (0.8.6)
     rake (10.0.4)
-    redcarpet (2.2.2)
     rspec (2.13.0)
       rspec-core (~> 2.13.0)
       rspec-expectations (~> 2.13.0)
@@ -67,11 +58,9 @@ GEM
     unicode-display_width (0.1.1)
     wirb (1.0.1)
       paint
-    yard (0.8.6.1)
     zucker (13.1)
 
 PLATFORMS
-  ruby
   x86-mingw32
 
 DEPENDENCIES

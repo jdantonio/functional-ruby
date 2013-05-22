@@ -3,9 +3,9 @@ source 'http://rubygems.org'
 gemspec
 
 group :development do
-  gem 'yard', :platforms => :ruby
-  gem 'redcarpet', :platforms => :ruby
-  gem 'debugger', :platforms => :ruby
+  gem 'yard', :platforms => :mri
+  gem 'redcarpet', :platforms => :mri
+  gem 'debugger', :platforms => :mri
 end
 
 group :testing do
