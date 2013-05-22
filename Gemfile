@@ -11,7 +11,7 @@ end
 group :testing do
   gem 'rake'
   gem 'rspec'
-  gem 'countloc'
-  gem 'irbtools'
-  gem 'terminal-notifier'
+  gem 'countloc', :platforms => :mri
+  gem 'irbtools', :platforms => :mri
+  gem 'terminal-notifier', :platforms => :mri
 end
