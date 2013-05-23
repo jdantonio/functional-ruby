@@ -614,7 +614,12 @@ A complete example
 
 ```ruby
 
-behaviour_info(:gen_foo, foo: 0, bar: 1, baz: 2, boom: -1);
+behaviour_info(:gen_foo,
+                foo: 0,
+                bar: 1,
+                baz: 2,
+                boom: -1,
+                bam: :any);
 
 class Foo
   behavior(:gen_foo)
@@ -633,6 +638,10 @@ class Foo
 
   def boom(*args)
     return 'boom/-1'
+  end
+
+  def bam
+    return 'bam!'
   end
 end
 
