@@ -4,6 +4,7 @@ def behavior_info(name, callbacks = {})
 end
 
 alias :behaviour_info :behavior_info
+alias :interface :behavior_info
 
 class Object
   def behaves_as?(name)

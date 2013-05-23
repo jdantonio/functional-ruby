@@ -565,6 +565,11 @@ is a hash of function names and their arity.
 
 ```ruby
 behaviour_info(:gen_foo, foo: 0, bar: 1, baz: 2)
+
+# -or (for the Java/C# crowd)
+
+interface(:gen_foo, foo: 0, bar: 1, baz: 2)
+
 ```
 
 Each function name can be listed only once and the arity must follow the rules of the
