@@ -18,7 +18,7 @@ describe PatternMatching do
       lambda {
         class Clazz
           include PatternMatching
-          defn :foo
+          defn(:foo){}
         end
       }.should_not raise_error
     end
@@ -27,8 +27,16 @@ describe PatternMatching do
       lambda {
         clazz = Class.new
         clazz.send(:include, PatternMatching)
-        clazz.defn(:foo)
+        clazz.defn(:foo){}
       }.should_not raise_error
+    end
+
+    it 'requires a block' do
+      lambda {
+        clazz = Class.new
+        clazz.send(:include, PatternMatching)
+        clazz.defn(:foo)
+      }.should raise_error(ArgumentError)
     end
   end
 
@@ -137,7 +145,7 @@ describe PatternMatching do
 
     it 'accepts no parameters' do
 
-      subject.defn(:foo)
+      subject.defn(:foo){}
       obj = subject.new
 
       lambda {
@@ -147,7 +155,7 @@ describe PatternMatching do
 
     it 'does not accept any parameters' do
 
-      subject.defn(:foo)
+      subject.defn(:foo){}
       obj = subject.new
 
       lambda {

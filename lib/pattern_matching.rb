@@ -9,7 +9,7 @@ module PatternMatching
 
   private
 
-  class Guard # :nodoc:
+  GUARD_CLAUSE = Class.new do # :nodoc:
     def initialize(func, clazz, matcher) # :nodoc:
       @func = func
       @clazz = clazz
@@ -63,11 +63,9 @@ module PatternMatching
   def self.__pattern_match__(clazz, func, *args, &block) # :nodoc:
     args = args.first
 
-    # get the array of matchers for this function
     matchers = clazz.__function_pattern_matches__[func]
     return [:nodef, nil] if matchers.nil?
 
-    # scan through all patterns for this function
     index = matchers.index do |matcher|
       if PatternMatching.__match_pattern__(args, matcher.first)
         if matcher.last.nil?
@@ -98,8 +96,10 @@ module PatternMatching
       end
 
       def defn(func, *args, &block)
+        unless block_given?
+          raise ArgumentError.new("block missing for definition of function `#{func}` on class #{self}")
+        end
 
-        block = Proc.new{} unless block_given?
         pattern = __add_pattern_for__(func, *args, &block)
 
         unless self.instance_methods(false).include?(func)
@@ -110,9 +110,7 @@ module PatternMatching
               # if a match is found call the block
               argv = PatternMatching.__unbound_args__(match, args)
               return self.instance_exec(*argv, &match[1])
-            elsif result == :nodef
-              super(*args, &block)
-            else
+            else # if result == :nodef || result == :nomatch
               begin
                 super(*args, &block)
               rescue NoMethodError, ArgumentError
@@ -122,7 +120,7 @@ module PatternMatching
           end
         end
 
-        return PatternMatching::Guard.new(func, self, pattern)
+        return GUARD_CLAUSE.new(func, self, pattern)
       end
 
       public
