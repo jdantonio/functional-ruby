@@ -1,5 +1,3 @@
-require 'pp'
-
 module PatternMatching
 
   VERSION = '0.3.0'

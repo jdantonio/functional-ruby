@@ -1,6 +1,7 @@
 $LOAD_PATH << File.expand_path('../lib', __FILE__)
 
 require 'pattern_matching'
+require 'behavior'
 require 'date'
 
 Gem::Specification.new do |s|

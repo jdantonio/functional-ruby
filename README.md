@@ -26,6 +26,9 @@ Pattern matching is like function overloading cranked to 11. So one day I was mu
 that I'd like to see Erlang-stype pattern matching in Ruby and one of my friends responded "Build it!"
 So I did. And here it is.
 
+For fun I've also thrown in Erlang's sparsely documented [-behaviour](http://www.erlang.org/doc/design_principles/gen_server_concepts.html)
+functionality and [Clojure's](http://clojure.org/) [memoize](http://clojuredocs.org/clojure_core/clojure.core/memoize).
+
 ### Goals
 
 * Stay true to the spirit of Erlang pattern matching, if not the semantics
@@ -53,6 +56,17 @@ So I did. And here it is.
 * Recursive calls to superclass methods
 * Dispatching to superclass methods when no match is found
 * Reasonable error messages when no match is found
+
+### For good -behavior(timeoff).
+
+One of Ruby's greatest strengths is [duck typing](http://rubylearning.com/satishtalim/duck_typing.html).
+Usually this is awesome and I'm happy to not have to deal with static typing and the compiler. Usually.
+The problem with duck typing is that is is impossible in Ruby to enforce an interface definition.
+I would never advocate turning Ruby into the cesspool complex object creation that Java has
+unfortunately become, but occasionally it would be nice to make sure a class implements a set of
+required methods. Enter Erlang's [-behavior](http://metajack.im/2008/10/29/custom-behaviors-in-erlang/)
+keyword. Basically, you define a `behavior_info` then drop a `behavior` call within a class.
+Forget to implement a required method and Ruby will let you know. See the examples below for details.
 
 ### To-do
 
@@ -530,6 +544,91 @@ defn(:wrong_age, _) {
 defn(:wrong_age, _) {
   true
 }
+```
+
+### Behavior
+
+The `behavior` functionality is not import by default. It requires a separate require statement
+
+```ruby
+require 'behavior'
+
+# -or-
+
+require 'behaviour'
+```
+
+Next, declare a behavior using the `behavior_info` function (this function should sit outside
+of any module/class definition, but will probably work regardless). The first parameter to
+`behavior_info` (or `behaviour_info`) is a symbol name for the behavior. The remaining parameter
+is a hash of function names and their arity.
+
+```ruby
+behaviour_info(:gen_foo, foo: 0, bar: 1, baz: 2)
+```
+
+Each function name can be listed only once and the arity must follow the rules of the
+[Method#arity](http://ruby-doc.org/core-1.9.3/Method.html#method-i-arity) function.
+Though not explicitly documented, block arguments do not count toward a method's arity.
+methods defined using this gem's `defn` function will always have an arity of -1,
+regardless of how many overloads are defined.
+
+To enforce a behavior on a class simply call the `behavior` function within the class,
+passing the name of the desired behavior
+
+```ruby
+class Foo
+  behavior(:gen_foo)
+  ...
+end
+
+# or use the idiomatic Erlang spelling
+class Bar
+  behaviour(:gen_foo)
+  ...
+end
+
+# or use the idiomatic Rails syntax
+class Baz
+  behaves_as :gen_foo
+  ...
+end
+```
+
+Make sure you the implement the required methods in your class. If you don't, Ruby will
+raise an exception when you try to create an object from the class
+
+```ruby
+Baz.new #=> ArgumentError: undefined callback functions in Baz (behavior 'gen_foo')
+```
+
+A complete example
+
+```ruby
+
+behaviour_info(:gen_foo, foo: 0, bar: 1, baz: 2, boom: -1);
+
+class Foo
+  behavior(:gen_foo)
+
+  def foo
+    return 'foo/0'
+  end
+
+  def bar(one, &block)
+    return 'bar/1'
+  end
+
+  def baz(one, two)
+    return 'baz/2'
+  end
+
+  def boom(*args)
+    return 'boom/-1'
+  end
+end
+
+foo = Foo.new
 ```
 
 ## Copyright

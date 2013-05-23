@@ -1,5 +1,3 @@
-# http://metajack.im/2008/10/29/custom-behaviors-in-erlang/
-
 def behavior_info(name, callbacks = {})
   $__behavior_info__ ||= {}
   $__behavior_info__[name] = callbacks
@@ -43,7 +41,7 @@ def behavior(name)
       name = self.behaviors.first
       obj = super
       unless obj.behaves_as?(name)
-        raise ArgumentError.new("#{self} is behaving badly. It should be a #{name} but isn't.")
+        raise ArgumentError.new("undefined callback functions in #{self} (behavior '#{name}')")
       else
         return obj
       end
@@ -52,36 +50,4 @@ def behavior(name)
 end
 
 alias :behaviour :behavior
-
-###############################################################################################
-
-behaviour_info(:gen_foo, foo: 0, bar: 1, baz: 2);
-
-class Foo
-  behavior :gen_foo
-
-  def foo
-    return 'foo/0'
-  end
-
-  def bar(one)
-    return 'bar/1'
-  end
-
-  def baz(one, two)
-    return 'baz/2'
-  end
-end
-
-class Bar
-  behavior :gen_foo
-
-  def foo(one)
-    return 'foo/1'
-  end
-end
-
-class Baz
-  behavior :gen_foo
-end
-
+alias :behaves_as :behavior
