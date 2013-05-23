@@ -602,6 +602,9 @@ raise an exception when you try to create an object from the class
 Baz.new #=> ArgumentError: undefined callback functions in Baz (behavior 'gen_foo')
 ```
 
+As an added bonus, Ruby [Object](http://ruby-doc.org/core-1.9.3/Object.html) will be
+monkey-patched with a `behaves_as?` predicate method.
+
 A complete example
 
 ```ruby
@@ -629,6 +632,10 @@ class Foo
 end
 
 foo = Foo.new
+
+foo.behaves_as? :gen_foo    #=> true
+foo.behaves_as?(:bogus)     #=> false
+'foo'.behaves_as? :gen_foo  #=> false
 ```
 
 ## Copyright
