@@ -26,8 +26,7 @@ Pattern matching is like function overloading cranked to 11. So one day I was mu
 that I'd like to see Erlang-stype pattern matching in Ruby and one of my friends responded "Build it!"
 So I did. And here it is.
 
-For fun I've also thrown in Erlang's sparsely documented [-behaviour](http://www.erlang.org/doc/design_principles/gen_server_concepts.html)
-functionality and [Clojure's](http://clojure.org/) [memoize](http://clojuredocs.org/clojure_core/clojure.core/memoize).
+For fun I've also thrown in Erlang's sparsely documented [-behaviour](http://www.erlang.org/doc/design_principles/gen_server_concepts.html).
 
 ### Goals
 
@@ -67,12 +66,6 @@ unfortunately become, but occasionally it would be nice to make sure a class imp
 required methods. Enter Erlang's [-behavior](http://metajack.im/2008/10/29/custom-behaviors-in-erlang/)
 keyword. Basically, you define a `behavior_info` then drop a `behavior` call within a class.
 Forget to implement a required method and Ruby will let you know. See the examples below for details.
-
-### To-do
-
-* Support class methods
-* Support module instance methods
-* Support module methods
 
 ## Supported Ruby versions
 
