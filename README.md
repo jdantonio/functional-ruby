@@ -212,7 +212,8 @@ end
 foo.greet('Jerry', "I'm not going to tell you my middle name!", "D'Antonio") #=> "Hello, Jerry D'Antonio!"
 ```
 
-Hash parameters can match against specific keys and either bound or unbound parameters. This allows for function dispatch by hash parameters without having to dig through the hash:
+Hash parameters can match against specific keys and either bound or unbound parameters. This allows for
+function dispatch by hash parameters without having to dig through the hash:
 
 ```ruby
 defn(:hashable, {foo: :bar}) { |opts|
@@ -506,7 +507,8 @@ foo.all()                       #=> NoMethodError: no method `all` matching [] f
 
 ### Guard Clauses
 
-These examples are based on [Syntax in defnctions: Pattern Matching](http://learnyousomeerlang.com/syntax-in-defnctions) in [Learn You Some Erlang for Great Good!](http://learnyousomeerlang.com/).
+These examples are based on [Syntax in defnctions: Pattern Matching](http://learnyousomeerlang.com/syntax-in-defnctions)
+in [Learn You Some Erlang for Great Good!](http://learnyousomeerlang.com/).
 
 Erlang:
 
@@ -548,7 +550,7 @@ defn(:wrong_age, _) {
 
 ### Behavior
 
-The `behavior` functionality is not import by default. It requires a separate require statement
+The `behavior` functionality is not import by default. It requires a separate require statement:
 
 ```ruby
 require 'behavior'
@@ -561,7 +563,7 @@ require 'behaviour'
 Next, declare a behavior using the `behavior_info` function (this function should sit outside
 of any module/class definition, but will probably work regardless). The first parameter to
 `behavior_info` (or `behaviour_info`) is a symbol name for the behavior. The remaining parameter
-is a hash of function names and their arity.
+is a hash of function names and their arity:
 
 ```ruby
 behaviour_info(:gen_foo, foo: 0, bar: 1, baz: 2)
@@ -579,7 +581,7 @@ methods defined using this gem's `defn` function will always have an arity of -1
 regardless of how many overloads are defined.
 
 To enforce a behavior on a class simply call the `behavior` function within the class,
-passing the name of the desired behavior
+passing the name of the desired behavior:
 
 ```ruby
 class Foo
@@ -601,7 +603,7 @@ end
 ```
 
 Make sure you the implement the required methods in your class. If you don't, Ruby will
-raise an exception when you try to create an object from the class
+raise an exception when you try to create an object from the class:
 
 ```ruby
 Baz.new #=> ArgumentError: undefined callback functions in Baz (behavior 'gen_foo')
@@ -610,7 +612,7 @@ Baz.new #=> ArgumentError: undefined callback functions in Baz (behavior 'gen_fo
 As an added bonus, Ruby [Object](http://ruby-doc.org/core-1.9.3/Object.html) will be
 monkey-patched with a `behaves_as?` predicate method.
 
-A complete example
+A complete example:
 
 ```ruby
 
