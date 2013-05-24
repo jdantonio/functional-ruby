@@ -615,13 +615,7 @@ monkey-patched with a `behaves_as?` predicate method.
 A complete example:
 
 ```ruby
-
-behaviour_info(:gen_foo,
-                foo: 0,
-                bar: 1,
-                baz: 2,
-                boom: -1,
-                bam: :any);
+behaviour_info(:gen_foo, foo: 0, bar: 1, baz: 2, boom: -1, bam: :any)
 
 class Foo
   behavior(:gen_foo)

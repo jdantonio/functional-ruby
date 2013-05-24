@@ -1,47 +1,239 @@
 require 'spec_helper'
 
+#behaviour_info(:gen_foo, foo: 0, bar: 1, baz: 2, boom: -1, bam: :any)
+
+#class Foo
+  #behavior(:gen_foo)
+
+  #def foo
+    #return 'foo/0'
+  #end
+
+  #def bar(one, &block)
+    #return 'bar/1'
+  #end
+
+  #def baz(one, two)
+    #return 'baz/2'
+  #end
+
+  #def boom(*args)
+    #return 'boom/-1'
+  #end
+
+  #def bam
+    #return 'bam!'
+  #end
+#end
+
+
+
 describe 'behavior/interface definitions' do
+
+  before(:each) do
+    $__behavior_info__ = {}
+  end
 
   context 'behavior_info/2' do
 
-    it 'accepts a symbol name'
+    it 'accepts a symbol name' do
+      behavior_info(:gen_foo, foo: 0)
+      $__behavior_info__.keys.first.should eq :gen_foo
+    end
 
-    it 'accepts a string name'
+    it 'accepts a string name' do
+      behavior_info('gen_foo', foo: 0)
+      $__behavior_info__.keys.first.should eq :gen_foo
+    end
 
-    it 'accepts zero function names'
+    it 'accepts zero function names' do
+      behavior_info(:gen_foo)
+      $__behavior_info__.keys.first.should eq :gen_foo
+    end
 
-    it 'accepts numeric arity values'
+    it 'accepts symbols for function names' do
+      behavior_info(:gen_foo, foo: 0)
+      $__behavior_info__.values.first.should == {foo: 0}
+    end
 
-    it 'accepts :any as an arity value'
+    it 'accepts strings as function names' do
+      behavior_info(:gen_foo, 'foo' => 0)
+      $__behavior_info__.values.first.should == {foo: 0}
+    end
+
+    it 'accepts numeric arity values' do
+      behavior_info(:gen_foo, foo: 0)
+      $__behavior_info__.values.first.should == {foo: 0}
+    end
+
+    it 'accepts :any as an arity value' do
+      behavior_info(:gen_foo, foo: :any)
+      $__behavior_info__.values.first.should == {foo: :any}
+    end
   end
 
   context 'behavior/1' do
 
-    it 'raises an exception if the behavior has not been defined'
+    it 'raises an exception if the behavior has not been defined' do
+      lambda {
+        Class.new{
+          behavior(:gen_foo)
+        }
+      }.should raise_error(ArgumentError)
+    end
 
-    it 'can be called multiple times for one class'
+    it 'can be called multiple times for one class' do
+      behavior_info(:gen_foo, foo: 0)
+      behavior_info(:gen_bar, bar: 0)
+
+      lambda {
+        Class.new{
+          behavior(:gen_foo)
+          behavior(:gen_bar)
+        }
+      }.should_not raise_error
+    end
+  end
+
+  context 'behavior check on object creation' do
+
+    it 'raises an exception when one or more function definitions are missing' do
+      behavior_info(:gen_foo, foo: 0, bar: 1)
+      clazz = Class.new {
+        behavior(:gen_foo)
+        def foo() nil; end
+      }
+
+      lambda {
+        clazz.new
+      }.should raise_error(ArgumentError)
+    end
+
+    it 'raises an exception when one or more functions do not have proper arity' do
+      behavior_info(:gen_foo, foo: 0)
+      clazz = Class.new {
+        behavior(:gen_foo)
+        def foo(broken) nil; end
+      }
+
+      lambda {
+        clazz.new
+      }.should raise_error(ArgumentError)
+    end
+
+    it 'accepts any arity when function arity is set to :any' do
+      behavior_info(:gen_foo, foo: :any)
+      clazz = Class.new {
+        behavior(:gen_foo)
+        def foo(first) nil; end
+      }
+
+      lambda {
+        clazz.new
+      }.should_not raise_error(ArgumentError)
+    end
+
+    it 'creates the object when function definitions match' do
+      behavior_info(:gen_foo, foo: 0, bar: 1)
+      clazz = Class.new {
+        behavior(:gen_foo)
+        def foo() nil; end
+        def bar(first) nil; end
+      }
+
+      lambda {
+        clazz.new
+      }.should_not raise_error(ArgumentError)
+    end
   end
 
   context '#behaves_as?' do
 
-    it 'returns true when the behavior is fully suported'
+    it 'returns true when the behavior is fully suported' do
+      behavior_info(:gen_foo, foo: 0, bar: 1, baz: 2)
+      clazz = Class.new {
+        def foo() nil; end
+        def bar(first) nil; end
+        def baz(first, second) nil; end
+      }
 
-    it 'returns false when the behavior is partially supported'
+      clazz.new.behaves_as?(:gen_foo).should be_true
+    end
 
-    it 'returns false when the behavior is not supported at all'
+    it 'accepts any arity when function arity is set to :any' do
+      behavior_info(:gen_foo, foo: :any)
+      clazz = Class.new {
+        def foo(*args, &block) nil; end
+      }
 
-    it 'returns false when the behavior does not exist'
+      clazz.new.behaves_as?(:gen_foo).should be_true
+    end
+
+    it 'returns false when the behavior is partially supported' do
+      behavior_info(:gen_foo, foo: 0, bar: 1, baz: 2)
+      clazz = Class.new {
+        def foo() nil; end
+        def bar(first) nil; end
+      }
+
+      clazz.new.behaves_as?(:gen_foo).should be_false
+    end
+
+    it 'returns false when the behavior is not supported at all' do
+      behavior_info(:gen_foo, foo: 0, bar: 1, baz: 2)
+      clazz = Class.new { }
+      clazz.new.behaves_as?(:gen_foo).should be_false
+    end
+
+    it 'returns false when the behavior does not exist' do
+      clazz = Class.new { }
+      clazz.new.behaves_as?(:gen_foo).should be_false
+    end
+
+    it 'accepts behavior name as a symbol' do
+      behavior_info(:gen_foo)
+      clazz = Class.new { }
+      clazz.new.behaves_as?(:gen_foo).should be_true
+    end
+
+    it 'accepts behavior name as a string' do
+      behavior_info(:gen_foo)
+      clazz = Class.new { }
+      clazz.new.behaves_as?('gen_foo').should be_true
+    end
   end
 
   context 'aliases' do
 
-    it 'aliases behaviour_info for behavior_info'
+    it 'aliases behaviour_info for behavior_info' do
+      behaviour_info(:gen_foo)
+      clazz = Class.new { }
+      clazz.new.behaves_as?(:gen_foo).should be_true
+    end
 
-    it 'aliases interface for behavior_info'
+    it 'aliases interface for behavior_info' do
+      interface(:gen_foo)
+      clazz = Class.new { }
+      clazz.new.behaves_as?(:gen_foo).should be_true
+    end
 
-    it 'aliases behaviour for behavior'
+    it 'aliases behaviour for behavior' do
+      behavior_info(:gen_foo, foo: 0)
+      clazz = Class.new {
+        behaviour(:gen_foo)
+        def foo() nil; end
+      }
+      clazz.new.behaves_as?(:gen_foo).should be_true
+    end
 
-    it 'aliases behaves_as for behavior'
+    it 'aliases behaves_as for behavior' do
+      behavior_info(:gen_foo, foo: 0)
+      clazz = Class.new {
+        behaves_as :gen_foo
+        def foo() nil; end
+      }
+      clazz.new.behaves_as?(:gen_foo).should be_true
+    end
   end
 
 end

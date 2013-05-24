@@ -1,6 +1,6 @@
 def behavior_info(name, callbacks = {})
   $__behavior_info__ ||= {}
-  $__behavior_info__[name] = callbacks
+  $__behavior_info__[name.to_sym] = callbacks.inject({}){|memo,(k,v)| memo[k.to_sym] = v; memo}
 end
 
 alias :behaviour_info :behavior_info
@@ -9,12 +9,13 @@ alias :interface :behavior_info
 class Object
   def behaves_as?(name)
 
+    name = name.to_sym
     bi = $__behavior_info__[name]
-    return true if bi.nil?
+    return false if bi.nil?
 
     bi.each do |method, arity|
       begin
-        return false unless self.method(method).arity == arity
+        return false unless arity == :any || self.method(method).arity == arity
       rescue NameError
         return false
       end
@@ -25,6 +26,10 @@ class Object
 end
 
 def behavior(name)
+
+  name = name.to_sym
+  raise ArgumentError.new("undefined behavior '#{name}'") if $__behavior_info__[name].nil?
+
   clazz = self.method(:behavior).receiver
 
   unless clazz.instance_methods(false).include?(:behaviors)
