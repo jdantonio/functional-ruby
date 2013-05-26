@@ -64,7 +64,7 @@ module PatternMatching
     matchers = clazz.__function_pattern_matches__[func]
     return [:nodef, nil] if matchers.nil?
 
-    index = matchers.index do |matcher|
+    match = matchers.detect do |matcher|
       if PatternMatching.__match_pattern__(args, matcher.first)
         if matcher.last.nil?
           true # no guard clause
@@ -74,11 +74,7 @@ module PatternMatching
       end
     end
 
-    if index.nil?
-      return [:nomatch, nil]
-    else
-      return [:ok, matchers[index]]
-    end
+    return (match ? [:ok, match] : [:nomatch, nil])
   end
 
   protected

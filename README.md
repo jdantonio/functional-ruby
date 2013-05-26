@@ -2,8 +2,6 @@
 
 A gem for adding Erlang-style function/method overloading through pattern matching to Ruby classes.
 
-*NOTE: This is a work in progress. Expect changes.*
-
 The project is hosted on the following sites:
 
 * [RubyGems project page](https://rubygems.org/gems/pattern-matching)
