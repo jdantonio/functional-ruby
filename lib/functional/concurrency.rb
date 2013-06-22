@@ -21,6 +21,10 @@
 # * ada range type - http://en.wikibooks.org/wiki/Ada_Programming/Types/range
 # * slurpee - slurp + erb parsing
 # * spawn/send/receive - http://www.erlang.org/doc/reference_manual/processes.html
+# * From Go:
+#   - go
+#   - channel
+#   - defer
 
 # Using Ruby's queue for sending messages between threads
 # * http://www.subelsky.com/2010/02/using-rubys-queue-class-to-manage-inter.html
