@@ -26,8 +26,6 @@ require 'spec_helper'
   #end
 #end
 
-
-
 describe 'behavior/interface definitions' do
 
   before(:each) do

@@ -1,23 +1,20 @@
 $LOAD_PATH << File.expand_path('../lib', __FILE__)
 
-require 'pattern_matching/version'
+require 'functional/version'
 
 Gem::Specification.new do |s|
-  s.name        = 'pattern-matching'
-  s.version     = PatternMatching::VERSION
+  s.name        = 'functional-ruby'
+  s.version     = Functional::VERSION
   s.platform    = Gem::Platform::RUBY
   s.author      = "Jerry D'Antonio"
   s.email       = 'jerry.dantonio@gmail.com'
-  s.homepage    = 'https://github.com/jdantonio/pattern_matching/'
-  s.summary     = 'Erlang-style function/method overloading through pattern matching for Ruby classes.'
+  s.homepage    = 'https://github.com/jdantonio/functional-ruby/'
+  s.summary     = 'Erlang and Clojure inspired functional programming tools for Ruby.'
   s.license     = 'MIT'
   s.date        = Time.now.strftime('%Y-%m-%d')
 
   s.description = <<-EOF
-    A gem for adding Erlang-style function/method overloading through pattern matching to Ruby classes.
-
-    For fun I've also thrown in Erlang's sparsely documented -behaviour
-    functionality plus a few other functions and constants I find useful.
+    A gem for adding Erlang and Clojure inspired functional programming tools to Ruby.
   EOF
 
   s.files            = Dir['README*', 'LICENSE*', 'CHANGELOG*']

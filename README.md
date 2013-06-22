@@ -1,13 +1,13 @@
-# PatternMatching [![Build Status](https://secure.travis-ci.org/jdantonio/pattern_matching.png)](http://travis-ci.org/jdantonio/pattern_matching?branch=master) [![Dependency Status](https://gemnasium.com/jdantonio/pattern_matching.png)](https://gemnasium.com/jdantonio/pattern_matching)
+# Functional Ruby [![Build Status](https://secure.travis-ci.org/jdantonio/functional-ruby.png)](http://travis-ci.org/jdantonio/functional-ruby?branch=master) [![Dependency Status](https://gemnasium.com/jdantonio/functional-ruby.png)](https://gemnasium.com/jdantonio/functional-ruby)
 
-A gem for adding Erlang-style function/method overloading through pattern matching to Ruby classes.
+A gem for adding Erlang and Clojure inspired functional programming tools to Ruby.
 
 The project is hosted on the following sites:
 
-* [RubyGems project page](https://rubygems.org/gems/pattern-matching)
-* [Source code on GitHub](https://github.com/jdantonio/pattern_matching)
-* [Continuous integration on Travis-CI](https://travis-ci.org/jdantonio/pattern_matching)
-* [Dependency tracking on Gemnasium](https://gemnasium.com/jdantonio/pattern_matching)
+* [RubyGems project page](https://rubygems.org/gems/functional-ruby)
+* [Source code on GitHub](https://github.com/jdantonio/functional-ruby)
+* [Continuous integration on Travis-CI](https://travis-ci.org/jdantonio/functional-ruby)
+* [Dependency tracking on Gemnasium](https://gemnasium.com/jdantonio/functional-ruby)
 * [Follow me on Twitter](https://twitter.com/jerrydantonio)
 
 ## Introduction
@@ -24,8 +24,11 @@ Pattern matching is like function overloading cranked to 11. So one day I was mu
 that I'd like to see Erlang-stype pattern matching in Ruby and one of my friends responded "Build it!"
 So I did. And here it is.
 
-For fun I've also thrown in Erlang's sparsely documented [-behaviour](http://www.erlang.org/doc/design_principles/gen_server_concepts.html)
-functionality plus a few other functions and constants I find useful.
+For fun I threw in Erlang's sparsely documented [-behaviour](http://www.erlang.org/doc/design_principles/gen_server_concepts.html)
+functionality plus a few other functions and constants I find useful. Eventually I realized I was
+building something much more than just Erlang's pattern matching. I was creating a broader library
+for helping programmers write Ruby code in a functional style. So I changed the name of the gem
+and kept on trucking.
 
 ### Goals
 
@@ -34,7 +37,7 @@ functionality plus a few other functions and constants I find useful.
 * Support features that make sense in Ruby
 * Exclude features that only make sense in Erlang
 * Avoid using *method_missing*
-* Keep it small (currently arround 100 LOC)
+* Keep everything small
 * Be as fast as reasonably possible
 
 ### Features
@@ -73,13 +76,13 @@ MRI 1.9.x and above. Anything else and your mileage may vary.
 ## Install
 
 ```shell
-gem install pattern-matching
+gem install functional-ruby
 ```
 
 or add the following line to Gemfile:
 
 ```ruby
-gem 'pattern-matching'
+gem 'functional-ruby'
 ```
 
 and run `bundle install` from your shell.
@@ -88,35 +91,33 @@ Once you've installed the gem you must `require` it in your project. Becuase thi
 that not all users may want, several `require` options are available:
 
 ```ruby
-require 'behavior'
-require 'behaviour' # alternate spelling
-require 'pattern_matching'
-require 'pattern_matching/functions'
+require 'functional/behavior'
+require 'functional/behaviour' # alternate spelling
+require 'functional/pattern_matching'
+require 'functional/core'
 ```
 
 If you want everything you can do that, too:
 
 ```ruby
-require 'pattern_matching/all'
+require 'functional/all'
 ```
 
 ## PatternMatching
 
 First, familiarize yourself with Erlang [pattern matching](http://learnyousomeerlang.com/syntax-in-functions#pattern-matching).
-This gem may not make much sense if you don't understand how Erlang dispatches
-functions.
+This gem may not make much sense if you don't understand how Erlang dispatches functions.
 
-In the Ruby class file where you want to use pattern matching, require the
-*pattern_matching* gem:
+In the Ruby class file where you want to use pattern matching, require the *functional-ruby* gem:
 
 ```ruby
-require 'pattern_matching'
+require 'functional/pattern_matching'
 ```
 
 Then include `PatternMatching` in your class:
 
 ```ruby
-require 'pattern_matching'
+require 'functional/pattern_matching'
 
 class Foo
   include PatternMatching
@@ -137,7 +138,7 @@ defn(:symbol_name_of_function, zero, or, more, parameters) { |block, arguments|
 You can then call your new function just like any other:
 
 ```ruby
-require 'pattern_matching'
+require 'functional/pattern_matching'
 
 class Foo
   include PatternMatching
@@ -343,7 +344,7 @@ greet(_, Name) ->
 Ruby:
 
 ```ruby
-require 'pattern_matching'
+require 'functional/pattern_matching'
 
 class Foo
   include PatternMatching
@@ -385,7 +386,7 @@ greet(_, Name) ->
 Ruby:
 
 ```ruby
-require 'pattern_matching'
+require 'functional/pattern_matching'
 
 class Foo
   include PatternMatching
@@ -412,7 +413,7 @@ end
 #### Constructor Overloading
 
 ```ruby
-require 'pattern_matching'
+require 'functional/pattern_matching'
 
 class Foo
   include PatternMatching
@@ -425,7 +426,7 @@ end
 #### Matching by Class/Datatype
 
 ```ruby
-require 'pattern_matching'
+require 'functional/pattern_matching'
 
 class Foo
   include PatternMatching
@@ -448,7 +449,7 @@ end
 #### Matching a Hash Parameter
 
 ```ruby
-require 'pattern_matching'
+require 'functional/pattern_matching'
 
 class Foo
   include PatternMatching
@@ -656,12 +657,12 @@ foo.behaves_as?(:bogus)     #=> false
 'foo'.behaves_as? :gen_foo  #=> false
 ```
 
-## Functions
+## Utility Functions
 
 Convenience functions are not imported by default. It require a separate `require` statement:
 
 ```ruby
-require 'pattern_matching/functions'
+require 'functional/core'
 ```
 
 ```ruby
@@ -683,7 +684,7 @@ This gives you access to a few constants and functions:
 
 ## Copyright
 
-*PatternMatching* is Copyright &copy; 2013 [Jerry D'Antonio](https://twitter.com/jerrydantonio).
+*Functional Ruby* is Copyright &copy; 2013 [Jerry D'Antonio](https://twitter.com/jerrydantonio).
 It is free software and may be redistributed under the terms specified in the LICENSE file.
 
 ## License
