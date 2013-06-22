@@ -24,7 +24,8 @@ Pattern matching is like function overloading cranked to 11. So one day I was mu
 that I'd like to see Erlang-stype pattern matching in Ruby and one of my friends responded "Build it!"
 So I did. And here it is.
 
-For fun I've also thrown in Erlang's sparsely documented [-behaviour](http://www.erlang.org/doc/design_principles/gen_server_concepts.html).
+For fun I've also thrown in Erlang's sparsely documented [-behaviour](http://www.erlang.org/doc/design_principles/gen_server_concepts.html)
+functionality plus a few other functions and constants I find useful.
 
 ### Goals
 
@@ -83,7 +84,23 @@ gem 'pattern-matching'
 
 and run `bundle install` from your shell.
 
-## Usage
+Once you've installed the gem you must `require` it in your project. Becuase this gem includes multiple features
+that not all users may want, several `require` options are available:
+
+```ruby
+require 'behavior'
+require 'behaviour' # alternate spelling
+require 'pattern_matching'
+require 'pattern_matching/functions'
+```
+
+If you want everything you can do that, too:
+
+```ruby
+require 'pattern_matching/all'
+```
+
+## PatternMatching
 
 First, familiarize yourself with Erlang [pattern matching](http://learnyousomeerlang.com/syntax-in-functions#pattern-matching).
 This gem may not make much sense if you don't understand how Erlang dispatches
@@ -304,11 +321,11 @@ in Ruby. Please read them. Please don't submit a bug report if you use a
 `return` statement within your `defn` and your code blows up with a
 [LocalJumpError](http://ruby-doc.org/core-2.0/LocalJumpError.html). 
 
-## Examples
+### Examples
 
 For more examples see the integration tests in *spec/integration_spec.rb*.
 
-### Simple Functions
+#### Simple Functions
 
 This example is based on [Syntax in defnctions: Pattern Matching](http://learnyousomeerlang.com/syntax-in-defnctions) in [Learn You Some Erlang for Great Good!](http://learnyousomeerlang.com/).
 
@@ -347,7 +364,7 @@ class Foo
 end
 ```
 
-### Simple Functions with Overloading
+#### Simple Functions with Overloading
 
 This example is based on [Syntax in defnctions: Pattern Matching](http://learnyousomeerlang.com/syntax-in-defnctions) in [Learn You Some Erlang for Great Good!](http://learnyousomeerlang.com/).
 
@@ -392,7 +409,7 @@ class Foo
 end
 ```
 
-### Constructor Overloading
+#### Constructor Overloading
 
 ```ruby
 require 'pattern_matching'
@@ -405,7 +422,7 @@ class Foo
 end
 ```
 
-### Matching by Class/Datatype
+#### Matching by Class/Datatype
 
 ```ruby
 require 'pattern_matching'
@@ -428,7 +445,7 @@ class Foo
 end
 ```
 
-### Matching a Hash Parameter
+#### Matching a Hash Parameter
 
 ```ruby
 require 'pattern_matching'
@@ -471,7 +488,7 @@ foo.hashable({bar: :baz})      #=> {bar: :baz}
 foo.hashable({})               #=> :empty 
 ```
 
-### Variable Length Argument Lists with ALL
+#### Variable Length Argument Lists with ALL
 
 ```ruby
 defn(:all, :one, ALL) { |args|
@@ -496,7 +513,7 @@ foo.all('a', 'bee', :see)       #=> ['a', 'bee', :see]
 foo.all()                       #=> NoMethodError: no method `all` matching [] found for class Foo
 ```
 
-### Guard Clauses
+#### Guard Clauses
 
 These examples are based on [Syntax in defnctions: Pattern Matching](http://learnyousomeerlang.com/syntax-in-defnctions)
 in [Learn You Some Erlang for Great Good!](http://learnyousomeerlang.com/).
@@ -539,9 +556,9 @@ defn(:wrong_age, _) {
 }
 ```
 
-### Behavior
+## Behavior
 
-The `behavior` functionality is not import by default. It requires a separate require statement:
+The `behavior` functionality is not imported by default. It requires a separate `require` statement:
 
 ```ruby
 require 'behavior'
@@ -638,6 +655,31 @@ foo.behaves_as? :gen_foo    #=> true
 foo.behaves_as?(:bogus)     #=> false
 'foo'.behaves_as? :gen_foo  #=> false
 ```
+
+## Functions
+
+Convenience functions are not imported by default. It require a separate `require` statement:
+
+```ruby
+require 'pattern_matching/functions'
+```
+
+```ruby
+Infinity #=> Infinity
+NaN #=> NaN
+
+repl? #=> true when called under irb, pry, bundle console, or rails console
+
+safe(1, 2){|a, b| a + b} #=> 3
+safe{ eval 'puts "Hello World!"' } #=> SecurityError: Insecure operation
+
+pp_s [1,2,3,4] #=> "[1, 2, 3, 4]\n" props to Rha7
+
+delta(-1, 1) #=> 2
+delta({count: -1}, {count: 1}){|item| item[:count]} #=> 2
+```
+
+This gives you access to a few constants and functions:
 
 ## Copyright
 

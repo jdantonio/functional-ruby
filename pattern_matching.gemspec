@@ -1,8 +1,6 @@
 $LOAD_PATH << File.expand_path('../lib', __FILE__)
 
-require 'pattern_matching'
-require 'behavior'
-require 'date'
+require 'pattern_matching/version'
 
 Gem::Specification.new do |s|
   s.name        = 'pattern-matching'
@@ -13,10 +11,13 @@ Gem::Specification.new do |s|
   s.homepage    = 'https://github.com/jdantonio/pattern_matching/'
   s.summary     = 'Erlang-style function/method overloading through pattern matching for Ruby classes.'
   s.license     = 'MIT'
-  s.date        = Date.today.to_s
+  s.date        = Time.now.strftime('%Y-%m-%d')
 
   s.description = <<-EOF
     A gem for adding Erlang-style function/method overloading through pattern matching to Ruby classes.
+
+    For fun I've also thrown in Erlang's sparsely documented -behaviour
+    functionality plus a few other functions and constants I find useful.
   EOF
 
   s.files            = Dir['README*', 'LICENSE*', 'CHANGELOG*']
