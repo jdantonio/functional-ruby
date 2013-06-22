@@ -1,3 +1,46 @@
+module Kernel
+
+  private
+
+  def go(*args, &block)
+    raise ArgumentError.new('no block given') unless block_given?
+    t = Thread.new(*args){ |*args|
+      Thread.pass
+      self.instance_exec(*args, &block)
+    }
+    t.abort_on_exception = false
+    return t.alive?
+  end
+  module_function :go
+
+end
+
+
+#load 'lib/functional/concurrency.rb'
+
+#class Foo
+  #def initialize(name = 'World')
+    #@name = name
+  #end
+  #def hello(greeting = 'Hello')
+    #go(greeting) do |greet|
+      #sleep(rand(5000)/1000.0)
+      #puts "#{greet} #{@name}"
+    #end 
+  #end
+  #def boom
+    #go { raise StandardError.new("Here comes the BOOM!") }
+  #end
+#end
+
+#f = Foo.new('Jerry')
+#f.hello
+#f.hello('Wilkomen')
+
+
+
+
+
 # http://docs.oracle.com/javase/tutorial/java/javaOO/enum.html
 # http://www.lesismore.co.za/rubyenums.html
 # http://gistflow.com/posts/682-ruby-enums-approaches
