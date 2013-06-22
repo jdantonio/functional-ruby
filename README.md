@@ -321,11 +321,11 @@ in Ruby. Please read them. Please don't submit a bug report if you use a
 `return` statement within your `defn` and your code blows up with a
 [LocalJumpError](http://ruby-doc.org/core-2.0/LocalJumpError.html). 
 
-## Examples
+### Examples
 
 For more examples see the integration tests in *spec/integration_spec.rb*.
 
-### Simple Functions
+#### Simple Functions
 
 This example is based on [Syntax in defnctions: Pattern Matching](http://learnyousomeerlang.com/syntax-in-defnctions) in [Learn You Some Erlang for Great Good!](http://learnyousomeerlang.com/).
 
@@ -364,7 +364,7 @@ class Foo
 end
 ```
 
-### Simple Functions with Overloading
+#### Simple Functions with Overloading
 
 This example is based on [Syntax in defnctions: Pattern Matching](http://learnyousomeerlang.com/syntax-in-defnctions) in [Learn You Some Erlang for Great Good!](http://learnyousomeerlang.com/).
 
@@ -409,7 +409,7 @@ class Foo
 end
 ```
 
-### Constructor Overloading
+#### Constructor Overloading
 
 ```ruby
 require 'pattern_matching'
@@ -422,7 +422,7 @@ class Foo
 end
 ```
 
-### Matching by Class/Datatype
+#### Matching by Class/Datatype
 
 ```ruby
 require 'pattern_matching'
@@ -445,7 +445,7 @@ class Foo
 end
 ```
 
-### Matching a Hash Parameter
+#### Matching a Hash Parameter
 
 ```ruby
 require 'pattern_matching'
@@ -488,7 +488,7 @@ foo.hashable({bar: :baz})      #=> {bar: :baz}
 foo.hashable({})               #=> :empty 
 ```
 
-### Variable Length Argument Lists with ALL
+#### Variable Length Argument Lists with ALL
 
 ```ruby
 defn(:all, :one, ALL) { |args|
@@ -513,7 +513,7 @@ foo.all('a', 'bee', :see)       #=> ['a', 'bee', :see]
 foo.all()                       #=> NoMethodError: no method `all` matching [] found for class Foo
 ```
 
-### Guard Clauses
+#### Guard Clauses
 
 These examples are based on [Syntax in defnctions: Pattern Matching](http://learnyousomeerlang.com/syntax-in-defnctions)
 in [Learn You Some Erlang for Great Good!](http://learnyousomeerlang.com/).
