@@ -127,6 +127,15 @@ end
 
 
 
+#load 'lib/functional/core.rb'
+#puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";nil
+#puts slurp('Gemfile')
+#puts "--------------------------------------";nil
+#puts slurpee('Gemfile')
+#puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";nil
+
+
+
 # http://docs.oracle.com/javase/tutorial/java/javaOO/enum.html
 # http://www.lesismore.co.za/rubyenums.html
 # http://gistflow.com/posts/682-ruby-enums-approaches

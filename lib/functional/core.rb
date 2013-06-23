@@ -1,5 +1,6 @@
 require 'pp'
 require 'stringio'
+require 'erb'
 
 Infinity = 1/0.0 unless defined?(Infinity)
 NaN = 0/0.0 unless defined?(NaN)
@@ -35,6 +36,16 @@ module Kernel
     s.read
   end
   module_function :pp_s
+
+  def slurp(file)
+    File.open(file, 'rb') {|f| f.read }
+  end
+  module_function :slurp
+
+  def slurpee(file, safe = nil)
+    ERB.new(slurp(file), safe).result
+  end
+  module_function :slurpee
 
   # Compute the difference (delta) between two values.
   # 
