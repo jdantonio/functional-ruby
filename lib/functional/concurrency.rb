@@ -1,3 +1,44 @@
+
+
+class Promise
+
+  def initialize(*args, &block)
+    raise ArgumentError.new('no block given') unless block_given?
+    @promises = []
+    @t = Thread.new do
+      Thread.pass
+      result = block.call(*args)
+      @promises.each_with_index do |promise, index|
+        begin
+          result = promise[1].call(result)
+        rescue Exception => e
+          resolved = index.step(0, -1) do |i|
+            unless @promises[i].last.nil?
+              @promises[i].last.call(e)
+              break(true)
+            end
+          end
+          raise(e) unless resolved === true
+        end
+      end
+    end
+    @t.abort_on_exception = false
+  end
+
+  def then(&block)
+    raise ArgumentError.new('no block given') unless block_given?
+    @promises << [[], block, nil]
+    return self
+  end
+
+  def error(&block)
+    raise ArgumentError.new('`error` must be called after `then`') if @promises.empty?
+    raise ArgumentError.new('no block given') unless block_given?
+    @promises.last[2] = block
+    return self
+  end
+end
+
 module Kernel
 
   private
@@ -12,6 +53,11 @@ module Kernel
     return t.alive?
   end
   module_function :go
+
+  def promise(*args, &block)
+    return Promise.new(*args, &block)
+  end
+  module_function :promise
 
 end
 
@@ -37,6 +83,46 @@ end
 #f.hello
 #f.hello('Wilkomen')
 
+
+
+
+#load 'lib/functional/concurrency.rb'
+#Promise.new('bar'){|arg| puts "#{arg} 1"; arg }.
+  #then{|result| sleep(1); puts "#{result} 2"; result }.
+  #error{|e| sleep(1); puts 'error 1' }.
+  #then{|result| sleep(1); puts "#{result} 3"; result }.
+  #then{|result| sleep(1); puts "#{result} 4"; result }.
+  #error{|e| sleep(1); puts 'error 2' }.
+  #then{|result| sleep(1); puts "#{result} 5"; result }
+
+#load 'lib/functional/concurrency.rb'
+#Promise.new('bar'){|arg| puts "#{arg} 1"; arg }.
+  #then{|result| sleep(1); puts "#{result} 2"; result }.
+  #error{|e| sleep(1); puts 'error 1' }.
+  #then{|result| sleep(1); puts "#{result} 3"; result }.
+  #then{|result| sleep(1); puts "#{result} 4"; result }.
+  #error{|e| sleep(1); puts 'error 2' }.
+  #then{|result| sleep(1); raise StandardError }
+
+#load 'lib/functional/concurrency.rb'
+#Promise.new('bar'){|arg| puts "#{arg} 1"; arg }.
+  #then{|result| sleep(1); raise StandardError }.
+  #then{|result| sleep(1); puts "#{result} 2"; result }.
+  #error{|e| sleep(1); puts 'error 1' }.
+  #then{|result| sleep(1); puts "#{result} 3"; result }.
+  #then{|result| sleep(1); puts "#{result} 4"; result }.
+  #error{|e| sleep(1); puts 'error 2' }.
+  #then{|result| sleep(1); puts "#{result} 5"; result }
+
+
+#load 'lib/functional/concurrency.rb'
+#promise('bar'){|arg| puts "#{arg} 1"; arg }.
+  #then{|result| sleep(1); puts "#{result} 2"; result }.
+  #error{|e| sleep(1); puts 'error 1' }.
+  #then{|result| sleep(1); puts "#{result} 3"; result }.
+  #then{|result| sleep(1); puts "#{result} 4"; result }.
+  #error{|e| sleep(1); puts 'error 2' }.
+  #then{|result| sleep(1); puts "#{result} 5"; result }
 
 
 
