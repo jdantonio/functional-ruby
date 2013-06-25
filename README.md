@@ -1,6 +1,6 @@
 # Functional Ruby [![Build Status](https://secure.travis-ci.org/jdantonio/functional-ruby.png)](http://travis-ci.org/jdantonio/functional-ruby?branch=master) [![Dependency Status](https://gemnasium.com/jdantonio/functional-ruby.png)](https://gemnasium.com/jdantonio/functional-ruby)
 
-A gem for adding Erlang and Clojure inspired functional programming tools to Ruby.
+A gem for adding Erlang, Clojure, and Go inspired functional programming tools to Ruby.
 
 The project is hosted on the following sites:
 
@@ -33,11 +33,11 @@ and kept on trucking.
 
 ### Goals
 
-* Stay true to the spirit of Erlang pattern matching, if not the semantics
+* Stay true to the spirit of the languages providing inspiration
+* But implement in a way that makes sense for Ruby
 * Keep the semantics as idiomatic Ruby as possible
 * Support features that make sense in Ruby
 * Exclude features that only make sense in Erlang
-* Avoid using *method_missing*
 * Keep everything small
 * Be as fast as reasonably possible
 
@@ -58,17 +58,6 @@ and kept on trucking.
 * Recursive calls to superclass methods
 * Dispatching to superclass methods when no match is found
 * Reasonable error messages when no match is found
-
-### For good -behavior(timeoff).
-
-One of Ruby's greatest strengths is [duck typing](http://rubylearning.com/satishtalim/duck_typing.html).
-Usually this is awesome and I'm happy to not have to deal with static typing and the compiler. Usually.
-The problem with duck typing is that is is impossible in Ruby to enforce an interface definition.
-I would never advocate turning Ruby into the cesspool complex object creation that Java has
-unfortunately become, but occasionally it would be nice to make sure a class implements a set of
-required methods. Enter Erlang's [-behavior](http://metajack.im/2008/10/29/custom-behaviors-in-erlang/)
-keyword. Basically, you define a `behavior_info` then drop a `behavior` call within a class.
-Forget to implement a required method and Ruby will let you know. See the examples below for details.
 
 ## Supported Ruby versions
 
@@ -104,7 +93,7 @@ If you want everything you can do that, too:
 require 'functional/all'
 ```
 
-## PatternMatching
+## Erlang-style Pattern Matching
 
 First, familiarize yourself with Erlang [pattern matching](http://learnyousomeerlang.com/syntax-in-functions#pattern-matching).
 This gem may not make much sense if you don't understand how Erlang dispatches functions.
@@ -558,16 +547,25 @@ defn(:wrong_age, _) {
 }
 ```
 
-## Behavior
+## For good -behavior(timeoff).
 
-The `behavior` functionality is not imported by default. It requires a separate `require` statement:
+One of Ruby's greatest strengths is [duck typing](http://rubylearning.com/satishtalim/duck_typing.html).
+Usually this is awesome and I'm happy to not have to deal with static typing and the compiler. Usually.
+The problem with duck typing is that is is impossible in Ruby to enforce an interface definition.
+I would never advocate turning Ruby into the cesspool complex object creation that Java has
+unfortunately become, but occasionally it would be nice to make sure a class implements a set of
+required methods. Enter Erlang's [-behavior](http://metajack.im/2008/10/29/custom-behaviors-in-erlang/)
+keyword. Basically, you define a `behavior_info` then drop a `behavior` call within a class.
+Forget to implement a required method and Ruby will let you know. See the examples below for details.
+
+The `behavior` functionality is not imported by default. It needs a separate `require` statement:
 
 ```ruby
-require 'behavior'
+require 'functional/behavior'
 
 # -or-
 
-require 'behaviour'
+require 'functional/behaviour'
 ```
 
 Next, declare a behavior using the `behavior_info` function (this function should sit outside
@@ -658,9 +656,13 @@ foo.behaves_as?(:bogus)     #=> false
 'foo'.behaves_as? :gen_foo  #=> false
 ```
 
+## Go, Clojure, and JavaScript-inspired Concurrency
+
+Needs documented...
+
 ## Utility Functions
 
-Convenience functions are not imported by default. It require a separate `require` statement:
+Convenience functions are not imported by default. They need a separate `require` statement:
 
 ```ruby
 require 'functional/core'
