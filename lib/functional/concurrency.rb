@@ -1,68 +1,96 @@
 require 'thread'
 
-class Promise
+module Functional
 
-  def initialize(*args, &block)
-    raise ArgumentError.new('no block given') unless block_given?
+  class Promise
 
-    @lock = Mutex.new
-    @promises = [ [block, nil] ]
+    def initialize(*args, &block)
+      raise ArgumentError.new('no block given') unless block_given?
 
-    @t = Thread.new do
-      Thread.pass # defer to caller
-      index = 1
+      @lock = Mutex.new
+      @promises = [ [block, nil] ]
 
-      begin
-        # call first promise
-        result = block.call(*args)
+      @t = Thread.new do
+        Thread.pass # defer to caller
+        index = 1
 
-        # iterate by index in case more promises are added
-        while index < @promises.length do
-          Thread.pass # defer to caller
+        begin
+          # call first promise
+          result = block.call(*args)
 
-          @lock.synchronize do
-            # call the next promise
-            result = @promises[index].first.call(result)
-            index += 1
-          end
-        end
+          # iterate by index in case more promises are added
+          while index < @promises.length do
+            Thread.pass # defer to caller
 
-      rescue Exception => e
-        resolved = @lock.synchronize do
-
-          # reverse iterate looking for an error block
-          index.step(0, -1) do |i|
-
-            # process the first error handler
-            unless @promises[i].last.nil?
-              @promises[i].last.call(e)
-              break(true)
+            @lock.synchronize do
+              # call the next promise
+              result = @promises[index].first.call(result)
+              index += 1
             end
           end
+
+        rescue Exception => e
+          resolved = @lock.synchronize do
+
+            # reverse iterate looking for an error block
+            index.step(0, -1) do |i|
+
+              # process the first error handler
+              unless @promises[i].last.nil?
+                @promises[i].last.call(e)
+                break(true)
+              end
+            end
+          end
+
+          # if no error handler found, raise the exception again
+          raise(e) unless resolved === true
         end
-
-        # if no error handler found, raise the exception again
-        raise(e) unless resolved === true
       end
+
+      @t.abort_on_exception = false
     end
 
-    @t.abort_on_exception = false
+    def then(&block)
+      raise ArgumentError.new('no block given') unless block_given?
+      @lock.synchronize do
+        @promises << [block, nil]
+      end
+      return self
+    end
+
+    def error(&block)
+      raise ArgumentError.new('no block given') unless block_given?
+      @lock.synchronize do
+        @promises.last[1] = block
+      end
+      return self
+    end
   end
 
-  def then(&block)
-    raise ArgumentError.new('no block given') unless block_given?
-    @lock.synchronize do
-      @promises << [block, nil]
-    end
-    return self
-  end
+  # p = Process.new{|receive| 'Bam!' }
+  # # -or-
+  # p = make {|receive| 'Bam!' }
 
-  def error(&block)
-    raise ArgumentError.new('no block given') unless block_given?
-    @lock.synchronize do
-      @promises.last[1] = block
+  # p << 'Boom!' # send the message 'Boom!' to the process
+  # x = nil
+  # p >> x # retrieve the next message from the process
+
+  # p.kill # stop the process and freeze it
+  
+  # http://www.ruby-doc.org/core-1.9.3/ObjectSpace.html
+  class Process
+
+    def initialize(&block)
+      raise ArgumentError.new('no block given') unless block_given?
+      ObjectSpace.define_finalizer(self, proc {|id| puts "Finalizer one on #{id}" })
     end
-    return self
+
+    def <<(send)
+    end
+
+    def >>(receive)
+    end
   end
 end
 
@@ -82,9 +110,15 @@ module Kernel
   module_function :go
 
   def promise(*args, &block)
-    return Promise.new(*args, &block)
+    return Functional::Promise.new(*args, &block)
   end
   module_function :promise
 
-end
+  # called `spawn` in Erlang, but Ruby already has a spawn function
+  # called `make` in Go
+  def make(&block)
+    return Functional::Process.new(&block)
+  end
+  module_function :spawn
 
+end
