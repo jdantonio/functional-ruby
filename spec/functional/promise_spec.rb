@@ -52,7 +52,10 @@ end
 def go_foo
   puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
   Foo.new.bar{ puts 'Boom!' }.
-    then{|result| sleep(1); puts 'Bam!'}.
-    then{|result| sleep(1); puts 'Pow!'}
+    then{|result| puts 'Bam!'}.
+    then.
+    rescue.
+    then{|result| puts 'Pow!'}.
+    then
   puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 end

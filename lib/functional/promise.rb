@@ -17,7 +17,7 @@ class Promise
   end
 
   def then(&block)
-    raise ArgumentError.new('no block given') unless block_given?
+    block = Proc.new{} unless block_given?
     lock do
       tail.next = Promise.new(tail, nil, &block)
       head.thread.run if thread.alive?
@@ -26,7 +26,7 @@ class Promise
   end
 
   def rescue(&block)
-    raise ArgumentError.new('no block given') unless block_given?
+    block = Proc.new{} unless block_given?
     @handler = block
     return self
   end
