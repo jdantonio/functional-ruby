@@ -83,8 +83,10 @@ that not all users may want, several `require` options are available:
 ```ruby
 require 'functional/behavior'
 require 'functional/behaviour' # alternate spelling
+require 'functional/concurrency'
 require 'functional/pattern_matching'
-require 'functional/core'
+require 'functional/promise'
+require 'functional/utilities'
 ```
 
 If you want everything you can do that, too:
@@ -665,7 +667,7 @@ Needs documented...
 Convenience functions are not imported by default. They need a separate `require` statement:
 
 ```ruby
-require 'functional/core'
+require 'functional/utilities'
 ```
 
 ```ruby
