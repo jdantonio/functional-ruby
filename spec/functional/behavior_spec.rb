@@ -1,32 +1,6 @@
 require 'spec_helper'
 
-#behaviour_info(:gen_foo, foo: 0, bar: 1, baz: 2, boom: -1, bam: :any)
-
-#class Foo
-  #behavior(:gen_foo)
-
-  #def foo
-    #return 'foo/0'
-  #end
-
-  #def bar(one, &block)
-    #return 'bar/1'
-  #end
-
-  #def baz(one, two)
-    #return 'baz/2'
-  #end
-
-  #def boom(*args)
-    #return 'boom/-1'
-  #end
-
-  #def bam
-    #return 'bam!'
-  #end
-#end
-
-describe 'behavior/interface definitions' do
+describe '-behavior' do
 
   before(:each) do
     $__behavior_info__ = {}
@@ -93,7 +67,7 @@ describe 'behavior/interface definitions' do
     end
   end
 
-  context 'behavior check on object creation' do
+  context 'object creation' do
 
     it 'raises an exception when one or more function definitions are missing' do
       behavior_info(:gen_foo, foo: 0, bar: 1)
