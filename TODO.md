@@ -4,6 +4,8 @@ These are ideas I have for additional functionality. Some may actually get imple
 
 ## Concurrency
 
+http://stackoverflow.com/questions/1028250/what-is-functional-reactive-programming/1030631#1030631
+
 Clojure agent: An agent is a single atomic value that represents an identity. The current value
 of the agent can be requested at any time (#deref). Each agent has a work queue and operates on
 its own thread (or a thread from the shared pool). Consumers can #send code blocks to the

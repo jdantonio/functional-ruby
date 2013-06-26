@@ -157,8 +157,8 @@ defn(:greet, :female) {
 
 ...
 
-foo.hello(:male)   #=> "Hello, sir!"
-foo.hello(:female) #=> "Hello, ma'am!"
+foo.greet(:male)   #=> "Hello, sir!"
+foo.greet(:female) #=> "Hello, ma'am!"
 ```
 
 If a particular method call can not be matched a *NoMethodError* is thrown with
