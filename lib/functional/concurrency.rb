@@ -41,11 +41,11 @@ module Kernel
   end
   module_function :go
 
-  # called `spawn` in Erlang, but Ruby already has a spawn function
-  # called `make` in Go
-  def make(&block)
-    return Functional::Process.new(&block)
-  end
-  module_function :make
+  ## called `spawn` in Erlang, but Ruby already has a spawn function
+  ## called `make` in Go
+  #def make(&block)
+    #return Functional::Process.new(&block)
+  #end
+  #module_function :make
 
 end
