@@ -25,7 +25,17 @@ Gem::Specification.new do |s|
   s.require_paths    = ['lib']
 
   s.required_ruby_version = '>= 1.9.2'
-  s.post_install_message  = 'start() -> io:format("Hello, World!").'
+  s.post_install_message  = <<-MSG
+    hello() -> io:format("Hello, World!").
+
+    package main
+    import "fmt"
+    func main() {
+      fmt.Printf("hello, world")
+    }
+
+    (def hello (fn [] "Hello world"))
+  MSG
 
   s.add_development_dependency 'bundler'
 end
