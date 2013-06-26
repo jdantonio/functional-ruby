@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'core' do
+describe 'utilities' do
 
   context '#repl?' do
     pending
