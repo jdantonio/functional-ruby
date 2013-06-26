@@ -7,6 +7,7 @@ require 'thread'
 class Promise
 
   def initialize(*args, &block)
+    block = Proc.new{} unless block_given?
     if args.first.is_a?(Promise)
       @previous = args.first
       args = args.slice(1, args.length) || []
@@ -16,6 +17,7 @@ class Promise
   end
 
   def then(&block)
+    raise ArgumentError.new('no block given') unless block_given?
     lock do
       tail.next = Promise.new(tail, nil, &block)
       head.thread.run if thread.alive?
@@ -24,6 +26,7 @@ class Promise
   end
 
   def rescue(&block)
+    raise ArgumentError.new('no block given') unless block_given?
     @handler = block
     return self
   end
@@ -104,7 +107,7 @@ end
 module Kernel
 
   def promise(*args, &block)
-    return Functional::Promise.new(*args, &block)
+    return Promise.new(*args, &block)
   end
   module_function :promise
 end
