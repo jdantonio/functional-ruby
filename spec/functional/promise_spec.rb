@@ -2,15 +2,22 @@ require 'spec_helper'
 
 describe Promise do
 
-  pending
+  context '#initialize' do
+    pending
+  end
 
+  context '#then' do
+  end
+
+  context '#rescue' do
+  end
 end
 
 def go_bad
   puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
   p = Promise.new{ sleep(1); puts 'good' }.
     then{|result| raise StandardError.new('Boom!') }.
-    catch{|ex| puts ex.message }
+    rescue{|ex| puts ex.message }
   sleep(2)
   p.then{|result| sleep(1); puts 'Pow!'}
   puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
