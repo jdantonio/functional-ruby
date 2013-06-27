@@ -4,7 +4,7 @@ These are ideas I have for additional functionality. Some may actually get imple
 
 ## Concurrency
 
-http://stackoverflow.com/questions/1028250/what-is-functional-reactive-programming/1030631#1030631
+* http://stackoverflow.com/questions/1028250/what-is-functional-reactive-programming/1030631#1030631
 
 Clojure agent: An agent is a single atomic value that represents an identity. The current value
 of the agent can be requested at any time (#deref). Each agent has a work queue and operates on
@@ -34,6 +34,10 @@ JavaScript promises: A chained series of behavioral routines and associated erro
 Excellent for handling a series of actions on a different thread. Promises interact with
 the outside world through side-effects.
 
+* http://blog.parse.com/2013/01/29/whats-so-great-about-javascript-promises/
+* http://domenic.me/2012/10/14/youre-missing-the-point-of-promises/
+* http://www.slideshare.net/domenicdenicola/callbacks-promises-and-coroutines-oh-my-the-evolution-of-asynchronicity-in-javascript
+
 ## Enums
 
 * http://docs.oracle.com/javase/tutorial/java/javaOO/enum.html
@@ -44,36 +48,43 @@ the outside world through side-effects.
 
 http://richhickey.github.io/clojure/clojure.core-api.html
 
-* agent
-* add-watch
-* apply
-* assert
-* await
-* future
-* memoize
-* promise
-* send
-* slurp
+### Agents
+
+* [agent](http://clojuredocs.org/clojure_core/clojure.core/agent)
+* [set-error-handler!](http://clojuredocs.org/clojure_core/clojure.core/set-error-handler!)
+* [restart-agent](http://clojuredocs.org/clojure_core/clojure.core/restart-agent)
+* [send](http://clojuredocs.org/clojure_core/clojure.core/send)
+* [send-off](http://clojuredocs.org/clojure_core/clojure.core/send-off)
+* [agent-error](http://clojuredocs.org/clojure_core/clojure.core/agent-error)
+* [release-pending-sends](http://clojuredocs.org/clojure_core/clojure.core/release-pending-sends)
+* [add-watch](http://clojuredocs.org/clojure_core/clojure.core/add-watch)
+* [set-validator](http://clojuredocs.org/clojure_core/clojure.core/set-validator!)
+* [deref](http://clojuredocs.org/clojure_core/clojure.core/deref)
+
+### Futures
+
+* [future](http://clojuredocs.org/clojure_core/clojure.core/future)
+* [realized?](http://clojuredocs.org/clojure_core/clojure.core/realized_q)
+* [future?](http://clojuredocs.org/clojure_core/clojure.core/future_q)
+* [future-cancel](http://clojuredocs.org/clojure_core/clojure.core/future-cancel)
+* [deref](http://clojuredocs.org/clojure_core/clojure.core/deref)
+* [shutdown-agents](http://clojuredocs.org/clojure_core/clojure.core/shutdown-agents)
+
+### Core
+
+* [apply](http://clojuredocs.org/clojure_core/clojure.core/apply)
+* [delay](http://clojuredocs.org/clojure_core/clojure.core/delay)
+* [await](http://clojuredocs.org/clojure_core/clojure.core/await)
+* [memoize](http://clojuredocs.org/clojure_core/clojure.core/memoize)
+* [slurp](http://clojuredocs.org/clojure_core/clojure.core/slurp)
 
 ## Other stuff
 
-* pure - creates an object, freezes it, and removes the unfreeze method
 * retry - retries something x times if it fails
-* promise, ala JavaScript
-  * http://blog.parse.com/2013/01/29/whats-so-great-about-javascript-promises/
-  * http://domenic.me/2012/10/14/youre-missing-the-point-of-promises/
-  * http://www.slideshare.net/domenicdenicola/callbacks-promises-and-coroutines-oh-my-the-evolution-of-asynchronicity-in-javascript
 * ada range type - http://en.wikibooks.org/wiki/Ada_Programming/Types/range
 * slurpee - slurp + erb parsing
-* spawn/send/receive - http://www.erlang.org/doc/reference_manual/processes.html
 
 ### Using Ruby's queue for sending messages between threads
 
 * http://www.subelsky.com/2010/02/using-rubys-queue-class-to-manage-inter.html
 * http://www.ruby-doc.org/stdlib-1.9.3/libdoc/thread/rdoc/Queue.html#method-i-pop
-
-## Go
-
-* go
-* channel
-* defer
