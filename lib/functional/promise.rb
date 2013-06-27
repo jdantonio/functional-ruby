@@ -43,7 +43,7 @@ module Functional
     end
 
     def then(&block)
-      return false if rejected?
+      return self if rejected?
       @children << Promise.new(self, &block)
       push(@children.last)
       root.thread.run if root.thread.alive?
