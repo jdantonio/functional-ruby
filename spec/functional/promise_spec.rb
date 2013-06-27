@@ -1,15 +1,18 @@
 require 'spec_helper'
 
-describe Promise do
+module Functional
 
-  context '#initialize' do
-    pending
-  end
+  describe Promise do
 
-  context '#then' do
-  end
+    context '#initialize' do
+      pending
+    end
 
-  context '#rescue' do
+    context '#then' do
+    end
+
+    context '#rescue' do
+    end
   end
 end
 
@@ -17,11 +20,12 @@ require 'functional/promise'
 
 def go_bad
   puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-  p = Promise.new{ sleep(1); puts 'good' }.
-    then{|result| raise StandardError.new('Boom!') }.
+  p = promise{ puts 'starting...'; sleep(1); puts 'good' }.
+    then{|result| puts 'raising exception...'; raise StandardError.new('Boom!') }.
     rescue{|ex| puts ex.message }
-  sleep(2)
   p.then{|result| sleep(1); puts 'Pow!'}
+  sleep(2)
+  puts "---> #{p.reason}"
   puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 end
 

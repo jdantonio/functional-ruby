@@ -34,6 +34,8 @@ JavaScript promises: A chained series of behavioral routines and associated erro
 Excellent for handling a series of actions on a different thread. Promises interact with
 the outside world through side-effects.
 
+* http://wiki.commonjs.org/wiki/Promises/A
+* http://promises-aplus.github.io/promises-spec/
 * http://blog.parse.com/2013/01/29/whats-so-great-about-javascript-promises/
 * http://domenic.me/2012/10/14/youre-missing-the-point-of-promises/
 * http://www.slideshare.net/domenicdenicola/callbacks-promises-and-coroutines-oh-my-the-evolution-of-asynchronicity-in-javascript
