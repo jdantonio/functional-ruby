@@ -20,7 +20,7 @@ module Functional
 
     def fulfilled?() return(@state == :fulfilled); end
     def rejected?() return(@state == :rejected); end
-    def pending?() return(!fulfilled? && !rejected?); end
+    def pending?() return(!(fulfilled? || rejected?)); end
 
     alias_method :realized?, :fulfilled?
     alias_method :deref, :value
@@ -33,7 +33,7 @@ module Functional
         @chain = [self]
       end
 
-      @handler = block || Proc.new{}
+      @handler = block || Proc.new{|result| result }
       @state = :pending
       @value = nil
       @reason = nil
@@ -43,15 +43,16 @@ module Functional
     end
 
     def then(&block)
-      return self if rejected?
+      return self unless pending?
+      block = Proc.new{|result| result } unless block_given?
       @children << Promise.new(self, &block)
       push(@children.last)
       root.thread.run if root.thread.alive?
       return @children.last
     end
 
-    def rescue(&block)
-      @rescuer = block || Proc.new{}
+    def rescue(clazz = Exception, &block)
+      @rescuer = block if block_given?
       return self
     end
     alias_method :catch, :rescue
@@ -105,22 +106,22 @@ module Functional
     end
 
     def realize(*args)
-      @thread = Thread.new(@chain, *args) do |*args|
-        result = *args
+      @thread = Thread.new(@chain, args) do |chain, args|
+        result = args.length == 1 ? args.first : args
         current = 0
         loop do
           Thread.pass
-          unless @chain[current].rejected?
+          unless chain[current].rejected?
             begin
-              result = @chain[current].handler.call(result)
-              @chain[current].on_fulfill(result)
+              result = chain[current].handler.call(result)
+              chain[current].on_fulfill(result)
             rescue Exception => ex
-              @chain[current].on_reject(ex)
-              bubble(@chain[current], ex)
+              chain[current].on_reject(ex)
+              bubble(chain[current], ex)
             end
           end
           current += 1
-          sleep while current >= @chain.length
+          sleep while current >= chain.length
         end
       end
       @thread.abort_on_exception = true
