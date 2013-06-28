@@ -11,8 +11,8 @@ require 'functional/all'
 
 Bundler::GemHelper.install_tasks
 YARD::Rake::YardocTask.new do |t|
-  #t.files   = ['lib/**/*.rb', OTHER_PATHS]   # optional
-  #t.options = ['--any', '--extra', '--opts'] # optional
+  #t.files   = ['lib/**/*.rb ']
+  t.options = ["--files", "#{Dir.glob('md/**/*.md').join(',')}"]
 end
 
 $:.unshift 'tasks'

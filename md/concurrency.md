@@ -1,0 +1,3 @@
+# Go, Clojure, and JavaScript-inspired Concurrency
+
+Needs documented...
