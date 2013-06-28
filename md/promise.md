@@ -1,0 +1,3 @@
+# Chained asynchronous operations inspried by JavaScript Promises
+
+Needs documented...

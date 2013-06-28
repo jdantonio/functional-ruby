@@ -43,11 +43,11 @@ and kept on trucking.
 
 ## Features
 
-* Function overloading with Erlang-style [Pattern Matching](http://rubydoc.info/github/jdantonio/functional-ruby/file/pattern_matching.md)
-* Interface specifications with Erlang-style [Behavior](http://rubydoc.info/github/jdantonio/functional-ruby/file/nehavior.md)
-* Chained asynchronous operations inspried by JavaScript [Promises](http://rubydoc.info/github/jdantonio/functional-ruby/file/promise.md)
-* Additional Clojure, Go, and Erlang inspired [Concurrency](http://rubydoc.info/github/jdantonio/functional-ruby/file/concurrency.md)
-* Several useful functional [Utilities](http://rubydoc.info/github/jdantonio/functional-ruby/file/utilities.md)
+* Function overloading with Erlang-style [Pattern Matching](http://rubydoc.info/github/jdantonio/functional-ruby/master/file/md/pattern_matching.md)
+* Interface specifications with Erlang-style [Behavior](http://rubydoc.info/github/jdantonio/functional-ruby/master/file/md/behavior.md)
+* Chained asynchronous operations inspried by JavaScript [Promises](http://rubydoc.info/github/jdantonio/functional-ruby/master/file/md/promise.md)
+* Additional Clojure, Go, and Erlang inspired [Concurrency](http://rubydoc.info/github/jdantonio/functional-ruby/master/file/md/concurrency.md)
+* Several useful functional [Utilities](http://rubydoc.info/github/jdantonio/functional-ruby/master/file/md/utilities.md)
 
 ## Supported Ruby versions
 
