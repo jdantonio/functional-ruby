@@ -53,11 +53,11 @@ My goal is to implement those patterns in Ruby. Specifically:
 
 Several features from Erlang, Co, Clojure, and JavaScript have been implemented this far:
 
-* Function overloading with Erlang-style [Pattern Matching](http://rubydoc.info/github/jdantonio/functional-ruby/master/file/md/pattern_matching.md)
-* Interface specifications with Erlang-style [Behavior](http://rubydoc.info/github/jdantonio/functional-ruby/master/file/md/behavior.md)
-* Chained asynchronous operations inspried by JavaScript [Promises](http://rubydoc.info/github/jdantonio/functional-ruby/master/file/md/promise.md)
-* Additional Clojure, Go, and Erlang inspired [Concurrency](http://rubydoc.info/github/jdantonio/functional-ruby/master/file/md/concurrency.md)
-* Several useful functional [Utilities](http://rubydoc.info/github/jdantonio/functional-ruby/master/file/md/utilities.md)
+* Function overloading with Erlang-style [Pattern Matching](https://github.com/jdantonio/functional-ruby/blob/master/md/pattern_matching.md)
+* Interface specifications with Erlang-style [Behavior](https://github.com/jdantonio/functional-ruby/blob/master/md/behavior.md)
+* Chained asynchronous operations inspried by JavaScript [Promises](https://github.com/jdantonio/functional-ruby/blob/master/md/promise.md)
+* Additional Clojure, Go, and Erlang inspired [Concurrency](https://github.com/jdantonio/functional-ruby/blob/master/md/concurrency.md)
+* Several useful functional [Utilities](https://github.com/jdantonio/functional-ruby/blob/master/md/utilities.md)
 
 ### Supported Ruby versions
 
