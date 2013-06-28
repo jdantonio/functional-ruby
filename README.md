@@ -6,7 +6,7 @@ The project is hosted on the following sites:
 
 * [RubyGems project page](https://rubygems.org/gems/functional-ruby)
 * [Source code on GitHub](https://github.com/jdantonio/functional-ruby)
-* [YARD documentation on RubyDoc.org](http://rubydoc.info/github/jdantonio/functional-ruby/)
+* [YARD documentation on RubyDoc.info](http://rubydoc.info/gems/functional-ruby)
 * [Continuous integration on Travis-CI](https://travis-ci.org/jdantonio/functional-ruby)
 * [Dependency tracking on Gemnasium](https://gemnasium.com/jdantonio/functional-ruby)
 * [Follow me on Twitter](https://twitter.com/jerrydantonio)
