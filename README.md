@@ -49,11 +49,11 @@ and kept on trucking.
 * Additional Clojure, Go, and Erlang inspired [Concurrency](http://rubydoc.info/github/jdantonio/functional-ruby/master/file/md/concurrency.md)
 * Several useful functional [Utilities](http://rubydoc.info/github/jdantonio/functional-ruby/master/file/md/utilities.md)
 
-## Supported Ruby versions
+### Supported Ruby versions
 
 MRI 1.9.x and above. Anything else and your mileage may vary.
 
-## Install
+### Install
 
 ```shell
 gem install functional-ruby
