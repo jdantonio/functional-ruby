@@ -1,4 +1,4 @@
-module Behavior
+module Kernel
 
   def behavior_info(name, callbacks = {})
     $__behavior_info__ ||= {}
@@ -49,8 +49,6 @@ module Behavior
   module_function :behaviour
   module_function :behaves_as
 end
-
-include Behavior
 
 class Object
 
