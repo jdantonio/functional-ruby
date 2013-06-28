@@ -1,8 +1,12 @@
 module Kernel
 
-  def behavior_info(name, callbacks = {})
+  # Define a behavioral specification (interface).
+  #
+  # @param name [Symbol] the name of the behavior
+  # @param functions [Hash] function names and their arity as key/value pairs
+  def behavior_info(name, functions = {})
     $__behavior_info__ ||= {}
-    $__behavior_info__[name.to_sym] = callbacks.inject({}){|memo,(k,v)| memo[k.to_sym] = v; memo}
+    $__behavior_info__[name.to_sym] = functions.inject({}){|memo,(k,v)| memo[k.to_sym] = v; memo}
   end
 
   alias :behaviour_info :behavior_info
@@ -12,6 +16,9 @@ module Kernel
   module_function :behaviour_info
   module_function :interface
 
+  # Specify a #behavior_info to enforce on the enclosing class
+  #
+  # @param name [Symbol] name of the #behavior_info being implemented
   def behavior(name)
 
     name = name.to_sym
@@ -52,6 +59,18 @@ end
 
 class Object
 
+  # Does the object implement the given #behavior_info?
+  #
+  # @note Will return true if the object implements the
+  # required methods. The object's class hierarchy does
+  # not necessarily have to include a corresponding
+  # #behavior call.
+  #
+  # @param name [Symbol] name of the #behavior_info to
+  # verify behavior against.
+  #
+  # @return [Boolean] whether or not the required public
+  # methods are implemented
   def behaves_as?(name)
 
     name = name.to_sym
