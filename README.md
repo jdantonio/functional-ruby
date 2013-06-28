@@ -6,7 +6,7 @@ The project is hosted on the following sites:
 
 * [RubyGems project page](https://rubygems.org/gems/functional-ruby)
 * [Source code on GitHub](https://github.com/jdantonio/functional-ruby)
-* [YARD documentation on RubyDoc.info](http://rubydoc.info/gems/functional-ruby)
+* [YARD documentation on RubyDoc.info](http://rubydoc.info/github/jdantonio/functional-ruby/master/frames)
 * [Continuous integration on Travis-CI](https://travis-ci.org/jdantonio/functional-ruby)
 * [Dependency tracking on Gemnasium](https://gemnasium.com/jdantonio/functional-ruby)
 * [Follow me on Twitter](https://twitter.com/jerrydantonio)
@@ -96,7 +96,7 @@ If you want everything you can do that, too:
 require 'functional/all'
 ```
 
-### Examples
+## Examples
 
 For complete examples, see the specific documentation linked above. Below are a
 few examples to whet your appetite.
