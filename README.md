@@ -1,4 +1,4 @@
-# Functional Ruby [![Build Status](https://secure.travis-ci.org/jdantonio/functional-ruby.png)](http://travis-ci.org/jdantonio/functional-ruby?branch=master) [![Dependency Status](https://gemnasium.com/jdantonio/functional-ruby.png)](https://gemnasium.com/jdantonio/functional-ruby)
+# Functional Ruby [![Build Status](https://secure.travis-ci.org/jdantonio/functional-ruby.png)](https://travis-ci.org/jdantonio/functional-ruby?branch=master) [![Dependency Status](https://gemnasium.com/jdantonio/functional-ruby.png)](https://gemnasium.com/jdantonio/functional-ruby)
 
 A gem for adding Erlang, Clojure, and Go inspired functional programming tools to Ruby.
 
@@ -43,11 +43,11 @@ and kept on trucking.
 
 ## Features
 
-* Function overloading with Erlang-style {file:md/pattern_matching.md Pattern Matching}
-* Interface specifications with Erlang-style {file:md/behavior.md Behavior}
-* Chained asynchronous operations inspried by JavaScript {file:md/promise.md Promises}
-* Additional Clojure, Go, and Erlang inspired {file:md/concurrency.md Concurrency}
-* Several useful functional {file:md/utilities.md Utilities}
+* Function overloading with Erlang-style [Pattern Matching](http://rubydoc.info/github/jdantonio/functional-ruby/file/pattern_matching.md)
+* Interface specifications with Erlang-style [Behavior](http://rubydoc.info/github/jdantonio/functional-ruby/file/nehavior.md)
+* Chained asynchronous operations inspried by JavaScript [Promises](http://rubydoc.info/github/jdantonio/functional-ruby/file/promise.md)
+* Additional Clojure, Go, and Erlang inspired [Concurrency](http://rubydoc.info/github/jdantonio/functional-ruby/file/concurrency.md)
+* Several useful functional [Utilities](http://rubydoc.info/github/jdantonio/functional-ruby/file/utilities.md)
 
 ## Supported Ruby versions
 
