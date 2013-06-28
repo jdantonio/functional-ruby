@@ -1,9 +1,3 @@
-# http://wiki.commonjs.org/wiki/Promises/A
-# http://promises-aplus.github.io/promises-spec/
-# http://blog.parse.com/2013/01/29/whats-so-great-about-javascript-promises/
-# http://domenic.me/2012/10/14/youre-missing-the-point-of-promises/
-# http://www.slideshare.net/domenicdenicola/callbacks-promises-and-coroutines-oh-my-the-evolution-of-asynchronicity-in-javascript
-
 require 'thread'
 
 module Functional
@@ -38,6 +32,7 @@ module Functional
       @value = nil
       @reason = nil
       @children = []
+      @rescuers = []
 
       realize(*args) if @parent.nil?
     end
@@ -52,7 +47,7 @@ module Functional
     end
 
     def rescue(clazz = Exception, &block)
-      @rescuer = block if block_given?
+      @rescuers << Rescuer.new(clazz, block) if block_given?
       return self
     end
     alias_method :catch, :rescue
@@ -62,8 +57,10 @@ module Functional
 
     attr_reader :parent
     attr_reader :handler
-    attr_reader :rescuer
+    attr_reader :rescuers
     attr_reader :thread
+
+    Rescuer = Struct.new(:clazz, :block)
 
     def root
       current = self
@@ -95,14 +92,12 @@ module Functional
     end
 
     def bubble(current, ex)
-      if current.rescuer.nil?
-        current = current.previous until current.rescuer || current.previous.nil?
-      end
-      if current.rescuer
-        current.rescuer.call(ex)
-      else
-        raise(ex)
-      end
+      rescuer = until current.nil?
+                  match = current.rescuers.find{|r| ex.is_a?(r.clazz) }
+                  break(match) unless match.nil?
+                  current = current.parent
+                end
+      rescuer.block.call(ex) if rescuer
     end
 
     def realize(*args)

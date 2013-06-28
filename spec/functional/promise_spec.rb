@@ -142,10 +142,6 @@ module Functional
           pending_promise.rescue(StandardError){}
         }.should_not raise_error
       end
-
-      it 'defaults to Exception when no class is given' do
-        pending
-      end
     end
 
     context 'fulfillment' do
@@ -189,96 +185,118 @@ module Functional
     context 'rejection' do
 
       it 'sets the promise reason to an error message on exception' do
-        pending
+        p = promise{ raise StandardError.new('Boom!') }
+        sleep(0.1)
+        p.reason.should =~ /Boom!/
       end
 
       it 'sets the promise state to :rejected on exception' do
-        pending
+        p = promise{ raise StandardError.new('Boom!') }
+        sleep(0.1)
+        p.should be_rejected
       end
 
       it 'recursively rejects all children' do
-        pending
+        p = promise{ raise StandardError.new('Boom!') }
+        promises = 3.times.collect{ p.then{ true } }
+        sleep(0.1)
+        promises.each{|p| p.should be_rejected }
       end
 
-      it 'skips processing rejected promises do
-        pending
-      end'
-
-      it 'searches all associated rescue blocks in order' do
-        pending
+      it 'skips processing rejected promises' do
+        p = promise{ raise StandardError.new('Boom!') }
+        promises = 3.times.collect{ p.then{ true } }
+        sleep(0.1)
+        promises.each{|p| p.value.should_not be_true }
       end
 
       it 'calls the first exception block with a matching class' do
-        pending
+        @expected = nil
+        promise{ raise StandardError }.
+          rescue(StandardError){|ex| @expected = 1 }.
+          rescue(StandardError){|ex| @expected = 2 }.
+          rescue(StandardError){|ex| @expected = 3 }
+        sleep(0.1)
+        @expected.should eq 1
+      end
+
+      it 'matches all with a rescue with no class given' do
+        @expected = nil
+        promise{ raise NoMethodError }.
+          rescue(LoadError){|ex| @expected = 1 }.
+          rescue{|ex| @expected = 2 }.
+          rescue(StandardError){|ex| @expected = 3 }
+        sleep(0.1)
+        @expected.should eq 2
+      end
+
+      it 'searches associated rescue blocks in order' do
+        @expected = nil
+        promise{ raise ArgumentError }.
+          rescue(ArgumentError){|ex| @expected = 1 }.
+          rescue(LoadError){|ex| @expected = 2 }.
+          rescue(Exception){|ex| @expected = 3 }
+        sleep(0.1)
+        @expected.should eq 1
+
+        @expected = nil
+        promise{ raise LoadError }.
+          rescue(ArgumentError){|ex| @expected = 1 }.
+          rescue(LoadError){|ex| @expected = 2 }.
+          rescue(Exception){|ex| @expected = 3 }
+        sleep(0.1)
+        @expected.should eq 2
+
+        @expected = nil
+        promise{ raise StandardError }.
+          rescue(ArgumentError){|ex| @expected = 1 }.
+          rescue(LoadError){|ex| @expected = 2 }.
+          rescue(Exception){|ex| @expected = 3 }
+        sleep(0.1)
+        @expected.should eq 3
       end
 
       it 'passes the exception object to the matched block' do
-        pending
+        @expected = nil
+        promise{ raise StandardError }.
+          catch(ArgumentError){|ex| @expected = ex }.
+          catch(LoadError){|ex| @expected = ex }.
+          catch(Exception){|ex| @expected = ex }
+        sleep(0.1)
+        @expected.should be_a(StandardError)
       end
 
-      it 'bubbles to the parent when there are no rescue blocks' do
-        pending
-      end
-
-      it 'bubbles to the parent when no exception blocks match' do
-        pending
+      it 'bubbles up when no exception blocks match' do
+        @expected = nil
+        promise{ nil }.
+          rescue(ArgumentError){|ex| @expected = ex }.
+          then{ raise ArgumentError }.
+          rescue(ArgumentError){|ex| @expected = ex }.
+          rescue(StandardError){|ex| @expected = ex }.
+          rescue(Exception){|ex| @expected = ex }
+        sleep(0.1)
+        @expected.should be_a(ArgumentError)
       end
 
       it 'ignores rescuers without a block' do
-        pending
+        @expected = nil
+        promise{ raise StandardError }.
+          rescue(StandardError).
+          rescue(StandardError){|ex| @expected = ex }.
+          rescue(Exception){|ex| @expected = ex }
+        sleep(0.1)
+        @expected.should be_a(StandardError)
       end
 
-      it 'raises the exception if no rescue matches' do
-        pending
+      it 'supresses the exception if no rescue matches' do
+        lambda {
+          promise{ raise StandardError }.
+            rescue(ArgumentError){|ex| @expected = ex }.
+            rescue(StandardError){|ex| @expected = ex }.
+            rescue(Exception){|ex| @expected = ex }
+          sleep(0.1)
+        }.should_not raise_error
       end
     end
   end
-end
-
-require 'functional/promise'
-
-def go_bad
-  puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-  p = promise{ puts 'starting...'; sleep(1); puts 'good' }.
-    then{|result| puts 'raising exception...'; raise StandardError.new('Boom!') }.
-    rescue{|ex| puts ex.message }
-  p.then{|result| sleep(1); puts 'Pow!'}
-  sleep(2)
-  puts "---> #{p.reason}"
-  puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-end
-
-def go_big
-  puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-  p = promise(1, 2, 3){|one, two, three| nil }.
-    then{|result| sleep(1); puts 1 }.
-    then{|result| sleep(1); puts 2 }.
-    then{|result| sleep(1); puts 3 }.
-    then{|result| sleep(1); puts 4 }.
-    then{|result| sleep(1); puts 5 }.
-    then{|result| sleep(1); puts 6 }.
-    then{|result| sleep(1); puts 7 }.
-    then{|result| sleep(1); puts 8 }
-  sleep(15)
-  p.then{|result| sleep(1); puts 'Boom!'}.
-    then{|result| sleep(1); puts 'Bam!'}
-  p.then{|result| sleep(1); puts 'Pow!'}
-  puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-end
-
-class Foo
-  def bar(&block)
-    return promise(&block)
-  end
-end
-
-def go_foo
-  puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-  Foo.new.bar{ puts 'Boom!' }.
-    then{|result| puts 'Bam!'}.
-    then.
-    rescue.
-    then{|result| puts 'Pow!'}.
-    then
-  puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 end
