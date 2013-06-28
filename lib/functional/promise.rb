@@ -2,10 +2,6 @@ require 'thread'
 
 module Functional
 
-  class Pact
-    Oath = Struct.new(:promise, :previous, :next)
-  end
-
   class Promise
 
     attr_reader :state
