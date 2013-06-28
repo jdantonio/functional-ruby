@@ -25,6 +25,7 @@ module Functional
       else
         @parent = nil
         @chain = [self]
+        @mutex = Mutex.new
       end
 
       @handler = block || Proc.new{|result| result }
@@ -34,7 +35,7 @@ module Functional
       @children = []
       @rescuers = []
 
-      realize(*args) if @parent.nil?
+      realize(*args) if root?
     end
 
     def then(&block)
@@ -64,13 +65,19 @@ module Functional
 
     def root
       current = self
-      current = current.parent until current.parent.nil?
+      current = current.parent until current.root?
       return current
     end
 
+    def root?
+      @parent.nil?
+    end
+
     def push(promise)
-      if @parent.nil?
-        @chain << promise; true
+      if root?
+        @mutex.synchronize {
+          @chain << promise
+        }
       else
         @parent.push(promise)
       end
@@ -101,22 +108,23 @@ module Functional
     end
 
     def realize(*args)
-      @thread = Thread.new(@chain, args) do |chain, args|
+      @thread = Thread.new(@chain, @mutex, args) do |chain, mutex, args|
         result = args.length == 1 ? args.first : args
-        current = 0
+        index = 0
         loop do
           Thread.pass
-          unless chain[current].rejected?
+          current = mutex.synchronize{ chain[index] }
+          unless current.rejected?
             begin
-              result = chain[current].handler.call(result)
-              chain[current].on_fulfill(result)
+              result = current.handler.call(result)
+              current.on_fulfill(result)
             rescue Exception => ex
-              chain[current].on_reject(ex)
-              bubble(chain[current], ex)
+              current.on_reject(ex)
+              bubble(current, ex)
             end
           end
-          current += 1
-          sleep while current >= chain.length
+          index += 1
+          sleep while index >= chain.length
         end
       end
       @thread.abort_on_exception = true
