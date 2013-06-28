@@ -5,15 +5,10 @@ require 'rubygems'
 require 'bundler/gem_tasks'
 require 'rspec'
 require 'rspec/core/rake_task'
-require 'yard'
 
 require 'functional/all'
 
 Bundler::GemHelper.install_tasks
-YARD::Rake::YardocTask.new do |t|
-  #t.files   = ['lib/**/*.rb ']
-  t.options = ['--files', "README.md,LICENSE,#{Dir.glob('md/**/*.md').join(',')}", '--no-private']
-end
 
 $:.unshift 'tasks'
 Dir.glob('tasks/**/*.rake').each do|rakefile|

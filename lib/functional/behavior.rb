@@ -1,4 +1,3 @@
-# {include:file:md/behavior.md}
 module Behavior
 
   def behavior_info(name, callbacks = {})
