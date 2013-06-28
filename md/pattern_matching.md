@@ -1,5 +1,15 @@
 # Erlang-style Pattern Matching
 
+As much as I love Ruby I've always been a little disappointed that Ruby doesn't
+support function overloading. Function overloading tends to reduce branching
+and keep function signatures simpler. No sweat, I learned to do without. Then
+I started programming in Erlang. My favorite Erlang feature is, without
+question, pattern matching. Pattern matching is like function overloading
+cranked to 11. So one day I was musing on Twitter that I'd like to see
+Erlang-stype pattern matching in Ruby and one of my friends responded
+"Build it!" So I did. And here it is.
+
+
 ## Features
 
 * Pattern matching for instance methods.
@@ -16,6 +26,7 @@
 * Recursive calls to superclass pattern matches
 * Recursive calls to superclass methods
 * Dispatching to superclass methods when no match is found
+* Reasonable error messages when no match is found
 
 ## Usage
 
@@ -471,4 +482,31 @@ defn(:wrong_age, _) {
 }
 ```
 
- Reasonable error messages when no match is found
+## Copyright
+
+*Functional Ruby* is Copyright &copy; 2013 [Jerry D'Antonio](https://twitter.com/jerrydantonio).
+It is free software and may be redistributed under the terms specified in the LICENSE file.
+
+## License
+
+Released under the MIT license.
+
+http://www.opensource.org/licenses/mit-license.php  
+
+> Permission is hereby granted, free of charge, to any person obtaining a copy  
+> of this software and associated documentation files (the "Software"), to deal  
+> in the Software without restriction, including without limitation the rights  
+> to use, copy, modify, merge, publish, distribute, sublicense, and/or sell  
+> copies of the Software, and to permit persons to whom the Software is  
+> furnished to do so, subject to the following conditions:  
+> 
+> The above copyright notice and this permission notice shall be included in  
+> all copies or substantial portions of the Software.  
+> 
+> THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR  
+> IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,  
+> FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE  
+> AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER  
+> LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,  
+> OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN  
+> THE SOFTWARE.  
