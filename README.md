@@ -13,35 +13,45 @@ The project is hosted on the following sites:
 
 ## Introduction
 
-[Ruby](http://www.ruby-lang.org/en/) is my favorite programming by far. As much as I love
-Ruby I've always been a little disappointed that Ruby doesn't support function overloading.
-Function overloading tends to reduce branching and keep function signatures simpler.
-No sweat, I learned to do without. Then I started programming in [Erlang](http://www.erlang.org/)...
+Three things I love are [Ruby](http://www.ruby-lang.org/en/),
+[functional](https://en.wikipedia.org/wiki/Functional_programming)
+[programming](http://c2.com/cgi/wiki?FunctionalProgramming) and
+[concurrency](http://www.amazon.com/s/ref=nb_sb_noss_1?url=search-alias%3Dstripbooks&field-keywords=concurrent%20programming).
+Sadly, the first is generally not associated with the other two. First, I reject the
+assertion that Ruby is an object-oriented language. It's certainly object-based, since
+everything is an object, but entire large-scale programs can be built without ever
+defining a single class. Ruby is a true multi-paradigm language and easily supports
+many advanced functional techniques. As to concurrency, Ruby's bad reputation is
+well earned, but recent versions of Ruby have made significan improvements in that
+area. Ruby 2.0 is now a [relevant](https://blog.heroku.com/archives/2013/6/17/ruby-2-default-new-aps)
+platform for concurrent applications.
 
-I've really started to enjoy working in Erlang. Erlang is good at all the things Ruby is bad
-at and vice versa. Together, Ruby and Erlang make me happy. My favorite Erlang feature is,
-without question, [pattern matching](http://learnyousomeerlang.com/syntax-in-functions#pattern-matching).
-Pattern matching is like function overloading cranked to 11. So one day I was musing on Twitter
-that I'd like to see Erlang-stype pattern matching in Ruby and one of my friends responded "Build it!"
-So I did. And here it is.
-
-For fun I threw in Erlang's sparsely documented [-behaviour](http://www.erlang.org/doc/design_principles/gen_server_concepts.html)
-functionality plus a few other functions and constants I find useful. Eventually I realized I was
-building something much more than just Erlang's pattern matching. I was creating a broader library
-for helping programmers write Ruby code in a functional style. So I changed the name of the gem
-and kept on trucking.
+This gem is my small and humble attempt to help Ruby reach its full potential as
+a highly performant, functional, concurrent programming language.
 
 ### Goals
+
+My history with high-performance, highly-concurrent programming goes back to my days with C/C++.
+I have the same scars as everyone else doing that kind of work with those languages.
+I'm fascinated by modern concurrency patterns like [Actors](http://en.wikipedia.org/wiki/Actor_model),
+[Agents](http://doc.akka.io/docs/akka/snapshot/java/agents.html), and
+[Promises](http://promises-aplus.github.io/promises-spec/). I'm equally fascinated by languages
+with strong concurrency support like [Erlang](http://www.erlang.org/doc/getting_started/conc_prog.html),
+[Go](http://golang.org/doc/articles/concurrency_patterns.html), and
+[Clojure](http://clojure.org/concurrent_programming) (I program with Erlang at work).
+My goal is to implement those patterns in Ruby. Specifically:
 
 * Stay true to the spirit of the languages providing inspiration
 * But implement in a way that makes sense for Ruby
 * Keep the semantics as idiomatic Ruby as possible
 * Support features that make sense in Ruby
-* Exclude features that only make sense in Erlang
+* Exclude features that don't make sense in Ruby
 * Keep everything small
 * Be as fast as reasonably possible
 
 ## Features
+
+Several features from Erlang, Co, Clojure, and JavaScript have been implemented this far:
 
 * Function overloading with Erlang-style [Pattern Matching](http://rubydoc.info/github/jdantonio/functional-ruby/master/file/md/pattern_matching.md)
 * Interface specifications with Erlang-style [Behavior](http://rubydoc.info/github/jdantonio/functional-ruby/master/file/md/behavior.md)
@@ -51,7 +61,8 @@ and kept on trucking.
 
 ### Supported Ruby versions
 
-MRI 1.9.x and above. Anything else and your mileage may vary.
+MRI 1.9.2, 1.9.3, and 2.0. Anything else and your mileage may vary.
+Althought I do test under Rubinius and JRuby in 1.9 mode I'll drop them if they become problematic.)
 
 ### Install
 
@@ -84,6 +95,77 @@ If you want everything you can do that, too:
 ```ruby
 require 'functional/all'
 ```
+
+### Examples
+
+For complete examples, see the specific documentation linked above. Below are a
+few examples to whet your appetite.
+
+### Pattern Matching (Erlang)
+
+```ruby
+require 'functional/pattern_matching'
+
+class Foo
+  include PatternMatching
+
+  defn(:greet, :male) {
+    puts "Hello, sir!"
+  }
+
+  defn(:greet, :female) {
+    puts "Hello, ma'am!"
+  }
+end
+
+foo = Foo.new
+foo.greet(:male)   #=> "Hello, sir!"
+foo.greet(:female) #=> "Hello, ma'am!"
+```
+
+### Behavior (Erlang)
+
+```ruby
+require 'functional/behavior'
+
+behaviour_info(:gen_foo, foo: 0, bar: 1)
+
+class Foo
+  behavior(:gen_foo)
+
+  def foo
+    return 'foo/0'
+  end
+
+  def bar(one, &block)
+    return 'bar/1'
+  end
+end
+
+foo = Foo.new
+
+foo.behaves_as? :gen_foo    #=> true
+foo.behaves_as?(:bogus)     #=> false
+'foo'.behaves_as? :gen_foo  #=> false
+```
+
+### Promises (JavaScript)
+
+```ruby
+require 'functional/promise'
+
+p = promise("Jerry", "D'Antonio"){|a, b| "#{a} #{b}" }.
+    then{|result| "Hello #{result}." }.
+    rescue(StandardError){|ex| puts "Boom!" }.
+    then{|result| "#{result} Would you like to play a game?"}
+sleep(1)
+p.value #=> "Hello Jerry D'Antonio. Would you like to play a game?" 
+
+```
+
+### Utilities
+
+TBD
 
 ## Copyright
 
