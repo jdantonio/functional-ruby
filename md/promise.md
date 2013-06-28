@@ -10,7 +10,7 @@ more children. Order of execution is guaranteed based on the order the promises 
 created and parent promises are guaranteed to be complete before their children. Once a
 promise has been fulfilled or rejected the corresponding value/reason can be retrieved.
 
-## The shoulders of Giants
+## The shoulders of giants
 
 Inspiration for this implementation came from the CommonJS
 [Promises/A](http://wiki.commonjs.org/wiki/Promises/A) proposal and the

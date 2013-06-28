@@ -103,6 +103,8 @@ few examples to whet your appetite.
 
 ### Pattern Matching (Erlang)
 
+Documentation: [Pattern Matching](https://github.com/jdantonio/functional-ruby/blob/master/md/pattern_matching.md)
+
 ```ruby
 require 'functional/pattern_matching'
 
@@ -124,6 +126,8 @@ foo.greet(:female) #=> "Hello, ma'am!"
 ```
 
 ### Behavior (Erlang)
+
+Documentation: [Behavior](https://github.com/jdantonio/functional-ruby/blob/master/md/behavior.md)
 
 ```ruby
 require 'functional/behavior'
@@ -151,6 +155,8 @@ foo.behaves_as?(:bogus)     #=> false
 
 ### Promises (JavaScript)
 
+Documentation: [Promises](https://github.com/jdantonio/functional-ruby/blob/master/md/promise.md)
+
 ```ruby
 require 'functional/promise'
 
@@ -164,6 +170,8 @@ p.value #=> "Hello Jerry D'Antonio. Would you like to play a game?"
 ```
 
 ### Utilities
+
+Documentation: [Utilities](https://github.com/jdantonio/functional-ruby/blob/master/md/utilities.md)
 
 TBD
 
