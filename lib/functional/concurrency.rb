@@ -1,7 +1,115 @@
+require 'thread'
+require 'timeout'
+
 require 'functional/promise'
 
 module Functional
 
+  class Future
+
+    attr_reader :state
+
+    # Has the promise been fulfilled?
+    # @return [Boolean]
+    def fulfilled?() return(@state == :fulfilled); end
+
+    # Is promise completion still pending?
+    # @return [Boolean]
+    def pending?() return(! fulfilled?); end
+
+    def value(timeout = nil)
+      if @mutex.nil?
+        return @value
+      elsif timeout.nil?
+        return @mutex.synchronize { @value }
+      else
+        begin
+          Timeout::timeout(timeout.to_f) {
+            @mutex.synchronize { @value }
+          }
+        rescue Timeout::Error => ex
+          return nil
+        end
+      end
+    end
+
+    alias_method :realized?, :fulfilled?
+    alias_method :deref, :value
+
+    def initialize(*args, &block)
+
+      unless block_given?
+        @state = :fulfilled
+      else
+        @state = :pending
+        @mutex = Mutex.new
+        @t = Thread.new do
+          @mutex.synchronize do
+            Thread.pass
+            begin
+              @value = block.call(*args)
+            rescue Exception => ex
+              # supress
+            end
+            @state = :fulfilled
+          end
+          @mutex = nil
+        end
+        @t.abort_on_exception = true
+      end
+    end
+  end
+end
+
+module Kernel
+
+  def future(*args, &block)
+    return Functional::Future.new(*args, &block)
+  end
+  module_function :future
+
+  def deref(future)
+    if future.respond_to?(:deref)
+      return future.deref
+    else
+      return nil
+    end
+  end
+
+  def pending?(future)
+    if future.respond_to?(:pending?)
+      return future.pending?
+    else
+      return false
+    end
+  end
+
+  def fulfilled?(future)
+    if future.respond_to?(:fulfilled?)
+      return future.fulfilled?
+    else
+      return false
+    end
+  end
+
+  def realized?(future)
+    if future.respond_to?(:realized?)
+      return future.realized?
+    else
+      return false
+    end
+  end
+
+  #def rejected?(future)
+    #if future.respond_to?(:rejected?)
+      #return future.rejected?
+    #else
+      #return false
+    #end
+  #end
+end
+
+#module Functional
   # p = Process.new{|receive| 'Bam!' }
   # # -or-
   # p = make {|receive| 'Bam!' }
@@ -26,7 +134,7 @@ module Functional
     #def >>(receive)
     #end
   #end
-end
+#end
 
 module Kernel
 
@@ -61,5 +169,4 @@ module Kernel
     #return Functional::Process.new(&block)
   #end
   #module_function :make
-
 end

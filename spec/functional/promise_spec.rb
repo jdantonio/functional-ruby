@@ -17,7 +17,7 @@ module Functional
 
     let(:rejected_promise) do
       Promise.new{ raise StandardError.new(rejected_reason) }.
-    rescue{ nil }.tap(){ sleep(0.1) }
+        rescue{ nil }.tap(){ sleep(0.1) }
       end
 
     context '#state' do

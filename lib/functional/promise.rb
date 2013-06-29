@@ -21,7 +21,6 @@ module Functional
     # @return [Boolean]
     def pending?() return(!(fulfilled? || rejected?)); end
 
-    alias_method :realized?, :fulfilled?
     alias_method :deref, :value
 
     # Creates a new promise object. "A promise represents the eventual
