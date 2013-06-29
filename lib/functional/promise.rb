@@ -43,9 +43,9 @@ module Functional
       else
         @parent = nil
         @chain = [self]
-        @mutex = Mutex.new
       end
 
+      @mutex = Mutex.new
       @handler = block || Proc.new{|result| result }
       @state = :pending
       @value = nil
@@ -57,18 +57,22 @@ module Functional
     end
 
     # Create a new child Promise. The block argument for the child will
-    # be the result of fulfilling its parent.
+    # be the result of fulfilling its parent. If the child will
+    # immediately be rejected if the parent has already been rejected.
     #
     # @param block [Proc] the block to call when attempting fulfillment
     #
     # @return [Promise] the new promise
     def then(&block)
-      return self unless pending?
-      block = Proc.new{|result| result } unless block_given?
-      @children << Promise.new(self, &block)
-      push(@children.last)
-      root.thread.run if root.thread.alive?
-      return @children.last
+      child = @mutex.synchronize do
+        block = Proc.new{|result| result } unless block_given?
+        @children << Promise.new(self, &block)
+        @children.last.on_reject(@reason) if rejected?
+        push(@children.last)
+        root.thread.run if root.thread.alive?
+        @children.last
+      end
+      return child
     end
 
     # Add a rescue handler to be run if the promise is rejected (via raised
@@ -82,7 +86,9 @@ module Functional
     #
     # @return [self] so that additional chaining can occur
     def rescue(clazz = Exception, &block)
-      @rescuers << Rescuer.new(clazz, block) if block_given?
+      @mutex.synchronize do
+        @rescuers << Rescuer.new(clazz, block) if block_given?
+      end
       return self
     end
     alias_method :catch, :rescue
@@ -113,9 +119,7 @@ module Functional
     # @private
     def push(promise) # :nodoc:
       if root?
-        @mutex.synchronize {
-          @chain << promise
-        }
+        @chain << promise
       else
         @parent.push(promise)
       end
@@ -123,20 +127,27 @@ module Functional
 
     # @private
     def on_fulfill(value) # :nodoc:
-      @state = :fulfilled
-      @value = value
-      @reason = nil
-      self.freeze
+      @mutex.synchronize do
+        if pending?
+          @value = @handler.call(value)
+          @state = :fulfilled
+          @reason = nil
+        end
+      end
+      return @value
     end
 
     # @private
     def on_reject(reason) # :nodoc:
-      @state = :rejected
-      @reason = reason.is_a?(Exception) ? reason.inspect : reason.to_s
-      self.try_rescue(reason)
-      @value = nil
-      @children.each{|child| child.on_reject(reason) }
-      self.freeze
+      @mutex.synchronize do
+        if pending?
+          @state = :rejected
+          @reason = reason.is_a?(Exception) ? reason.inspect : reason.to_s
+          self.try_rescue(reason)
+          @value = nil
+        end
+        @children.each{|child| child.on_reject(reason) }
+      end
     end
 
     # @private
@@ -157,8 +168,7 @@ module Functional
           current = mutex.synchronize{ chain[index] }
           unless current.rejected?
             begin
-              result = current.handler.call(result)
-              current.on_fulfill(result)
+              result = current.on_fulfill(result)
             rescue Exception => ex
               current.on_reject(ex)
             end
@@ -182,6 +192,7 @@ module Kernel
   # to be resolved before their children. The result of each promise
   # is passes to each of its children when the child resolves. When
   # a promise is rejected all its children will be summarily rejected.
+  # A promise added to a rejected promise will immediately be rejected.
   # A promise that is neither resolved or rejected is pending.
   #
   # @param args [Array] zero or more arguments for the block

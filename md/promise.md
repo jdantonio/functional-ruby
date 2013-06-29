@@ -181,7 +181,7 @@ promise{ Thread.pass; raise StandardError }.
   then{ true }.rescue{ puts 'Boom!' }.
   then{ true }.rescue{ puts 'Boom!' }.
   then{ true }.rescue{ puts 'Boom!' }
-sleep(0.1);
+sleep(0.1)
 
 #=> Boom!
 #=> Boom!

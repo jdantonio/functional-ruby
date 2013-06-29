@@ -17,8 +17,8 @@ module Functional
 
     let(:rejected_promise) do
       Promise.new{ raise StandardError.new(rejected_reason) }.
-        rescue{ nil }.tap(){ sleep(0.1) }
-    end
+    rescue{ nil }.tap(){ sleep(0.1) }
+      end
 
     context '#state' do
 
@@ -38,21 +38,6 @@ module Functional
         p = rejected_promise
         p.state.should == :rejected
         p.should be_rejected
-      end
-
-      it 'is not frozen when :pending' do
-        p = pending_promise
-        p.should_not be_frozen
-      end
-
-      it 'is frozen when :fulfilled' do
-        p = fulfilled_promise
-        p.should be_frozen
-      end
-
-      it 'is frozen when :rejected' do
-        p = rejected_promise
-        p.should be_frozen
       end
     end
 
@@ -95,18 +80,23 @@ module Functional
         p1.should_not eq p2
       end
 
-      it 'returns self when :fulfilled' do
+      it 'returns a new Promise when :fulfilled' do
         p1 = fulfilled_promise
         p2 = p1.then{}
         p2.should be_a(Promise)
-        p1.object_id.should eq p2.object_id
+        p1.should_not eq p2
       end
 
-      it 'returns self when :rejected' do
+      it 'returns a new Promise when :rejected' do
         p1 = rejected_promise
         p2 = p1.then{}
         p2.should be_a(Promise)
-        p1.object_id.should eq p2.object_id
+        p1.should_not eq p2
+      end
+
+      it 'immediately rejects new promises when self has been rejected' do
+        p = rejected_promise
+        p.then.should be_rejected
       end
 
       it 'accepts a nil block' do
@@ -154,7 +144,7 @@ module Functional
         sleep(0.1)
         [@a, @b, @c].should eq [1, 2, 3]
       end
-      
+
       it 'passes the result of each block to all its children' do
         @expected = nil
         promise(10){|a| a * 2 }.then{|result| @expected = result}
@@ -198,13 +188,10 @@ module Functional
 
       it 'recursively rejects all children' do
         p = promise{ Thread.pass; raise StandardError.new('Boom!') }
-        promises = 3.times.collect{ p.then{ true } }
+        promises = 10.times.collect{ p.then{ true } }
         sleep(0.1)
 
-        #NOTE: The exact size of array 'p' cannot be predicted because
-        # it is impossible to time precisely when the root promise will
-        # abend. Testing concurrency is hard...
-        promises.each{|p| p.should be_rejected }
+        10.times.each{|i| promises[i].should be_rejected }
       end
 
       it 'skips processing rejected promises' do
@@ -217,48 +204,48 @@ module Functional
       it 'calls the first exception block with a matching class' do
         @expected = nil
         promise{ raise StandardError }.
-          rescue(StandardError){|ex| @expected = 1 }.
-          rescue(StandardError){|ex| @expected = 2 }.
-          rescue(StandardError){|ex| @expected = 3 }
-        sleep(0.1)
-        @expected.should eq 1
-      end
+      rescue(StandardError){|ex| @expected = 1 }.
+        rescue(StandardError){|ex| @expected = 2 }.
+        rescue(StandardError){|ex| @expected = 3 }
+          sleep(0.1)
+          @expected.should eq 1
+        end
 
       it 'matches all with a rescue with no class given' do
         @expected = nil
         promise{ raise NoMethodError }.
-          rescue(LoadError){|ex| @expected = 1 }.
-          rescue{|ex| @expected = 2 }.
-          rescue(StandardError){|ex| @expected = 3 }
-        sleep(0.1)
-        @expected.should eq 2
-      end
+      rescue(LoadError){|ex| @expected = 1 }.
+        rescue{|ex| @expected = 2 }.
+        rescue(StandardError){|ex| @expected = 3 }
+          sleep(0.1)
+          @expected.should eq 2
+        end
 
       it 'searches associated rescue handlers in order' do
         @expected = nil
         promise{ raise ArgumentError }.
-          rescue(ArgumentError){|ex| @expected = 1 }.
-          rescue(LoadError){|ex| @expected = 2 }.
-          rescue(Exception){|ex| @expected = 3 }
-        sleep(0.1)
-        @expected.should eq 1
+      rescue(ArgumentError){|ex| @expected = 1 }.
+        rescue(LoadError){|ex| @expected = 2 }.
+        rescue(Exception){|ex| @expected = 3 }
+          sleep(0.1)
+          @expected.should eq 1
 
-        @expected = nil
-        promise{ raise LoadError }.
-          rescue(ArgumentError){|ex| @expected = 1 }.
+          @expected = nil
+          promise{ raise LoadError }.
+        rescue(ArgumentError){|ex| @expected = 1 }.
           rescue(LoadError){|ex| @expected = 2 }.
           rescue(Exception){|ex| @expected = 3 }
-        sleep(0.1)
-        @expected.should eq 2
+            sleep(0.1)
+            @expected.should eq 2
 
-        @expected = nil
-        promise{ raise StandardError }.
+            @expected = nil
+            promise{ raise StandardError }.
           rescue(ArgumentError){|ex| @expected = 1 }.
-          rescue(LoadError){|ex| @expected = 2 }.
-          rescue(Exception){|ex| @expected = 3 }
-        sleep(0.1)
-        @expected.should eq 3
-      end
+            rescue(LoadError){|ex| @expected = 2 }.
+            rescue(Exception){|ex| @expected = 3 }
+              sleep(0.1)
+              @expected.should eq 3
+            end
 
       it 'passes the exception object to the matched block' do
         @expected = nil
@@ -273,30 +260,30 @@ module Functional
       it 'ignores rescuers without a block' do
         @expected = nil
         promise{ raise StandardError }.
-          rescue(StandardError).
-          rescue(StandardError){|ex| @expected = ex }.
-          rescue(Exception){|ex| @expected = ex }
-        sleep(0.1)
-        @expected.should be_a(StandardError)
-      end
+      rescue(StandardError).
+        rescue(StandardError){|ex| @expected = ex }.
+        rescue(Exception){|ex| @expected = ex }
+          sleep(0.1)
+          @expected.should be_a(StandardError)
+        end
 
       it 'supresses the exception if no rescue matches' do
         lambda {
           promise{ raise StandardError }.
-            rescue(ArgumentError){|ex| @expected = ex }.
-            rescue(StandardError){|ex| @expected = ex }.
-            rescue(Exception){|ex| @expected = ex }
+      rescue(ArgumentError){|ex| @expected = ex }.
+        rescue(StandardError){|ex| @expected = ex }.
+        rescue(Exception){|ex| @expected = ex }
           sleep(0.1)
         }.should_not raise_error
-      end
+        end
 
       it 'supresses exceptions thrown from rescue handlers' do
         lambda {
           promise{ raise ArgumentError }.
-            rescue(Exception){ raise StandardError }
-          sleep(0.1)
+      rescue(Exception){ raise StandardError }
+        sleep(0.1)
         }.should_not raise_error(StandardError)
-      end
+        end
 
       it 'calls matching rescue handlers on all children' do
         @expected = []
@@ -308,10 +295,7 @@ module Functional
           then{ sleep(0.1) }.rescue{ @expected << 'Boom!' }
         sleep(0.1)
 
-        #NOTE: The exact size of @expected cannot be predicted because
-        # it is impossible to time precisely when the root promise will
-        # abend. Testing concurrency is hard...
-        @expected.should_not be_empty
+        @expected.length.should eq 5
       end
     end
   end
