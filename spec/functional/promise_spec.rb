@@ -252,9 +252,9 @@ module Functional
       it 'passes the exception object to the matched block' do
         @expected = nil
         Promise.new{ raise StandardError }.
-          catch(ArgumentError){|ex| @expected = ex }.
-          catch(LoadError){|ex| @expected = ex }.
-          catch(Exception){|ex| @expected = ex }
+          rescue(ArgumentError){|ex| @expected = ex }.
+          rescue(LoadError){|ex| @expected = ex }.
+          rescue(Exception){|ex| @expected = ex }
         sleep(0.1)
         @expected.should be_a(StandardError)
       end
@@ -311,9 +311,19 @@ module Functional
         fulfilled_promise.deref.should eq fulfilled_value
       end
 
-      it 'aliases #catch for #rescue'
+      it 'aliases #catch for #rescue' do
+        @expected = nil
+        Promise.new{ raise StandardError }.catch{ @expected = true }
+        sleep(0.1)
+        @expected.should be_true
+      end
 
-      it 'aliases #on_error for #rescue'
+      it 'aliases #on_error for #rescue' do
+        @expected = nil
+        Promise.new{ raise StandardError }.on_error{ @expected = true }
+        sleep(0.1)
+        @expected.should be_true
+      end
 
       it 'aliases Kernel#promise for Promise.new' do
         promise().should be_a(Promise)
