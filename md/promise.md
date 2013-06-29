@@ -101,11 +101,12 @@ Much like the economy, rejection exhibits a trickle-down effect. When
 a promise is rejected all its children will be rejected
 
 ```ruby
-p = [ promise{ sleep(1); raise StandardError } ]
+p = [ promise{ Thread.pass; raise StandardError } ]
 
 10.times{|i| p << p.first.then{ i } }
 sleep(0.1)
 
+p.length      #=> 11
 p.first.state #=> :rejected
 p.last.state  #=> :rejected
 ```
@@ -173,17 +174,20 @@ sleep(0.1)
 Trickle-down rejection also applies to rescue handlers. When a promise is rejected,
 for any reason, its rescue handlers will be triggered. Rejection of the parent counts.
 
-
 ```ruby
-p = [ promise{ sleep(1); raise StandardError } ]
+promise{ Thread.pass; raise StandardError }.
+  then{ true }.rescue{ puts 'Boom!' }.
+  then{ true }.rescue{ puts 'Boom!' }.
+  then{ true }.rescue{ puts 'Boom!' }.
+  then{ true }.rescue{ puts 'Boom!' }.
+  then{ true }.rescue{ puts 'Boom!' }
+sleep(0.1);
 
-10.times{|i| p << p.first.then{ nil }.rescue{|ex| puts i.times.collect{'Boom!'}.join(' ') } }
-
-p = promise{ sleep(1); raise StandardError }
-10.times{ p.then{ nil }.rescue{|ex| puts 'Boom!' } }
-sleep(1)
-
-
+#=> Boom!
+#=> Boom!
+#=> Boom!
+#=> Boom!
+#=> Boom!
 ```
 
 ## Copyright

@@ -141,8 +141,10 @@ module Functional
 
     # @private
     def try_rescue(ex) # :nodoc:
-      rescuer = self.rescuers.find{|r| ex.is_a?(r.clazz) }
+      rescuer = @rescuers.find{|r| ex.is_a?(r.clazz) }
       rescuer.block.call(ex) if rescuer
+    rescue Exception => e
+      # supress
     end
 
     # @private
