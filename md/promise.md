@@ -170,21 +170,20 @@ sleep(0.1)
 #=> Boom!
 ```
 
-If a promise does not have a matching `rescue` handlers the exception
-will bubble up through the parents until one matches or the root promise
-is reached
+Trickle-down rejection also applies to rescue handlers. When a promise is rejected,
+for any reason, its rescue handlers will be triggered. Rejection of the parent counts.
+
 
 ```ruby
-promise{ "Hello" }.
-  rescue(ArgumentError){|ex| puts "Bam!" }.
-  rescue(NoMethodError){|ex| puts "Boom!" }.
-  rescue(StandardError){|ex| puts "Pow!" }.
-  then{|result| "#{result}, world!" }.
-  then{ raise ArgumentError }
+p = [ promise{ sleep(1); raise StandardError } ]
 
-sleep(0.1)
+10.times{|i| p << p.first.then{ nil }.rescue{|ex| puts i.times.collect{'Boom!'}.join(' ') } }
 
-#=> Bom!
+p = promise{ sleep(1); raise StandardError }
+10.times{ p.then{ nil }.rescue{|ex| puts 'Boom!' } }
+sleep(1)
+
+
 ```
 
 ## Copyright

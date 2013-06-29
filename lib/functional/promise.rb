@@ -71,8 +71,8 @@ module Functional
       return @children.last
     end
 
-    # Add a rescue block to be run if the promise is rejected (via raised
-    # exception). Multiple rescue blocks may be added to a Promise.
+    # Add a rescue handler to be run if the promise is rejected (via raised
+    # exception). Multiple rescue handlers may be added to a Promise.
     # Rescue blocks will be checked in order and the first one with a
     # matching Exception class will be processed. The block argument
     # will be the exception that caused the rejection.
@@ -133,18 +133,15 @@ module Functional
     def on_reject(reason) # :nodoc:
       @state = :rejected
       @reason = reason.is_a?(Exception) ? reason.inspect : reason.to_s
+      self.try_rescue(reason)
       @value = nil
-      @children.each{|child| child.on_reject(reason)}
+      @children.each{|child| child.on_reject(reason) }
       self.freeze
     end
 
     # @private
-    def bubble(current, ex) # :nodoc:
-      rescuer = until current.nil?
-                  match = current.rescuers.find{|r| ex.is_a?(r.clazz) }
-                  break(match) unless match.nil?
-                  current = current.parent
-                end
+    def try_rescue(ex) # :nodoc:
+      rescuer = self.rescuers.find{|r| ex.is_a?(r.clazz) }
       rescuer.block.call(ex) if rescuer
     end
 
@@ -162,7 +159,6 @@ module Functional
               current.on_fulfill(result)
             rescue Exception => ex
               current.on_reject(ex)
-              bubble(current, ex)
             end
           end
           index += 1

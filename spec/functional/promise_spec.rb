@@ -230,7 +230,7 @@ module Functional
         @expected.should eq 2
       end
 
-      it 'searches associated rescue blocks in order' do
+      it 'searches associated rescue handlers in order' do
         @expected = nil
         promise{ raise ArgumentError }.
           rescue(ArgumentError){|ex| @expected = 1 }.
@@ -266,18 +266,6 @@ module Functional
         @expected.should be_a(StandardError)
       end
 
-      it 'bubbles up when no exception blocks match' do
-        @expected = nil
-        promise{ nil }.
-          rescue(ArgumentError){|ex| @expected = ex }.
-          then{ raise ArgumentError }.
-          rescue(ArgumentError){|ex| @expected = ex }.
-          rescue(StandardError){|ex| @expected = ex }.
-          rescue(Exception){|ex| @expected = ex }
-        sleep(0.1)
-        @expected.should be_a(ArgumentError)
-      end
-
       it 'ignores rescuers without a block' do
         @expected = nil
         promise{ raise StandardError }.
@@ -296,6 +284,16 @@ module Functional
             rescue(Exception){|ex| @expected = ex }
           sleep(0.1)
         }.should_not raise_error
+      end
+
+      it 'calls matching rescue handlers on all children' do
+        @expected = []
+        p = promise{ raise StandardError.new('Boom!') }
+        promises = 3.times.collect{|i| p.then{ true }.rescue{ @expected << i } }
+        sleep(0.1)
+        3.times.each do |i|
+          @expected.should include(i)
+        end
       end
     end
   end
