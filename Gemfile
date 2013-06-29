@@ -3,7 +3,6 @@ source 'http://rubygems.org'
 gemspec
 
 group :development do
-  gem 'yard'
   gem 'redcarpet', :platforms => :mri
   gem 'debugger', :platforms => :mri
 end
