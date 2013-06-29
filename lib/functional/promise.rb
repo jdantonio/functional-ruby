@@ -11,6 +11,7 @@ module Functional
     # Has the promise been fulfilled?
     # @return [Boolean]
     def fulfilled?() return(@state == :fulfilled); end
+    alias_method :realized?, :fulfilled?
 
     # Has the promise been rejected?
     # @return [Boolean]
