@@ -5,7 +5,7 @@ module Functional
   describe Promise do
 
     let!(:fulfilled_value) { 10 }
-    let!(:rejected_reason) { 'mojo jojo' }
+    let!(:rejected_reason) { StandardError.new('mojo jojo') }
 
     let(:pending_promise) do
       Promise.new{ sleep(1) }
@@ -66,8 +66,9 @@ module Functional
         fulfilled_promise.reason.should be_nil
       end
 
-      it 'is set to the message of the exception when :rejected' do
-        rejected_promise.reason.should =~ /#{rejected_reason}/
+      it 'is set to error object of the exception when :rejected' do
+        rejected_promise.reason.should be_a(Exception)
+        rejected_promise.reason.to_s.should =~ /#{rejected_reason}/
       end
     end
 
@@ -174,10 +175,11 @@ module Functional
 
     context 'rejection' do
 
-      it 'sets the promise reason to an error message on exception' do
+      it 'sets the promise reason the error object on exception' do
         p = promise{ raise StandardError.new('Boom!') }
         sleep(0.1)
-        p.reason.should =~ /Boom!/
+        p.reason.should be_a(Exception)
+        p.reason.should.to_s =~ /Boom!/
       end
 
       it 'sets the promise state to :rejected on exception' do

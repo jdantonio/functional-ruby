@@ -142,7 +142,7 @@ module Functional
       @mutex.synchronize do
         if pending?
           @state = :rejected
-          @reason = reason.is_a?(Exception) ? reason.inspect : reason.to_s
+          @reason = reason
           self.try_rescue(reason)
           @value = nil
         end
