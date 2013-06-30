@@ -46,7 +46,7 @@ module Functional
     alias_method :realized?, :fulfilled?
     alias_method :deref, :value
 
-    def initialize(*args, &block)
+    def initialize(*args)
 
       unless block_given?
         @state = :fulfilled
@@ -57,7 +57,7 @@ module Functional
           @mutex.synchronize do
             Thread.pass
             begin
-              @value = block.call(*args)
+              @value = yield(*args)
             rescue Exception => ex
               # supress
             end
@@ -95,11 +95,11 @@ module Kernel
   #
   # @see http://golang.org/doc/effective_go.html#goroutines
   # @see https://gobyexample.com/goroutines
-  def go(*args, &block)
+  def go(*args)
     return false unless block_given?
     t = Thread.new(*args){ |*args|
       Thread.pass
-      self.instance_exec(*args, &block)
+      yield(*args)
     }
     t.abort_on_exception = false
     return t.alive?
