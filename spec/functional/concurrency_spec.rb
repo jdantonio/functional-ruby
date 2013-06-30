@@ -21,7 +21,8 @@ module Functional
 
       it 'returns false if the thread cannot be created' do
         t = Thread.new{ nil }
-        Thread.stub(:new).with(any_args()).and_return(t)
+        t.stub(:alive?).with(no_args()).and_return(false)
+        Thread.stub(:new).once.with(any_args()).and_return(t)
         go{ nil }.should be_false
       end
 
@@ -186,7 +187,8 @@ module Functional
           end
 
           it 'returns true when the thread is killed' do
-            Thread.stub(:kill).once.with(any_args()).and_return(dead_thread)
+            t = stub('thread', :alive? => false)
+            Thread.stub(:kill).once.with(any_args()).and_return(t)
             pending_future.cancel.should be_true
           end
 
@@ -208,7 +210,8 @@ module Functional
           end
 
           it 'sets the sate to :fulfilled on success' do
-            Thread.stub(:kill).once.with(any_args()).and_return(dead_thread)
+            t = stub('thread', :alive? => false)
+            Thread.stub(:kill).once.with(any_args()).and_return(t)
             f = pending_future
             f.cancel
             f.should be_fulfilled
