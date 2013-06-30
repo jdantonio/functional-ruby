@@ -18,19 +18,29 @@ module Functional
     def pending?() return(! fulfilled?); end
 
     def value(timeout = nil)
-      if @mutex.nil?
+      if @mutex.nil? || fulfilled?
         return @value
       elsif timeout.nil?
         return @mutex.synchronize { @value }
       else
         begin
-          Timeout::timeout(timeout.to_f) {
+          return Timeout::timeout(timeout.to_f) {
             @mutex.synchronize { @value }
           }
         rescue Timeout::Error => ex
           return nil
         end
       end
+    end
+
+    def cancel
+      return false if @t.nil? || fulfilled?
+      t = Thread.kill(@t)
+      unless t.alive?
+        @value = nil
+        @state = :fulfilled
+      end
+      return ! t.alive?
     end
 
     alias_method :realized?, :fulfilled?
@@ -69,33 +79,6 @@ module Kernel
   module_function :future
 end
 
-#module Functional
-  # p = Process.new{|receive| 'Bam!' }
-  # # -or-
-  # p = make {|receive| 'Bam!' }
-
-  # p << 'Boom!' # send the message 'Boom!' to the process
-  # x = nil
-  # p >> x # retrieve the next message from the process
-
-  # p.kill # stop the process and freeze it
-
-  # http://www.ruby-doc.org/core-1.9.3/ObjectSpace.html
-  #class Process
-
-    #def initialize(&block)
-      #raise ArgumentError.new('no block given') unless block_given?
-      #ObjectSpace.define_finalizer(self, proc {|id| puts "Finalizer one on #{id}" })
-    #end
-
-    #def <<(send)
-    #end
-
-    #def >>(receive)
-    #end
-  #end
-#end
-
 module Kernel
 
   # Spawn a single-use thread to run the given block.
@@ -122,11 +105,4 @@ module Kernel
     return t.alive?
   end
   module_function :go
-
-  ## called `spawn` in Erlang, but Ruby already has a spawn function
-  ## called `make` in Go
-  #def make(&block)
-    #return Functional::Process.new(&block)
-  #end
-  #module_function :make
 end

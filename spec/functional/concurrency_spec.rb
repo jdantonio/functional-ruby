@@ -14,11 +14,15 @@ module Functional
       end
 
       it 'returns true if the thread is successfully created' do
-        pending
+        t = Thread.new{ sleep }
+        Thread.stub(:new).with(any_args()).and_return(t)
+        go{ nil }.should be_true
       end
 
       it 'returns false if the thread cannot be created' do
-        pending
+        t = Thread.new{ nil }
+        Thread.stub(:new).with(any_args()).and_return(t)
+        go{ nil }.should be_false
       end
 
       it 'immediately returns false if no block is given' do
@@ -173,17 +177,42 @@ module Functional
 
         context '#cancel'  do
 
-          it 'attempts to kill the thread when :pending'
+          let(:dead_thread){ Thread.new{} }
+          let(:alive_thread){ Thread.new{ sleep } }
 
-          it 'returns true when the thread is killed'
+          it 'attempts to kill the thread when :pending' do
+            Thread.should_receive(:kill).once.with(any_args()).and_return(dead_thread)
+            pending_future.cancel
+          end
 
-          it 'returns false when the thread is not killed'
+          it 'returns true when the thread is killed' do
+            Thread.stub(:kill).once.with(any_args()).and_return(dead_thread)
+            pending_future.cancel.should be_true
+          end
 
-          it 'returns false when :fulfilled'
+          it 'returns false when the thread is not killed' do
+            Thread.stub(:kill).with(any_args()).and_return(alive_thread)
+            pending_future.cancel.should be_false
+          end
 
-          it 'sets the value to nil on success'
+          it 'returns false when :fulfilled' do
+            f = fulfilled_future
+            f.cancel.should be_false
+          end
 
-          it 'sets the sate to :fulfilled on success'
+          it 'sets the value to nil on success' do
+            Thread.stub(:kill).once.with(any_args()).and_return(dead_thread)
+            f = pending_future
+            f.cancel
+            f.value.should be_nil
+          end
+
+          it 'sets the sate to :fulfilled on success' do
+            Thread.stub(:kill).once.with(any_args()).and_return(dead_thread)
+            f = pending_future
+            f.cancel
+            f.should be_fulfilled
+          end
         end
 
         context 'aliases' do
