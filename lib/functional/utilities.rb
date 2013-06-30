@@ -7,12 +7,28 @@ NaN = 0/0.0 unless defined?(NaN)
 
 module Kernel
 
-  # Is the current process a REPL? 
-  # @private
-  def repl? # :nodoc:
-    return ($0 == 'irb' || $0 == 'pry' || $0 == 'script/rails' || !!($0 =~ /bin\/bundle$/))
+  # Compute the difference (delta) between two values.
+  #
+  # When a block is given the block will be applied to both arguments.
+  # Using a block in this way allows computation against a specific field
+  # in a data set of hashes or objects.
+  #
+  # @yield iterates over each element in the data set
+  # @yieldparam item each element in the data set
+  #
+  # @param [Object] v1 the first value
+  # @param [Object] v2 the second value
+  #
+  # @return [Float] positive value representing the difference
+  #   between the two parameters
+  def delta(v1, v2)
+    if block_given?
+      v1 = yield(v1)
+      v2 = yield(v2)
+    end
+    return (v1 - v2).abs
   end
-  module_function :repl?
+  module_function :delta
 
   # Sandbox the given operation at a high $SAFE level.
   #
@@ -20,29 +36,17 @@ module Kernel
   # @param block [Proc] the block to isolate
   #
   # @return [Object] the result of the block operation
-  def safe(*args, &block)
+  def safe(*args)
     raise ArgumentError.new('no block given') unless block_given?
     result = nil
     t = Thread.new do
       $SAFE = 3
-      result = self.instance_exec(*args, &block)
+      result = yield(*args)
     end
     t.join
     return result
   end
   module_function :safe
-
-  # @private
-  # @see http://rhaseventh.blogspot.com/2008/07/ruby-and-rails-how-to-get-pp-pretty.html
-  def pp_s(*objs) # :nodoc:
-    s = StringIO.new
-    objs.each {|obj|
-      PP.pp(obj, s)
-    }
-    s.rewind
-    s.read
-  end
-  module_function :pp_s
 
   # Open a file, read it, close the file, and return its contents.
   #
@@ -68,27 +72,38 @@ module Kernel
   end
   module_function :slurpee
 
-  # Compute the difference (delta) between two values.
-  # 
-  # When a block is given the block will be applied to both arguments.
-  # Using a block in this way allows computation against a specific field
-  # in a data set of hashes or objects.
-  #
-  # @yield iterates over each element in the data set
-  # @yieldparam item each element in the data set
-  #
-  # @param [Object] v1 the first value
-  # @param [Object] v2 the second value
-  #
-  # @return [Float] positive value representing the difference
-  #   between the two parameters
-  def delta(v1, v2)
-    if block_given?
-      v1 = yield(v1)
-      v2 = yield(v2)
-    end
-    return (v1 - v2).abs
-  end
-  module_function :delta
+  #############################################################################
 
+  # @private
+  def repl? # :nodoc:
+    return ($0 == 'irb' || $0 == 'pry' || $0 == 'script/rails' || !!($0 =~ /bin\/bundle$/))
+  end
+  module_function :repl?
+
+  # @private
+  def timer(*args) # :nodoc:
+    t1 = Time.now
+    result = yield(*args)
+    t2 = Time.now
+    return (t2 - t1)
+  end
+  module_function :timer
+
+  # @private
+  def strftimer(seconds) # :nodoc:
+    Time.at(seconds).gmtime.strftime('%R:%S.%L')
+  end
+  module_function :strftimer
+
+  # @private
+  # @see http://rhaseventh.blogspot.com/2008/07/ruby-and-rails-how-to-get-pp-pretty.html
+  def pp_s(*objs) # :nodoc:
+    s = StringIO.new
+    objs.each {|obj|
+      PP.pp(obj, s)
+    }
+    s.rewind
+    s.read
+  end
+  module_function :pp_s
 end
