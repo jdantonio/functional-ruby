@@ -5,10 +5,13 @@ require 'functional/concurrent_behavior'
 module Functional
 
   class Promise
+    behavior(:future)
+    behavior(:promise)
 
     attr_reader :state
-    attr_reader :value
     attr_reader :reason
+
+    def value(timeout = nil) return @value; end
 
     # Has the promise been fulfilled?
     # @return [Boolean]

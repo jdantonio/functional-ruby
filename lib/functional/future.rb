@@ -6,6 +6,7 @@ require 'functional/concurrent_behavior'
 module Functional
 
   class Future
+    behavior(:future)
 
     attr_reader :state
 

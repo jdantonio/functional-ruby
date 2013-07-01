@@ -18,6 +18,17 @@ module Functional
       Future.new{ raise StandardException }.tap(){ sleep(0.1) }
     end
 
+    context 'behavior' do
+
+      it 'implements :future behavior' do
+        lambda {
+          Future.new{ nil }
+        }.should_not raise_error(BehaviorError)
+
+        Future.new{ nil }.behaves_as?(:future).should be_true
+      end
+    end
+
     context '#initialize' do
 
       it 'spawns a new thread when a block is given' do

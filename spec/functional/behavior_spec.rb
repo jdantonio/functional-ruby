@@ -3,7 +3,12 @@ require 'spec_helper'
 describe '-behavior' do
 
   before(:each) do
+    @__behavior_info__ = $__behavior_info__
     $__behavior_info__ = {}
+  end
+
+  after(:each) do
+    $__behavior_info__ = @__behavior_info__
   end
 
   context 'behavior_info/2' do

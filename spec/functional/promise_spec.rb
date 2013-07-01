@@ -20,6 +20,25 @@ module Functional
         rescue{ nil }.tap(){ sleep(0.1) }
       end
 
+    context 'behavior' do
+
+      it 'implements :promise behavior' do
+        lambda {
+          Promise.new{ nil }
+        }.should_not raise_error(BehaviorError)
+
+        Promise.new{ nil }.behaves_as?(:promise).should be_true
+      end
+
+      it 'implements :future behavior' do
+        lambda {
+          Promise.new{ nil }
+        }.should_not raise_error(BehaviorError)
+
+        Promise.new{ nil }.behaves_as?(:future).should be_true
+      end
+    end
+
     context '#state' do
 
       it 'is :pending when first created' do
