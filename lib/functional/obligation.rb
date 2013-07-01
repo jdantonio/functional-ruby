@@ -31,6 +31,7 @@ module Functional
     # Has the obligation been fulfilled?
     # @return [Boolean]
     def fulfilled?() return(@state == :fulfilled); end
+    alias_method :realized?, :fulfilled?
 
     # Is obligation completion still pending?
     # @return [Boolean]
@@ -51,13 +52,11 @@ module Functional
         end
       end
     end
+    alias_method :deref, :value
 
     # Has the promise been rejected?
     # @return [Boolean]
     def rejected?() return(@state == :rejected); end
-
-    alias_method :realized?, :fulfilled?
-    alias_method :deref, :value
 
     protected
 
