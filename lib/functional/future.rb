@@ -1,5 +1,4 @@
 require 'thread'
-require 'timeout'
 
 require 'functional/obligation'
 

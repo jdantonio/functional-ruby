@@ -1,3 +1,6 @@
+require 'thread'
+require 'timeout'
+
 require 'functional/behavior'
 
 behavior_info(:future,
