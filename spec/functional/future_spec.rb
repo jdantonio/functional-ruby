@@ -1,5 +1,5 @@
 require 'spec_helper'
-require_relative 'obligation_spec'
+require_relative 'obligation_shared'
 
 module Functional
 
