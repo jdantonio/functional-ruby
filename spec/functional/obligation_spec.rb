@@ -82,6 +82,7 @@ module Functional
 
       it 'aliases Kernel#deref for #deref' do
         deref(fulfilled_subject).should eq fulfilled_value
+        deref(fulfilled_subject, 0).should eq fulfilled_value
       end
 
       it 'aliases Kernel#pending? for #pending?' do

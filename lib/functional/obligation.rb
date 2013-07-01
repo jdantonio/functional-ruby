@@ -65,11 +65,11 @@ end
 
 module Kernel
 
-  def deref(obligation)
+  def deref(obligation, timeout = nil)
     if obligation.respond_to?(:deref)
-      return obligation.deref
+      return obligation.deref(timeout)
     elsif obligation.respond_to?(:value)
-      return obligation.deref
+      return obligation.deref(timeout)
     else
       return nil
     end
