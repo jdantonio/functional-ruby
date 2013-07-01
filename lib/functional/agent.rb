@@ -5,7 +5,7 @@ module Functional
 
   # An agent is a single atomic value that represents an identity. The current value
   # of the agent can be requested at any time (#deref). Each agent has a work queue and operates on
-  # its own thread (or a thread from the shared pool). Consumers can #send code blocks to the
+  # its own thread (or a thread from the shared pool). Consumers can #post code blocks to the
   # agent. The code block (function) will receive the current value of the agent as its sole
   # parameter. The return value of the block will become the new value of the agent. Agents support
   # two error handling modes: fail and continue. A good example of an agent is a shared incrementing
@@ -15,7 +15,6 @@ module Functional
 
     TIMEOUT = 5
 
-    attr_reader :value
     attr_reader :initial
     attr_reader :timeout
 
@@ -29,6 +28,9 @@ module Functional
       @thread = Thread.new{ work }
       @thread.abort_on_exception = true
     end
+
+    def value(timeout = 0) return @value; end
+    alias_method :deref, :value
 
     def rescue(clazz = Exception, &block)
       @rescuers << Rescuer.new(clazz, block) if block_given?
@@ -45,13 +47,14 @@ module Functional
     alias_method :validate_with, :validate
     alias_method :validates_with, :validate
 
-    def send(&block)
+    def post(&block)
       return @queue.length unless block_given?
       @queue << block
       return @queue.length
     end
+
     def <<(block)
-      send(&block)
+      self.post(&block)
     end
 
     def length
@@ -60,7 +63,6 @@ module Functional
     alias_method :size, :length
     alias_method :count, :length
 
-    alias_method :deref, :value
     alias_method :add_watch, :add_observer
 
     private
@@ -104,4 +106,24 @@ module Kernel
     return Functional::Agent.new(initial, timeout)
   end
   module_function :agent
+
+  def deref(agent, timeout = nil)
+    if agent.respond_to?(:deref)
+      return agent.deref(timeout)
+    elsif agent.respond_to?(:value)
+      return agent.deref(timeout)
+    else
+      return nil
+    end
+  end
+  module_function :deref
+
+  def post(agent, &block)
+    if agent.respond_to?(:post)
+      return agent.post(&block)
+    else
+      return nil
+    end
+  end
+  module_function :deref
 end

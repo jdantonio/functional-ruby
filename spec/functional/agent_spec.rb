@@ -86,19 +86,19 @@ module Functional
       end
     end
 
-    context '#send' do
+    context '#post' do
       
       it 'adds the given block to the queue' do
         before = subject.length
-        subject.send{ nil }
-        subject.send{ nil }
+        subject.post{ nil }
+        subject.post{ nil }
         subject.length.should eq before+2
       end
 
       it 'does not add to the queue when no block is given' do
         before = subject.length
-        subject.send
-        subject.send{ nil }
+        subject.post
+        subject.post{ nil }
         subject.length.should eq before+1
       end
     end
@@ -109,17 +109,17 @@ module Functional
         subject.length.should eq 0
       end
 
-      it 'should increase by one for each #send' do
-        subject.send{ sleep }
-        subject.send{ sleep }
-        subject.send{ sleep }
+      it 'should increase by one for each #post' do
+        subject.post{ sleep }
+        subject.post{ sleep }
+        subject.post{ sleep }
         subject.length.should eq 3
       end
 
       it 'should decrease by one each time a handler is run' do
-        subject.send{ nil }
-        subject.send{ sleep }
-        subject.send{ sleep }
+        subject.post{ nil }
+        subject.post{ sleep }
+        subject.post{ sleep }
         sleep(0.1)
         subject.length.should eq 1
       end
@@ -129,29 +129,29 @@ module Functional
 
       it 'process each block in the queue' do
         @expected = []
-        subject.send{ @expected << 1 }
-        subject.send{ @expected << 2 }
-        subject.send{ @expected << 3 }
+        subject.post{ @expected << 1 }
+        subject.post{ @expected << 2 }
+        subject.post{ @expected << 3 }
         sleep(0.1)
         @expected.should eq [1,2,3]
       end
 
       it 'passes the current value to the handler' do
         @expected = nil
-        Agent.new(10).send{|i| @expected = i }
+        Agent.new(10).post{|i| @expected = i }
         sleep(0.1)
         @expected.should eq 10
       end
 
       it 'sets the value to the handler return value on success' do
-        subject.send{ 100 }
+        subject.post{ 100 }
         sleep(0.1)
         subject.value.should eq 100
       end
 
       it 'rejects the handler after timeout reached' do
         agent = Agent.new(0, 0.1)
-        agent.send{ sleep(1); 10 }
+        agent.post{ sleep(1); 10 }
         agent.value.should eq 0
       end
     end
@@ -161,7 +161,7 @@ module Functional
       it 'processes the validator when present' do
         @expected = nil
         subject.validate{ @expected = 10; true }
-        subject.send{ nil }
+        subject.post{ nil }
         sleep(0.1)
         @expected.should eq 10
       end
@@ -169,28 +169,28 @@ module Functional
       it 'passes the new value to the validator' do
         @expected = nil
         subject.validate{|v| @expected = v; true }
-        subject.send{ 10 }
+        subject.post{ 10 }
         sleep(0.1)
         @expected.should eq 10
       end
 
       it 'sets the new value when the validator returns true' do
         agent = Agent.new(0).validate{ true }
-        agent.send{ 10 }
+        agent.post{ 10 }
         sleep(0.1)
         agent.value.should eq 10
       end
 
       it 'does not change the value when the validator returns false' do
         agent = Agent.new(0).validate{ false }
-        agent.send{ 10 }
+        agent.post{ 10 }
         sleep(0.1)
         agent.value.should eq 0
       end
 
       it 'does not change the value when the validator raises an exception' do
         agent = Agent.new(0).validate{ raise StandardError }
-        agent.send{ 10 }
+        agent.post{ 10 }
         sleep(0.1)
         agent.value.should eq 0
       end
@@ -204,7 +204,7 @@ module Functional
           rescue(StandardError){|ex| @expected = 1 }.
           rescue(StandardError){|ex| @expected = 2 }.
           rescue(StandardError){|ex| @expected = 3 }
-        subject.send{ raise StandardError }
+        subject.post{ raise StandardError }
           sleep(0.1)
         @expected.should eq 1
       end
@@ -215,7 +215,7 @@ module Functional
           rescue(LoadError){|ex| @expected = 1 }.
           rescue{|ex| @expected = 2 }.
           rescue(StandardError){|ex| @expected = 3 }
-        subject.send{ raise NoMethodError }
+        subject.post{ raise NoMethodError }
         sleep(0.1)
         @expected.should eq 2
       end
@@ -226,7 +226,7 @@ module Functional
           rescue(ArgumentError){|ex| @expected = 1 }.
           rescue(LoadError){|ex| @expected = 2 }.
           rescue(Exception){|ex| @expected = 3 }
-        subject.send{ raise ArgumentError }
+        subject.post{ raise ArgumentError }
         sleep(0.1)
         @expected.should eq 1
 
@@ -235,7 +235,7 @@ module Functional
           rescue(ArgumentError){|ex| @expected = 1 }.
           rescue(LoadError){|ex| @expected = 2 }.
           rescue(Exception){|ex| @expected = 3 }
-        subject.send{ raise LoadError }
+        subject.post{ raise LoadError }
         sleep(0.1)
         @expected.should eq 2
 
@@ -244,7 +244,7 @@ module Functional
           rescue(ArgumentError){|ex| @expected = 1 }.
           rescue(LoadError){|ex| @expected = 2 }.
           rescue(Exception){|ex| @expected = 3 }
-        subject.send{ raise StandardError }
+        subject.post{ raise StandardError }
         sleep(0.1)
         @expected.should eq 3
       end
@@ -255,7 +255,7 @@ module Functional
           rescue(ArgumentError){|ex| @expected = ex }.
           rescue(LoadError){|ex| @expected = ex }.
           rescue(Exception){|ex| @expected = ex }
-        subject.send{ raise StandardError }
+        subject.post{ raise StandardError }
         sleep(0.1)
         @expected.should be_a(StandardError)
       end
@@ -266,7 +266,7 @@ module Functional
           rescue(StandardError).
           rescue(StandardError){|ex| @expected = ex }.
           rescue(Exception){|ex| @expected = ex }
-        subject.send{ raise StandardError }
+        subject.post{ raise StandardError }
         sleep(0.1)
         @expected.should be_a(StandardError)
       end
@@ -277,7 +277,7 @@ module Functional
             rescue(ArgumentError){|ex| @expected = ex }.
             rescue(StandardError){|ex| @expected = ex }.
             rescue(Exception){|ex| @expected = ex }
-          subject.send{ raise StandardError }
+          subject.post{ raise StandardError }
           sleep(0.1)
         }.should_not raise_error
       end
@@ -285,7 +285,7 @@ module Functional
       it 'supresses exceptions thrown from rescue handlers' do
         lambda {
           subject.rescue(Exception){ raise StandardError }
-          subject.send{ raise ArgumentError }
+          subject.post{ raise ArgumentError }
           sleep(0.1)
         }.should_not raise_error(StandardError)
       end
@@ -296,7 +296,7 @@ module Functional
       it 'notifies all observers when the value changes' do
         agent = Agent.new(0)
         agent.add_observer(observer)
-        agent.send{ 10 }
+        agent.post{ 10 }
         sleep(0.1)
         observer.value.should eq 10
       end
@@ -305,7 +305,7 @@ module Functional
         agent = Agent.new(0)
         agent.validate{ false }
         agent.add_observer(observer)
-        agent.send{ 10 }
+        agent.post{ 10 }
         sleep(0.1)
         observer.value.should be_nil
       end
@@ -313,7 +313,7 @@ module Functional
       it 'does not notify observers when the handler raises an exception' do
         agent = Agent.new(0)
         agent.add_observer(observer)
-        agent.send{ raise StandardError }
+        agent.post{ raise StandardError }
         sleep(0.1)
         observer.value.should be_nil
       end
@@ -328,7 +328,7 @@ module Functional
       it 'aliases #validates for :validate' do
         @expected = nil
         subject.validates{|v| @expected = v }
-        subject.send{ 10 }
+        subject.post{ 10 }
         sleep(0.1)
         @expected.should eq 10
       end
@@ -336,7 +336,7 @@ module Functional
       it 'aliases #validate_with for :validate' do
         @expected = nil
         subject.validate_with{|v| @expected = v }
-        subject.send{ 10 }
+        subject.post{ 10 }
         sleep(0.1)
         @expected.should eq 10
       end
@@ -344,7 +344,7 @@ module Functional
       it 'aliases #validates_with for :validate' do
         @expected = nil
         subject.validates_with{|v| @expected = v }
-        subject.send{ 10 }
+        subject.post{ 10 }
         sleep(0.1)
         @expected.should eq 10
       end
@@ -352,7 +352,7 @@ module Functional
       it 'aliases #catch for #rescue' do
         @expected = nil
         subject.catch{ @expected = true }
-        subject.send{ raise StandardError }
+        subject.post{ raise StandardError }
         sleep(0.1)
         @expected.should be_true
       end
@@ -360,7 +360,7 @@ module Functional
       it 'aliases #on_error for #rescue' do
         @expected = nil
         subject.on_error{ @expected = true }
-        subject.send{ raise StandardError }
+        subject.post{ raise StandardError }
         sleep(0.1)
         @expected.should be_true
       end
@@ -368,12 +368,12 @@ module Functional
       it 'aliases #add_watch for #add_observer' do
         agent = Agent.new(0)
         agent.add_watch(observer)
-        agent.send{ 10 }
+        agent.post{ 10 }
         sleep(0.1)
         observer.value.should eq 10
       end
 
-      it 'aliases #<< for Agent#send' do
+      it 'aliases #<< for Agent#post' do
         subject << proc{ 100 }
         sleep(0.1)
         subject.value.should eq 100
@@ -385,6 +385,17 @@ module Functional
 
       it 'aliases Kernel#agent for Agent.new' do
         agent(10).should be_a(Agent)
+      end
+
+      it 'aliases Kernel#deref for #deref' do
+        deref(Agent.new(10)).should eq 10
+        deref(Agent.new(10), 10).should eq 10
+      end
+
+      it 'aliases Kernel:post for Agent#post' do
+        post(subject){ 100 }
+        sleep(0.1)
+        subject.value.should eq 100
       end
     end
   end
