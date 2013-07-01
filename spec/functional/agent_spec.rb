@@ -373,6 +373,16 @@ module Functional
         observer.value.should eq 10
       end
 
+      it 'aliases #<< for Agent#send' do
+        subject << proc{ 100 }
+        sleep(0.1)
+        subject.value.should eq 100
+
+        subject << lambda{ 100 }
+        sleep(0.1)
+        subject.value.should eq 100
+      end
+
       it 'aliases Kernel#agent for Agent.new' do
         agent(10).should be_a(Agent)
       end

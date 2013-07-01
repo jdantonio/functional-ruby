@@ -50,6 +50,9 @@ module Functional
       @queue << block
       return @queue.length
     end
+    def <<(block)
+      send(&block)
+    end
 
     def length
       @queue.length
