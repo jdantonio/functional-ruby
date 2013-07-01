@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Functional
 
-  share_examples_for 'Obligation' do
+  share_examples_for Obligation do
 
     context '#state' do
 
