@@ -13,11 +13,15 @@ module Functional
   class Agent
     include Observable
 
+    TIMEOUT = 5
+
     attr_reader :value
     attr_reader :initial
+    attr_reader :timeout
 
-    def initialize(initial, opts = {})
-      @value = @initial = initial
+    def initialize(initial, timeout = TIMEOUT)
+      @value = initial
+      @timeout = timeout
       @rescuers = []
       @validator = nil
       @queue = Queue.new
@@ -75,7 +79,9 @@ module Functional
         Thread.pass
         handler = @queue.pop
         begin
-          result = handler.call(@value)
+          result = Timeout.timeout(@timeout){
+            handler.call(@value)
+          }
           if @validator.nil? || @validator.call(result)
             @value = result
             changed
@@ -91,8 +97,8 @@ end
 
 module Kernel
 
-  def agent(initial, opts = {})
-    return Functional::Agent.new(initial, opts)
+  def agent(initial, timeout = Functional::Agent::TIMEOUT)
+    return Functional::Agent.new(initial, timeout)
   end
   module_function :agent
 end

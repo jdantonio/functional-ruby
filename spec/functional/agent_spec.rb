@@ -21,6 +21,14 @@ module Functional
         Agent.new(10).value.should eq 10
       end
 
+      it 'sets the timeout to the given value' do
+        Agent.new(0, 5).timeout.should eq 5
+      end
+
+      it 'sets the timeout to the default when nil' do
+        Agent.new(0).timeout.should eq Agent::TIMEOUT
+      end
+
       it 'sets the length to zero' do
         Agent.new(10).length.should eq 0
       end
@@ -142,7 +150,9 @@ module Functional
       end
 
       it 'rejects the handler after timeout reached' do
-        pending
+        agent = Agent.new(0, 0.1)
+        agent.send{ sleep(1); 10 }
+        agent.value.should eq 0
       end
     end
 
