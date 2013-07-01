@@ -51,7 +51,7 @@ describe '-behavior' do
         Class.new{
           behavior(:gen_foo)
         }
-      }.should raise_error(ArgumentError)
+      }.should raise_error(BehaviorError)
     end
 
     it 'can be called multiple times for one class' do
@@ -78,7 +78,7 @@ describe '-behavior' do
 
       lambda {
         clazz.new
-      }.should raise_error(ArgumentError)
+      }.should raise_error(BehaviorError)
     end
 
     it 'raises an exception when one or more functions do not have proper arity' do
@@ -90,7 +90,7 @@ describe '-behavior' do
 
       lambda {
         clazz.new
-      }.should raise_error(ArgumentError)
+      }.should raise_error(BehaviorError)
     end
 
     it 'accepts any arity when function arity is set to :any' do
@@ -102,7 +102,7 @@ describe '-behavior' do
 
       lambda {
         clazz.new
-      }.should_not raise_error(ArgumentError)
+      }.should_not raise_error(BehaviorError)
     end
 
     it 'creates the object when function definitions match' do
@@ -115,7 +115,7 @@ describe '-behavior' do
 
       lambda {
         clazz.new
-      }.should_not raise_error(ArgumentError)
+      }.should_not raise_error(BehaviorError)
     end
   end
 

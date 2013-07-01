@@ -1,5 +1,7 @@
 module Kernel
 
+  BehaviorError = Class.new(StandardError)
+
   # Define a behavioral specification (interface).
   #
   # @param name [Symbol] the name of the behavior
@@ -22,7 +24,7 @@ module Kernel
   def behavior(name)
 
     name = name.to_sym
-    raise ArgumentError.new("undefined behavior '#{name}'") if $__behavior_info__[name].nil?
+    raise BehaviorError.new("undefined behavior '#{name}'") if $__behavior_info__[name].nil?
 
     clazz = self.method(:behavior).receiver
 
@@ -41,7 +43,7 @@ module Kernel
         name = self.behaviors.first
         obj = super
         unless obj.behaves_as?(name)
-          raise ArgumentError.new("undefined callback functions in #{self} (behavior '#{name}')")
+          raise BehaviorError.new("undefined callback functions in #{self} (behavior '#{name}')")
         else
           return obj
         end

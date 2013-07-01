@@ -1,5 +1,6 @@
 require 'functional/behavior'
 require 'functional/concurrency'
+require 'functional/future'
 require 'functional/pattern_matching'
 require 'functional/promise'
 require 'functional/utilities'
