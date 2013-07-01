@@ -21,10 +21,6 @@ module Functional
         Agent.new(10).value.should eq 10
       end
 
-      it 'sets the reason to nil' do
-        Agent.new(10).reason.should be_nil
-      end
-
       it 'sets the length to zero' do
         Agent.new(10).length.should eq 0
       end
@@ -145,12 +141,6 @@ module Functional
         subject.value.should eq 100
       end
 
-      it 'sets the reason to nil on success' do
-        subject.send{ 100 }
-        sleep(0.1)
-        subject.reason.should be_nil
-      end
-
       it 'rejects the handler after timeout reached' do
         pending
       end
@@ -197,13 +187,6 @@ module Functional
     end
 
     context 'rejection' do
-
-      it 'sets the reason to the error object on exception' do
-        subject.send{ raise StandardError.new('Boom!') }
-        sleep(0.1)
-        subject.reason.should be_a(Exception)
-        subject.reason.should.to_s =~ /Boom!/
-      end
 
       it 'calls the first exception block with a matching class' do
         @expected = nil

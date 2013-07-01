@@ -14,12 +14,10 @@ module Functional
     include Observable
 
     attr_reader :value
-    attr_reader :reason
     attr_reader :initial
 
     def initialize(initial, opts = {})
       @value = @initial = initial
-      @reason = nil
       @rescuers = []
       @validator = nil
       @queue = Queue.new
@@ -83,9 +81,7 @@ module Functional
             changed
             notify_observers(Time.now, @value)
           end
-          @reason = nil
         rescue Exception => ex
-          @reason = ex
           try_rescue(ex)
         end
       end
