@@ -27,7 +27,7 @@ module Functional
 
     context '#value' do
 
-      it 'blocks the caller when :pending' do
+      it 'blocks the caller when :pending and timeout is nil' do
         f = pending_subject
         sleep(0.1)
         f.value.should be_true
@@ -38,6 +38,14 @@ module Functional
         f = pending_subject
         sleep(0.1)
         f.value(0.1).should be_nil
+        f.should be_pending
+      end
+
+      it 'returns immediately when timeout is zero' do
+        Timeout.should_not_receive(:timeout).with(any_args())
+        f = pending_subject
+        sleep(0.1)
+        f.value(0).should be_nil
         f.should be_pending
       end
 

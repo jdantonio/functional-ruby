@@ -33,7 +33,7 @@ module Functional
     def pending?() return(!(fulfilled? || rejected?)); end
 
     def value(timeout = nil)
-      if ! pending?
+      if !pending? || timeout == 0
         return @value
       elsif timeout.nil?
         return semaphore.synchronize { @value }
