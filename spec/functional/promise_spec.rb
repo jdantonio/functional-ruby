@@ -1,4 +1,5 @@
 require 'spec_helper'
+require_relative 'obligation_spec'
 
 module Functional
 
@@ -20,6 +21,8 @@ module Functional
         rescue{ nil }.tap(){ sleep(0.1) }
     end
 
+    it_should_behave_like 'Obligation'
+
     context 'behavior' do
 
       it 'implements :promise behavior' do
@@ -36,72 +39,6 @@ module Functional
         }.should_not raise_error(BehaviorError)
 
         Promise.new{ nil }.behaves_as?(:future).should be_true
-      end
-    end
-
-    context '#state' do
-
-      it 'is :pending when first created' do
-        p = pending_subject
-        p.state.should == :pending
-        p.should be_pending
-      end
-
-      it 'is :fulfilled on success' do
-        p = fulfilled_subject
-        p.state.should == :fulfilled
-        p.should be_fulfilled
-      end
-
-      it 'is :rejected on error' do
-        p = rejected_subject
-        p.state.should == :rejected
-        p.should be_rejected
-      end
-    end
-
-    context '#value' do
-
-      it 'blocks the caller when :pending' do
-        p = pending_subject
-        sleep(0.1)
-        p.value.should be_true
-        p.should be_fulfilled
-      end
-
-      it 'returns nil when reaching the optional timeout value' do
-        p = pending_subject
-        sleep(0.1)
-        p.value(0.1).should be_nil
-        p.should be_pending
-      end
-
-      it 'is nil when :pending' do
-        pending_subject.value.should be_nil
-      end
-
-      it 'is nil when :rejected' do
-        rejected_subject.value.should be_nil
-      end
-
-      it 'is set to the return value of the block when :fulfilled' do
-        fulfilled_subject.value.should eq fulfilled_value
-      end
-    end
-
-    context '#reason' do
-
-      it 'is nil when :pending' do
-        pending_subject.reason.should be_nil
-      end
-
-      it 'is nil when :fulfilled' do
-        fulfilled_subject.reason.should be_nil
-      end
-
-      it 'is set to error object of the exception when :rejected' do
-        rejected_subject.reason.should be_a(Exception)
-        rejected_subject.reason.to_s.should =~ /#{rejected_reason}/
       end
     end
 
