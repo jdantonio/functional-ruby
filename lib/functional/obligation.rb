@@ -33,7 +33,7 @@ module Functional
     def pending?() return(!(fulfilled? || rejected?)); end
 
     def value(timeout = nil)
-      if ! pending?
+      if !pending? || timeout == 0
         return @value
       elsif timeout.nil?
         return semaphore.synchronize { @value }
@@ -65,11 +65,11 @@ end
 
 module Kernel
 
-  def deref(obligation)
+  def deref(obligation, timeout = nil)
     if obligation.respond_to?(:deref)
-      return obligation.deref
+      return obligation.deref(timeout)
     elsif obligation.respond_to?(:value)
-      return obligation.deref
+      return obligation.deref(timeout)
     else
       return nil
     end
