@@ -69,5 +69,36 @@ module Functional
         rejected_subject.reason.to_s.should =~ /#{rejected_reason}/
       end
     end
+
+    context 'Kernel aliases' do
+
+      it 'aliases Kernel#deref for #deref' do
+        deref(fulfilled_subject).should eq fulfilled_value
+      end
+
+      it 'aliases Kernel#pending? for #pending?' do
+        pending?(pending_subject).should be_true
+        pending?(fulfilled_subject).should be_false
+        pending?(rejected_subject).should be_false
+      end
+
+      it 'aliases Kernel#fulfilled? for #fulfilled?' do
+        fulfilled?(fulfilled_subject).should be_true
+        fulfilled?(pending_subject).should be_false
+        fulfilled?(rejected_subject).should be_false
+      end
+
+      it 'aliases Kernel#realized?? for #realized?' do
+        realized?(fulfilled_subject).should be_true
+        realized?(pending_subject).should be_false
+        realized?(rejected_subject).should be_false
+      end
+
+      it 'aliases Kernel#rejected? for #rejected?' do
+        rejected?(rejected_subject).should be_true
+        rejected?(fulfilled_subject).should be_false
+        rejected?(pending_subject).should be_false
+      end
+    end
   end
 end
