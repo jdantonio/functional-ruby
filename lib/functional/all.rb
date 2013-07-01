@@ -1,3 +1,4 @@
+require 'functional/agent'
 require 'functional/behavior'
 require 'functional/concurrency'
 require 'functional/future'

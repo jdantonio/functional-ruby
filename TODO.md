@@ -4,16 +4,6 @@ These are ideas I have for additional functionality. Some may actually get imple
 
 ## Concurrency
 
-* http://stackoverflow.com/questions/1028250/what-is-functional-reactive-programming/1030631#1030631
-
-Clojure agent: An agent is a single atomic value that represents an identity. The current value
-of the agent can be requested at any time (#deref). Each agent has a work queue and operates on
-its own thread (or a thread from the shared pool). Consumers can #send code blocks to the
-agent. The code block (function) will receive the current value of the agent as its sole
-parameter. The return value of the block will become the new value of the agent. Agents support
-two error handling modes: fail and continue. A good example of an agent is a shared incrementing
-counter.
-
 Erlang/Go send-receive/channel: Built on their lightweight processes mechanisms, both
 Erlang and Go support message passing send/receive loops between processes. The heavyweight
 threads in Ruby make long-lived send/receive loops compelling.
@@ -27,19 +17,6 @@ threads in Ruby make long-lived send/receive loops compelling.
 ## Clojure
 
 http://richhickey.github.io/clojure/clojure.core-api.html
-
-### Agents
-
-* [agent](http://clojuredocs.org/clojure_core/clojure.core/agent)
-* [set-error-handler!](http://clojuredocs.org/clojure_core/clojure.core/set-error-handler!)
-* [restart-agent](http://clojuredocs.org/clojure_core/clojure.core/restart-agent)
-* [send](http://clojuredocs.org/clojure_core/clojure.core/send)
-* [send-off](http://clojuredocs.org/clojure_core/clojure.core/send-off)
-* [agent-error](http://clojuredocs.org/clojure_core/clojure.core/agent-error)
-* [release-pending-sends](http://clojuredocs.org/clojure_core/clojure.core/release-pending-sends)
-* [add-watch](http://clojuredocs.org/clojure_core/clojure.core/add-watch)
-* [set-validator](http://clojuredocs.org/clojure_core/clojure.core/set-validator!)
-* [deref](http://clojuredocs.org/clojure_core/clojure.core/deref)
 
 ### Core
 
