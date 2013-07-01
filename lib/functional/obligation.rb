@@ -4,13 +4,17 @@ require 'timeout'
 require 'functional/behavior'
 
 behavior_info(:future,
+              state: 0,
               value: -1,
+              reason: 0,
               pending?: 0,
-              fulfilled?: 0)
+              fulfilled?: 0,
+              rejected?: 0)
 
 behavior_info(:promise,
               state: 0,
               value: -1,
+              reason: 0,
               pending?: 0,
               fulfilled?: 0,
               rejected?: 0,
