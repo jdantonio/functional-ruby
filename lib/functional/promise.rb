@@ -1,32 +1,13 @@
 require 'thread'
 
-require 'functional/concurrent_behavior'
+require 'functional/obligation'
 
 module Functional
 
   class Promise
+    include Obligation
     behavior(:future)
     behavior(:promise)
-
-    attr_reader :state
-    attr_reader :reason
-
-    def value(timeout = nil) return @value; end
-
-    # Has the promise been fulfilled?
-    # @return [Boolean]
-    def fulfilled?() return(@state == :fulfilled); end
-    alias_method :realized?, :fulfilled?
-
-    # Has the promise been rejected?
-    # @return [Boolean]
-    def rejected?() return(@state == :rejected); end
-
-    # Is promise completion still pending?
-    # @return [Boolean]
-    def pending?() return(!(fulfilled? || rejected?)); end
-
-    alias_method :deref, :value
 
     # Creates a new promise object. "A promise represents the eventual
     # value returned from the single completion of an operation."
@@ -172,10 +153,12 @@ module Functional
           Thread.pass
           current = mutex.synchronize{ chain[index] }
           unless current.rejected?
-            begin
-              result = current.on_fulfill(result)
-            rescue Exception => ex
-              current.on_reject(ex)
+            current.semaphore.synchronize do
+              begin
+                result = current.on_fulfill(result)
+              rescue Exception => ex
+                current.on_reject(ex)
+              end
             end
           end
           index += 1

@@ -7,18 +7,18 @@ module Functional
     let!(:fulfilled_value) { 10 }
     let!(:rejected_reason) { StandardError.new('mojo jojo') }
 
-    let(:pending_promise) do
+    let(:pending_subject) do
       Promise.new{ sleep(1) }
     end
 
-    let(:fulfilled_promise) do
+    let(:fulfilled_subject) do
       Promise.new{ fulfilled_value }.tap(){ sleep(0.1) }
     end
 
-    let(:rejected_promise) do
-      Promise.new{ raise StandardError.new(rejected_reason) }.
+    let(:rejected_subject) do
+      Promise.new{ raise rejected_reason }.
         rescue{ nil }.tap(){ sleep(0.1) }
-      end
+    end
 
     context 'behavior' do
 
@@ -42,19 +42,19 @@ module Functional
     context '#state' do
 
       it 'is :pending when first created' do
-        p = pending_promise
+        p = pending_subject
         p.state.should == :pending
         p.should be_pending
       end
 
       it 'is :fulfilled on success' do
-        p = fulfilled_promise
+        p = fulfilled_subject
         p.state.should == :fulfilled
         p.should be_fulfilled
       end
 
       it 'is :rejected on error' do
-        p = rejected_promise
+        p = rejected_subject
         p.state.should == :rejected
         p.should be_rejected
       end
@@ -62,71 +62,85 @@ module Functional
 
     context '#value' do
 
+      it 'blocks the caller when :pending' do
+        p = pending_subject
+        sleep(0.1)
+        p.value.should be_true
+        p.should be_fulfilled
+      end
+
+      it 'returns nil when reaching the optional timeout value' do
+        p = pending_subject
+        sleep(0.1)
+        p.value(0.1).should be_nil
+        p.should be_pending
+      end
+
       it 'is nil when :pending' do
-        pending_promise.value.should be_nil
+        pending_subject.value.should be_nil
       end
 
       it 'is nil when :rejected' do
-        rejected_promise.value.should be_nil
+        rejected_subject.value.should be_nil
       end
 
       it 'is set to the return value of the block when :fulfilled' do
-        fulfilled_promise.value.should eq fulfilled_value
+        fulfilled_subject.value.should eq fulfilled_value
       end
     end
 
     context '#reason' do
 
       it 'is nil when :pending' do
-        pending_promise.reason.should be_nil
+        pending_subject.reason.should be_nil
       end
 
       it 'is nil when :fulfilled' do
-        fulfilled_promise.reason.should be_nil
+        fulfilled_subject.reason.should be_nil
       end
 
       it 'is set to error object of the exception when :rejected' do
-        rejected_promise.reason.should be_a(Exception)
-        rejected_promise.reason.to_s.should =~ /#{rejected_reason}/
+        rejected_subject.reason.should be_a(Exception)
+        rejected_subject.reason.to_s.should =~ /#{rejected_reason}/
       end
     end
 
     context '#then' do
 
       it 'returns a new Promise when :pending' do
-        p1 = pending_promise
+        p1 = pending_subject
         p2 = p1.then{}
         p2.should be_a(Promise)
         p1.should_not eq p2
       end
 
       it 'returns a new Promise when :fulfilled' do
-        p1 = fulfilled_promise
+        p1 = fulfilled_subject
         p2 = p1.then{}
         p2.should be_a(Promise)
         p1.should_not eq p2
       end
 
       it 'returns a new Promise when :rejected' do
-        p1 = rejected_promise
+        p1 = rejected_subject
         p2 = p1.then{}
         p2.should be_a(Promise)
         p1.should_not eq p2
       end
 
       it 'immediately rejects new promises when self has been rejected' do
-        p = rejected_promise
+        p = rejected_subject
         p.then.should be_rejected
       end
 
       it 'accepts a nil block' do
         lambda {
-          pending_promise.then
+          pending_subject.then
         }.should_not raise_error
       end
 
       it 'can be called more than once' do
-        p = pending_promise
+        p = pending_subject
         p1 = p.then{}
         p2 = p.then{}
         p1.object_id.should_not eq p2.object_id
@@ -136,20 +150,20 @@ module Functional
     context '#rescue' do
 
       it 'returns self when a block is given' do
-        p1 = pending_promise
+        p1 = pending_subject
         p2 = p1.rescue{}
         p1.object_id.should eq p2.object_id
       end
 
       it 'returns self when no block is given' do
-        p1 = pending_promise
+        p1 = pending_subject
         p2 = p1.rescue
         p1.object_id.should eq p2.object_id
       end
 
       it 'accepts an exception class as the first parameter' do
         lambda {
-          pending_promise.rescue(StandardError){}
+          pending_subject.rescue(StandardError){}
         }.should_not raise_error
       end
     end
@@ -323,11 +337,11 @@ module Functional
     context 'aliases' do
 
       it 'aliases #realized? for #fulfilled?' do
-        fulfilled_promise.should be_realized
+        fulfilled_subject.should be_realized
       end
 
       it 'aliases #deref for #value' do
-        fulfilled_promise.deref.should eq fulfilled_value
+        fulfilled_subject.deref.should eq fulfilled_value
       end
 
       it 'aliases #catch for #rescue' do
@@ -352,31 +366,31 @@ module Functional
       end
 
       it 'aliases Kernel#deref for #deref' do
-        deref(fulfilled_promise).should eq fulfilled_value
+        deref(fulfilled_subject).should eq fulfilled_value
       end
 
       it 'aliases Kernel#pending? for #pending?' do
-        pending?(pending_promise).should be_true
-        pending?(fulfilled_promise).should be_false
-        pending?(rejected_promise).should be_false
+        pending?(pending_subject).should be_true
+        pending?(fulfilled_subject).should be_false
+        pending?(rejected_subject).should be_false
       end
 
       it 'aliases Kernel#fulfilled? for #fulfilled?' do
-        fulfilled?(fulfilled_promise).should be_true
-        fulfilled?(pending_promise).should be_false
-        fulfilled?(rejected_promise).should be_false
+        fulfilled?(fulfilled_subject).should be_true
+        fulfilled?(pending_subject).should be_false
+        fulfilled?(rejected_subject).should be_false
       end
 
       it 'aliases Kernel#realized? for #realized?' do
-        realized?(fulfilled_promise).should be_true
-        realized?(pending_promise).should be_false
-        realized?(rejected_promise).should be_false
+        realized?(fulfilled_subject).should be_true
+        realized?(pending_subject).should be_false
+        realized?(rejected_subject).should be_false
       end
 
       it 'aliases Kernel#rejected? for #rejected?' do
-        rejected?(rejected_promise).should be_true
-        rejected?(fulfilled_promise).should be_false
-        rejected?(pending_promise).should be_false
+        rejected?(rejected_subject).should be_true
+        rejected?(fulfilled_subject).should be_false
+        rejected?(pending_subject).should be_false
       end
     end
   end
