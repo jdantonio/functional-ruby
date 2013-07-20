@@ -4,6 +4,9 @@ require 'functional/agent'
 require 'functional/future'
 require 'functional/promise'
 
+require 'functional/cached_thread_pool'
+require 'functional/fixed_thread_pool'
+
 module Kernel
 
   # Spawn a single-use thread to run the given block.

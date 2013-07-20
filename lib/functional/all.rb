@@ -1,6 +1,8 @@
 require 'functional/agent'
 require 'functional/behavior'
+require 'functional/cached_thread_pool'
 require 'functional/concurrency'
+require 'functional/fixed_thread_pool'
 require 'functional/future'
 require 'functional/obligation'
 require 'functional/pattern_matching'
