@@ -9,7 +9,7 @@ module Functional
     let!(:rejected_reason) { StandardError.new('mojo jojo') }
 
     let(:pending_subject) do
-      Future.new{ sleep(1) }
+      Future.new{ sleep(2) }
     end
 
     let(:fulfilled_subject) do
