@@ -10,6 +10,7 @@ require 'functional/all'
 
 Bundler::GemHelper.install_tasks
 
+RSpec::Core::RakeTask.new(:spec)
 $:.unshift 'tasks'
 Dir.glob('tasks/**/*.rake').each do|rakefile|
   load rakefile
