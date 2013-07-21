@@ -12,18 +12,14 @@ module Functional
         raise ArgumentError.new("size must be between #{MIN_POOL_SIZE} and #{MAX_POOL_SIZE}")
       end
 
-      @running = true
-      @terminated = false
-
+      @status = :running
       @queue = Queue.new
 
-      @pool = size.times.collect do
-        Thread.new{ thread_proc }
-      end
+      @pool = size.times.collect{ create_worker_thread }
     end
 
     def running?
-      return @running
+      return @status == :running
     end
 
     def shutdown?
@@ -31,17 +27,16 @@ module Functional
     end
 
     def terminated?
-      return @terminated
+      return @status == :terminated
     end
 
     def shutdown
-      @running = false
       @pool.size.times{ @queue << :stop }
-      @terminated = true
+      @status = :terminated
     end
 
     def kill
-      @running = false
+      @status = :shutdown
       @pool.each{|t| Thread.kill(t) }
     end
 
@@ -58,7 +53,7 @@ module Functional
 
     def post(*args, &block)
       raise ArgumentError.new('no block given') unless block_given?
-      if @running
+      if running?
         @queue << [args, block]
         return true
       else
@@ -78,13 +73,15 @@ module Functional
     private
 
     # @private
-    def thread_proc # :nodoc:
-      loop do
-        task = @queue.pop
-        if task == :stop
-          break
-        else
-          task.last.call(*task.first)
+    def create_worker_thread # :nodoc:
+      Thread.new do
+        loop do
+          task = @queue.pop
+          if task == :stop
+            break
+          else
+            task.last.call(*task.first)
+          end
         end
       end
     end
