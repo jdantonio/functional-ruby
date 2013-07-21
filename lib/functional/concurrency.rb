@@ -4,6 +4,7 @@ require 'functional/agent'
 require 'functional/future'
 require 'functional/promise'
 
+require 'functional/thread_pool'
 require 'functional/cached_thread_pool'
 require 'functional/fixed_thread_pool'
 

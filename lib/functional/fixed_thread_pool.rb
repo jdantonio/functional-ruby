@@ -1,5 +1,6 @@
 require 'thread'
 
+require 'functional/thread_pool'
 require 'functional/event'
 
 module Functional
@@ -9,6 +10,7 @@ module Functional
   end
 
   class FixedThreadPool
+    behavior(:thread_pool)
 
     MIN_POOL_SIZE = 1
     MAX_POOL_SIZE = 1024
