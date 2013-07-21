@@ -22,7 +22,8 @@ module Functional
 
       it 'creates a thread pool of the given size' do
         thread = mock('thread')
-        Thread.should_receive(:new).exactly(5).times.and_return(thread)
+        # add one for the garbage collector
+        Thread.should_receive(:new).exactly(5+1).times.and_return(thread)
         pool = FixedThreadPool.new(5)
         pool.size.should eq 5
       end
@@ -115,13 +116,7 @@ module Functional
         pool = FixedThreadPool.new(5)
         pool.shutdown
         sleep(1)
-        pool.status.should eq [false, false, false, false, false]
-      end
-
-      it 'returns immediately (does not block)' do
-        pending
-        pool = FixedThreadPool.new(1)
-        pool.shutdown
+        pool.status.should be_empty
       end
     end
 
@@ -161,12 +156,6 @@ module Functional
         pool.kill
         sleep(0.1)
       end
-
-      it 'returns immediately (does not block)' do
-        pending
-        pool = FixedThreadPool.new(1)
-        pool.kill
-      end
     end
 
     context '#size' do
@@ -193,27 +182,23 @@ module Functional
     context '#wait_for_termination' do
 
       it 'immediately returns true after shutdown has complete' do
-        pending
         subject.shutdown
         subject.wait_for_termination.should be_true
       end
 
       it 'blocks indefinitely when timeout it nil' do
-        pending
         subject.post{ sleep(1) }
         subject.shutdown
         subject.wait_for_termination(nil).should be_true
       end
 
       it 'returns true when shutdown sucessfully completes before timeout' do
-        pending
         subject.post{ sleep(0.5) }
         subject.shutdown
         subject.wait_for_termination(1).should be_true
       end
 
       it 'returns false when shutdown fails to complete before timeout' do
-        pending
         subject.post{ sleep(1) }
         subject.shutdown
         subject.wait_for_termination(0.5).should be_true
@@ -285,7 +270,15 @@ module Functional
     end
 
     context 'exception handling' do
-      it 'restarts dead threads'
+
+      it 'restarts threads that suffer exception' do
+        pool = FixedThreadPool.new(5)
+        3.times{ pool << proc{ raise StandardError } }
+        sleep(2)
+        pool.size.should eq 5
+        pool.status.should_not include(nil)
+        #pool.status.include?(nil).should be_false
+      end
     end
   end
 end
