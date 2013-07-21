@@ -27,6 +27,12 @@ module Functional
         pool = FixedThreadPool.new(5)
         pool.size.should eq 5
       end
+
+      it 'aliases Functional#new_fixed_thread_pool' do
+        pool = Functional.new_fixed_thread_pool(5)
+        pool.should be_a(FixedThreadPool)
+        pool.size.should eq 5
+      end
     end
 
     context '#running?' do

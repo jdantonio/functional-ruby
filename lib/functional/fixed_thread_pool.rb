@@ -4,6 +4,10 @@ require 'functional/event'
 
 module Functional
 
+  def self.new_fixed_thread_pool(size)
+    return FixedThreadPool.new(size)
+  end
+
   class FixedThreadPool
 
     MIN_POOL_SIZE = 1
