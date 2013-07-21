@@ -20,8 +20,10 @@ module Functional
       return true if set?
       @mutex.synchronize {
         @set = true
-        @waiting.times{ @notifier << :set }
-        @waiting = 0
+        while @waiting > 0
+          @notifier << :set
+          @waiting -= 1
+        end
       }
     end
 

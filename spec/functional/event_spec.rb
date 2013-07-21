@@ -99,6 +99,16 @@ module Functional
         sleep(1)
         @expected.length.should eq 5
       end
+
+      it 'behaves appropriately if wait begins while #set is processing' do
+        subject.reset
+        @expected = []
+        5.times{ Thread.new{ subject.wait(5) } }
+        subject.set
+        5.times{ Thread.new{ subject.wait; @expected << Thread.current.object_id } }
+        sleep(1)
+        @expected.length.should eq 5
+      end
     end
   end
 end
