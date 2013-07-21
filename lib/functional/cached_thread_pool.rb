@@ -1,8 +1,15 @@
 require 'thread'
 
+require 'functional/thread_pool'
+
 module Functional
 
+  def self.new_cached_thread_pool
+    return FixedThreadPool.new
+  end
+
   class CachedThreadPool
+    behavior(:thread_pool)
 
     def initialize
     end
@@ -32,6 +39,11 @@ module Functional
     end
 
     def <<(block)
+    end
+
+    # @private
+    def status # :nodoc:
+      #@pool.collect{|t| t.status }
     end
 
   end
