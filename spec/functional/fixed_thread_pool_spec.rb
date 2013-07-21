@@ -104,19 +104,18 @@ module Functional
 
       it 'allows pending tasks to complete' do
         @expected = false
-        subject.post{ sleep(0.5) }
-        subject.post{ sleep(0.5); @expected = true }
+        subject.post{ sleep(0.2) }
+        subject.post{ sleep(0.2); @expected = true }
         subject.shutdown
         sleep(1)
         @expected.should be_true
       end
 
-      it 'kills all threads' do
-        thread = mock('thread')
-        Thread.should_receive(:new).and_return(thread)
-        thread.should_receive(:kill)
-        pool = FixedThreadPool.new(1)
+      it 'allows threads to exit normally' do
+        pool = FixedThreadPool.new(5)
         pool.shutdown
+        sleep(1)
+        pool.status.should eq [false, false, false, false, false]
       end
 
       it 'returns immediately (does not block)' do
@@ -127,6 +126,8 @@ module Functional
     end
 
     context '#kill' do
+
+      subject{ FixedThreadPool.new(5) }
 
       it 'stops accepting new tasks' do
         subject.post{ sleep(1) }
@@ -155,11 +156,10 @@ module Functional
       end
 
       it 'kills all threads' do
-        thread = mock('thread')
-        Thread.should_receive(:new).and_return(thread)
-        thread.should_receive(:kill)
-        pool = FixedThreadPool.new(1)
+        Thread.should_receive(:kill).exactly(5).times
+        pool = FixedThreadPool.new(5)
         pool.kill
+        sleep(0.1)
       end
 
       it 'returns immediately (does not block)' do
@@ -225,23 +225,63 @@ module Functional
         }.should raise_error(ArgumentError)
       end
 
-      it 'adds the block to the queue when running' do
-        pending
+      it 'returns true when the block is added to the queue' do
+        subject.post{ nil }.should be_true
       end
 
-      it 'returns true when the block is added to the queue'
+      it 'calls the block with the given arguments' do
+        @expected = nil
+        subject.post(1, 2, 3)do |a, b, c|
+          @expected = a + b + c
+        end
+        sleep(0.1)
+        @expected.should eq 6
+      end
 
-      it 'calls the block with the given arguments'
+      it 'rejects the block while shutting down' do
+        pool = FixedThreadPool.new(5)
+        pool.post{ sleep(1) }
+        pool.shutdown
+        @expected = nil
+        pool.post(1, 2, 3)do |a, b, c|
+          @expected = a + b + c
+        end
+        @expected.should be_nil
+      end
 
-      it 'rejects the block while shutting down'
+      it 'returns false while shutting down' do
+        subject.post{ sleep(1) }
+        subject.shutdown
+        subject.post{ nil }.should be_false
+      end
 
-      it 'returns false while shutting down'
+      it 'rejects the block once shutdown' do
+        pool = FixedThreadPool.new(5)
+        pool.shutdown
+        @expected = nil
+        pool.post(1, 2, 3)do |a, b, c|
+          @expected = a + b + c
+        end
+        @expected.should be_nil
+      end
 
-      it 'rejects the block once shutdown'
+      it 'returns false once shutdown' do
+        subject.post{ nil }
+        subject.shutdown
+        sleep(0.1)
+        subject.post{ nil }.should be_false
+      end
 
-      it 'returns false once shutdown'
+      it 'aliases #<<' do
+        @expected = false
+        subject << proc { @expected = true }
+        sleep(0.1)
+        @expected.should be_true
+      end
+    end
 
-      it 'aliases #<<'
+    context 'exception handling' do
+      it 'restarts dead threads'
     end
   end
 end
