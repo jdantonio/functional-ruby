@@ -50,15 +50,18 @@ module Functional
       end
 
       it 'is nil when :pending' do
-        pending_subject.value.should be_nil
+        expected = pending_subject.value
+        expected.should be_nil
       end
 
       it 'is nil when :rejected' do
-        rejected_subject.value.should be_nil
+        expected = rejected_subject.value
+        expected.should be_nil
       end
 
       it 'is set to the return value of the block when :fulfilled' do
-        fulfilled_subject.value.should eq fulfilled_value
+        expected = fulfilled_subject.value
+        expected.should eq fulfilled_value
       end
     end
 
