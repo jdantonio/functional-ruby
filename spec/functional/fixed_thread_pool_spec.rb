@@ -96,7 +96,7 @@ module Functional
 
       it 'allows in-progress tasks to complete' do
         @expected = false
-        subject.post{ sleep(1); @expected = true }
+        subject.post{ sleep(0.5); @expected = true }
         subject.shutdown
         sleep(1)
         @expected.should be_true
