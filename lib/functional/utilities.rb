@@ -81,6 +81,11 @@ module Kernel
   module_function :repl?
 
   # @private
+  def timestamp # :nodoc:
+    return Time.now.getutc.to_i
+  end
+
+  # @private
   def timer(*args) # :nodoc:
     t1 = Time.now
     result = yield(*args)
