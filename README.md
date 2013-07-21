@@ -1,6 +1,6 @@
 # Functional Ruby [![Build Status](https://secure.travis-ci.org/jdantonio/functional-ruby.png)](https://travis-ci.org/jdantonio/functional-ruby?branch=master) [![Dependency Status](https://gemnasium.com/jdantonio/functional-ruby.png)](https://gemnasium.com/jdantonio/functional-ruby)
 
-A gem for adding Erlang, Clojure, and Go inspired functional programming tools to Ruby.
+A gem for adding Erlang, Clojure, and Go inspired concurrency and functional programming tools to Ruby.
 
 The project is hosted on the following sites:
 

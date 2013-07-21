@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.date        = Time.now.strftime('%Y-%m-%d')
 
   s.description = <<-EOF
-    A gem for adding Erlang and Clojure inspired functional programming tools to Ruby.
+    A gem for adding Erlang, Clojure, and Go inspired concurrency and functional programming tools to Ruby.
   EOF
 
   s.files            = Dir['README*', 'LICENSE*', 'CHANGELOG*']
