@@ -38,16 +38,14 @@ module Functional
         @waiting += 1
         @notifier.pop
       else
-        begin
-          Timeout::timeout(timeout) do
-            @waiting += 1
-            @notifier.pop
-          end
-          return true
-        rescue Timeout::Error
-          return false
+        Timeout::timeout(timeout) do
+          @waiting += 1
+          @notifier.pop
         end
       end
+      return true
+    rescue Timeout::Error
+      return false
     end
   end
 end
