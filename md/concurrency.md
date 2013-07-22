@@ -388,12 +388,51 @@ pool.shutdown? #=> true
 
 ## Global Thread Pool
 
+For efficiency, of the aforementioned concurrency methods (agents, futures, promises, and
+goroutines) run against a global thread pool. This pool can be directly accessed through the
+`$GLOBAL_THREAD_POOL` global variable. Generally, this pool should not be directly accessed.
+Use the other concurrency features instead.
+
+By default the global thread pool is a `CachedThreadPool`. This means it consumes no resources
+unless concurrency functions are called. Most of the time this pool can simply be left alone.
 
 ### Changing the Global Thread Pool
 
+It is possible to change the global thread pool. Simply assign a new pool to the `$GLOBAL_THREAD_POOL`
+variable:
 
+```ruby
+$GLOBAL_THREAD_POOL = Functional::FixedThreadPool.new(10)
+```
+
+Ideally this should be done at application startup, before any concurrency functions are called.
+If the circumstances warrant the global thread pool can be changed at runtime. Just make sure to
+shutdown the old global thread pool so that no tasks are lost:
+
+```ruby
+$GLOBAL_THREAD_POOL = Functional::FixedThreadPool.new(10)
+
+# do stuff...
+
+old_global_pool = $GLOBAL_THREAD_POOL
+$GLOBAL_THREAD_POOL = Functional::FixedThreadPool.new(10)
+old_global_pool.shutdown
+```
 
 ### EventMachine
+
+The [EventMachine](http://rubyeventmachine.com/) library (source [online](https://github.com/eventmachine/eventmachine))
+is an awesome library for creating evented applications. EventMachine provides its own thread pool
+and the authors recommend using their pool rather than using Ruby's `Thread`. No sweat,
+`functional-ruby` is fully compatible with EventMachine. Simple require `eventmachine`
+*before* requiring `functional-ruby` then replace the global thread pool.
+
+```ruby
+require 'eventmachine' # do this FIRST
+require 'functional/concurrency'
+
+$GLOBAL_THREAD_POOL = EventMachineDeferProxy.new
+```
 
 ## Copyright
 
