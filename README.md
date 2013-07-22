@@ -59,6 +59,10 @@ Several features from Erlang, Co, Clojure, and JavaScript have been implemented 
 * Additional Clojure, Go, and Erlang inspired [Concurrency](https://github.com/jdantonio/functional-ruby/blob/master/md/concurrency.md)
 * Several useful functional [Utilities](https://github.com/jdantonio/functional-ruby/blob/master/md/utilities.md)
 
+### Is it any good?
+
+[Yes](http://news.ycombinator.com/item?id=3067434)
+
 ### Supported Ruby versions
 
 MRI 1.9.2, 1.9.3, and 2.0. Anything else and your mileage may vary (most notably with the concurrency utilities).

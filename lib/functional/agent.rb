@@ -7,11 +7,10 @@ module Functional
 
   # An agent is a single atomic value that represents an identity. The current value
   # of the agent can be requested at any time (#deref). Each agent has a work queue and operates on
-  # its own thread (or a thread from the shared pool). Consumers can #post code blocks to the
-  # agent. The code block (function) will receive the current value of the agent as its sole
-  # parameter. The return value of the block will become the new value of the agent. Agents support
-  # two error handling modes: fail and continue. A good example of an agent is a shared incrementing
-  # counter.
+  # the global thread pool. Consumers can #post code blocks to the agent. The code block (function)
+  # will receive the current value of the agent as its sole parameter. The return value of the block
+  # will become the new value of the agent. Agents support two error handling modes: fail and continue.
+  # A good example of an agent is a shared incrementing counter, such as the score in a video game.
   class Agent
     include Observable
 
