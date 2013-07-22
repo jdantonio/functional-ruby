@@ -26,7 +26,7 @@ module Functional
     end
 
     def kill
-      @status = :shutdown
+      @status = :killed
       @pool.each{|t| Thread.kill(t) }
     end
 
@@ -69,7 +69,7 @@ module Functional
         @pool.delete(Thread.current)
         if @pool.empty?
           @termination.set
-          @status = :terminated
+          @status = :shutdown unless killed?
         end
       end
     end

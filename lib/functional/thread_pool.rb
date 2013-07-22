@@ -4,7 +4,7 @@ require 'functional/event'
 behavior_info(:thread_pool,
               running?: 0,
               shutdown?: 0,
-              terminated?: 0,
+              killed?: 0,
               shutdown: 0,
               kill: 0,
               size: 0,
@@ -32,8 +32,8 @@ module Functional
       return ! running?
     end
 
-    def terminated?
-      return @status == :terminated
+    def killed?
+      return @status == :killed
     end
 
     def shutdown
@@ -42,7 +42,7 @@ module Functional
     end
 
     def wait_for_termination(timeout = nil)
-      if shutdown? || terminated?
+      if shutdown? || killed?
         return true
       else
         return @termination.wait(timeout)

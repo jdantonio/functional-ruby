@@ -21,7 +21,7 @@ module Functional
         subject.should_not be_running
       end
 
-      it 'returns false when the thread pool is terminated' do
+      it 'returns false when the thread pool is killed' do
         subject.shutdown
         subject.should_not be_running
       end
@@ -39,23 +39,16 @@ module Functional
       end
     end
 
-    context '#terminated?' do
+    context '#killed?' do
 
-      it 'returns true if all tasks were completed after shutdown' do
-        subject.post{ sleep(0.5) }
-        subject.shutdown
-        sleep(1)
-        subject.should be_terminated
-      end
-
-      it 'returns false if tasks were killed after shutdown' do
+      it 'returns true if tasks were killed at shutdown' do
         subject.post{ sleep(1) }
         subject.kill
-        subject.should_not be_terminated
+        subject.should be_killed
       end
 
       it 'returns false when running' do
-        subject.should_not be_terminated
+        subject.should_not be_killed
       end
     end
 
