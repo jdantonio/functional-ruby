@@ -93,6 +93,7 @@ module Functional
       @collector = Thread.new do
         loop do
           sleep(60)
+          #NOTE: working count is off if dead thread is rejected
           @mutex.synchronize do
             @pool.reject! do |worker|
               worker.thread.status.nil? ||
