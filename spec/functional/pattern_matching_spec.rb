@@ -44,14 +44,16 @@ describe PatternMatching do
 
     it 'can pattern match the constructor' do
 
-      subject.defn(:initialize, PatternMatching::UNBOUND, PatternMatching::UNBOUND, PatternMatching::UNBOUND) { 'three args' }
-      subject.defn(:initialize, PatternMatching::UNBOUND, PatternMatching::UNBOUND) { 'two args' }
-      subject.defn(:initialize, PatternMatching::UNBOUND) { 'one arg' }
+      unless RUBY_VERSION = '1.9.2'
+        subject.defn(:initialize, PatternMatching::UNBOUND, PatternMatching::UNBOUND, PatternMatching::UNBOUND) { 'three args' }
+        subject.defn(:initialize, PatternMatching::UNBOUND, PatternMatching::UNBOUND) { 'two args' }
+        subject.defn(:initialize, PatternMatching::UNBOUND) { 'one arg' }
 
-      lambda { subject.new(1) }.should_not raise_error
-      lambda { subject.new(1, 2) }.should_not raise_error
-      lambda { subject.new(1, 2, 3) }.should_not raise_error
-      lambda { subject.new(1, 2, 3, 4) }.should raise_error
+        lambda { subject.new(1) }.should_not raise_error
+        lambda { subject.new(1, 2) }.should_not raise_error
+        lambda { subject.new(1, 2, 3) }.should_not raise_error
+        lambda { subject.new(1, 2, 3, 4) }.should raise_error
+      end
     end
   end
 

@@ -61,8 +61,7 @@ Several features from Erlang, Co, Clojure, and JavaScript have been implemented 
 
 ### Supported Ruby versions
 
-MRI 1.9.2, 1.9.3, and 2.0. Anything else and your mileage may vary.
-Althought I do test under Rubinius and JRuby in 1.9 mode I'll drop them if they become problematic.)
+MRI 1.9.2, 1.9.3, and 2.0. Anything else and your mileage may vary (most notably with the concurrency utilities).
 
 ### Install
 
