@@ -27,7 +27,9 @@ module Functional
 
     def kill
       @status = :killed
-      @pool.each{|t| Thread.kill(t.thread) }
+      @mutex.synchronize do
+        @pool.each{|t| Thread.kill(t.thread) }
+      end
     end
 
     def size
@@ -69,11 +71,9 @@ module Functional
 
     # @private
     def create_worker_thread # :nodoc:
-      worker = Worker.new(:starting, nil, nil)
+      worker = Worker.new(:idle, timestamp, nil)
 
       worker.thread = Thread.new(worker) do |me|
-        me.status = :idle
-        me.idletime = timestamp
 
         loop do
           task = @queue.pop
