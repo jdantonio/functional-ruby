@@ -14,7 +14,7 @@ These tools will help ease the burden, but at the end of the day it is essential
 
 ## Agent
 
-Agents are inspired by Clojure's [agent](http://clojure.org/agents) keyword.
+Agents are inspired by [Clojure's](http://clojure.org/) [agent](http://clojure.org/agents) keyword.
 An agent is a single atomic value that represents an identity. The current value
 of the agent can be requested at any time (`deref`). Each agent has a work queue and operates on
 the global thread pool (see below). Consumers can `post` code blocks to the
@@ -86,10 +86,10 @@ score.value #=> 100
 
 ## Future
 
-Futures are inspired by Clojure's [future](http://clojuredocs.org/clojure_core/clojure.core/future) keyword.
+Futures are inspired by [Clojure's](http://clojure.org/) [future](http://clojuredocs.org/clojure_core/clojure.core/future) keyword.
 A future represents a promise to complete an action at some time in the future. The action is atomic and permanent.
 The idea behind a future is to send an action off for asynchronous operation, do other stuff, then return and
-retrieve the result of the async operation at a later time.
+retrieve the result of the async operation at a later time. Futures run on the global thread pool (see below).
 
 Futures have three possible states: *pending*, *rejected*, and *fulfilled*. When a future is created it is set
 to *pending* and will remain in that state until processing is complete. A completed future is either *rejected*,
@@ -105,6 +105,8 @@ When a future is *pending* a call to `value` will block until the future is eith
 A *timeout* value can be passed to `value` to limit how long the call will block. If `nil` the call will
 block indefinitely. If `0` the call will not block. Any other integer or float value will indicate the
 maximum number of seconds to block.
+
+### Examples
 
 A fulfilled example:
 
@@ -141,17 +143,42 @@ count.reason #=> #<StandardError: Boom!>
 
 ## Promise
 
+### Examples
+
+
+## Goroutine
+
+A goroutine is the simplest of the concurrency utilities in this library. It is inspired by
+[Go's](http://golang.org/) [goroutines](https://gobyexample.com/goroutines) and
+[Erlang's](http://www.erlang.org/) [spawn](http://erlangexamples.com/tag/spawn/) keyword. The
+`go` function is nothing more than a simple way to send a block to the global thread pool (see below)
+for processing.
+
+### Examples
+
+```ruby
+require 'functional/concurrency'
+
+@expected = nil
+
+go(1, 2, 3){|a, b, c| sleep(1); @expected = [c, b, a] }
+
+sleep(0.1)
+@expected #=> nil
+
+sleep(2)
+@expected #=> [3, 2, 1]
+```
 
 ## Thread Pools
 
-
 ### FixedThreadPool
 
-
+#### Examples
 
 ### CachedThreadPool
 
-
+#### Examples
 
 ## Global Thread Pool
 
