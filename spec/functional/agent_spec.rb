@@ -15,6 +15,10 @@ module Functional
       end.new
     end
 
+    before(:each) do
+      $GLOBAL_THREAD_POOL = CachedThreadPool.new
+    end
+
     context '#initialize' do
 
       it 'sets the value to the given initial state' do
@@ -34,8 +38,9 @@ module Functional
       end
 
       it 'spawns the worker thread' do
-        t = Thread.new{ sleep }
-        Thread.should_receive(:new).once.with(any_args()).and_return(t)
+        #t = Thread.new{ sleep }
+        #Thread.should_receive(:new).once.with(any_args()).and_return(t)
+        $GLOBAL_THREAD_POOL.should_receive(:post).once.with(any_args())
         Agent.new(0)
       end
     end

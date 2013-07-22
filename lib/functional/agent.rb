@@ -1,6 +1,8 @@
 require 'observer'
 require 'thread'
 
+require 'functional/global_thread_pool'
+
 module Functional
 
   # An agent is a single atomic value that represents an identity. The current value
@@ -25,8 +27,9 @@ module Functional
       @validator = nil
       @queue = Queue.new
 
-      @thread = Thread.new{ work }
-      @thread.abort_on_exception = true
+      #@thread = Thread.new{ work }
+      #@thread.abort_on_exception = true
+      $GLOBAL_THREAD_POOL << proc{ work }
     end
 
     def value(timeout = 0) return @value; end

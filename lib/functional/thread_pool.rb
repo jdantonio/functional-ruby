@@ -1,4 +1,5 @@
 require 'functional/behavior'
+require 'functional/event'
 
 behavior_info(:thread_pool,
               running?: 0,
