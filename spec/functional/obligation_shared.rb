@@ -89,6 +89,7 @@ module Functional
       end
 
       it 'aliases Kernel#pending? for #pending?' do
+        fulfilled_subject # needs initialized
         pending?(pending_subject).should be_true
         pending?(fulfilled_subject).should be_false
         pending?(rejected_subject).should be_false
@@ -100,7 +101,7 @@ module Functional
         fulfilled?(rejected_subject).should be_false
       end
 
-      it 'aliases Kernel#realized?? for #realized?' do
+      it 'aliases Kernel#realized? for #realized?' do
         realized?(fulfilled_subject).should be_true
         realized?(pending_subject).should be_false
         realized?(rejected_subject).should be_false
