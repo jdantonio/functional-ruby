@@ -10,6 +10,8 @@ require 'functional/fixed_thread_pool'
 
 require 'functional/global_thread_pool'
 
+require 'functional/event_machine_defer_proxy' if defined?(EventMachine)
+
 module Kernel
 
   # Post the given agruments and block to the Global Thread Pool.

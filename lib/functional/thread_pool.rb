@@ -13,6 +13,10 @@ behavior_info(:thread_pool,
               :<< => 1,
               status: 0)
 
+behavior_info(:global_thread_pool,
+              post: -1,
+              :<< => 1)
+
 module Functional
 
   class ThreadPool

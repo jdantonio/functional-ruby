@@ -1,3 +1,5 @@
+require 'eventmachine'
+
 require 'functional/all'
 
 # import all the support files
