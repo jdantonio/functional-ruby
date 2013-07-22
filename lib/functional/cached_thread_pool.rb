@@ -12,9 +12,14 @@ module Functional
   class CachedThreadPool < ThreadPool
     behavior(:thread_pool)
 
+    DEFAULT_GC_INTERVAL = 60
+    DEFAULT_THREAD_IDLETIME = 60
+
     attr_reader :working
 
-    def initialize
+    def initialize(opts = {})
+      @gc_interval = opts[:gc_interval] || DEFAULT_GC_INTERVAL
+      @thread_idletime = opts[:thread_idletime] || DEFAULT_THREAD_IDLETIME
       super()
       @working = 0
       @mutex = Mutex.new
@@ -47,7 +52,15 @@ module Functional
 
     # @private
     def status # :nodoc:
-      @pool.collect{|t| t.thread.status }
+      @mutex.synchronize do
+        @pool.collect do |worker|
+          [
+            worker.status,
+            worker.status == :idle ? delta(worker.idletime, timestamp) : nil,
+            worker.thread.status
+          ]
+        end
+      end
     end
 
     private
@@ -59,11 +72,10 @@ module Functional
       worker = Worker.new(:starting, nil, nil)
 
       worker.thread = Thread.new(worker) do |me|
-        loop do
-          @working -= 1
-          me.status = :idle
-          me.idletime = timestamp
+        me.status = :idle
+        me.idletime = timestamp
 
+        loop do
           task = @queue.pop
 
           @working += 1
@@ -74,6 +86,9 @@ module Functional
             break
           else
             task.last.call(*task.first)
+            @working -= 1
+            me.status = :idle
+            me.idletime = timestamp
           end
         end
 
@@ -85,21 +100,20 @@ module Functional
       end
 
       @pool << worker
-      @working += 1
     end
 
     # @private
     def collect_garbage # :nodoc:
       @collector = Thread.new do
         loop do
-          sleep(60)
-          #NOTE: working count is off if dead thread is rejected
+          sleep(@gc_interval)
           @mutex.synchronize do
             @pool.reject! do |worker|
               worker.thread.status.nil? ||
-                (worker.status == :idle && 60 >= delta(worker.idletime, timestamp))
+                (worker.status == :idle && @thread_idletime >= delta(worker.idletime, timestamp))
             end
           end
+          @working = @pool.count{|worker| worker.status == :working}
           break if @pool.empty?
         end
       end
