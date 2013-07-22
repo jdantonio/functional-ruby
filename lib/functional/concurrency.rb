@@ -8,6 +8,8 @@ require 'functional/thread_pool'
 require 'functional/cached_thread_pool'
 require 'functional/fixed_thread_pool'
 
+require 'functional/global_thread_pool'
+
 module Kernel
 
   # Spawn a single-use thread to run the given block.
@@ -26,12 +28,18 @@ module Kernel
   # @see https://gobyexample.com/goroutines
   def go(*args)
     return false unless block_given?
-    t = Thread.new(*args){ |*args|
+    $GLOBAL_THREAD_POOL.post(*args) do |*args|
       Thread.pass
       yield(*args)
-    }
-    t.abort_on_exception = false
-    return t.alive?
+    end
+
+    #return false unless block_given?
+    #t = Thread.new(*args){ |*args|
+      #Thread.pass
+      #yield(*args)
+    #}
+    #t.abort_on_exception = false
+    #return t.alive?
   end
   module_function :go
 end
