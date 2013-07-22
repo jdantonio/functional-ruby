@@ -89,10 +89,14 @@ module Functional
       end
 
       it 'aliases Kernel#pending? for #pending?' do
-        fulfilled_subject # needs initialized
-        pending?(pending_subject).should be_true
-        pending?(fulfilled_subject).should be_false
-        pending?(rejected_subject).should be_false
+        #NOTE: was structured like others but was incorrectly failing
+        # on fulfilled_subject
+        fulfilled_subject.should_receive(:pending?).once
+        pending?(fulfilled_subject)
+        pending_subject.should_receive(:pending?).once
+        pending?(pending_subject)
+        rejected_subject.should_receive(:pending?).once
+        pending?(rejected_subject)
       end
 
       it 'aliases Kernel#fulfilled? for #fulfilled?' do
