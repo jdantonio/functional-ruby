@@ -12,8 +12,7 @@ require 'functional/global_thread_pool'
 
 module Kernel
 
-  # Spawn a single-use thread to run the given block.
-  # Supresses exceptions.
+  # Post the given agruments and block to the Global Thread Pool.
   #
   # @param args [Array] zero or more arguments for the block
   # @param block [Proc] operation to be performed concurrently
@@ -22,7 +21,7 @@ module Kernel
   #
   # @note Althought based on Go's goroutines and Erlang's spawn/1,
   # Ruby has a vastly different runtime. Threads aren't nearly as
-  # efficient in Ruby. Use this function sparingly.
+  # efficient in Ruby. Use this function appropriately.
   #
   # @see http://golang.org/doc/effective_go.html#goroutines
   # @see https://gobyexample.com/goroutines
