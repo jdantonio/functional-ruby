@@ -26,12 +26,9 @@ module Kernel
   #
   # @see http://golang.org/doc/effective_go.html#goroutines
   # @see https://gobyexample.com/goroutines
-  def go(*args)
+  def go(*args, &block)
     return false unless block_given?
-    $GLOBAL_THREAD_POOL.post(*args) do |*args|
-      Thread.pass
-      yield(*args)
-    end
+    $GLOBAL_THREAD_POOL.post(*args, &block)
 
     #return false unless block_given?
     #t = Thread.new(*args){ |*args|

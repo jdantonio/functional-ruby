@@ -58,6 +58,7 @@ module Functional
 
     def <<(block)
       self.post(&block)
+      return self
     end
 
     def length
