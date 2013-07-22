@@ -49,7 +49,7 @@ My goal is to implement those patterns in Ruby. Specifically:
 * Keep everything small
 * Be as fast as reasonably possible
 
-## Features
+## Features (and Documentation)
 
 Several features from Erlang, Co, Clojure, and JavaScript have been implemented this far:
 
@@ -65,7 +65,11 @@ Several features from Erlang, Co, Clojure, and JavaScript have been implemented 
 
 ### Supported Ruby versions
 
-MRI 1.9.2, 1.9.3, and 2.0. Anything else and your mileage may vary (most notably with the concurrency utilities).
+MRI 1.9.2, 1.9.3, and 2.0. This library is pure Ruby and has no gem dependencies. It should be
+fully compatible with any Ruby interpreter that is 1.9.x compliant. I simply don't know enough
+about JRuby, Rubinius, or the others to fully support them. I can promise good karma and
+attribution on this page to anyone wishing to take responsibility for verifying compaitibility
+with any Ruby other than MRI.
 
 ### Install
 

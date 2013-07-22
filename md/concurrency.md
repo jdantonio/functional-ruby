@@ -425,7 +425,8 @@ The [EventMachine](http://rubyeventmachine.com/) library (source [online](https:
 is an awesome library for creating evented applications. EventMachine provides its own thread pool
 and the authors recommend using their pool rather than using Ruby's `Thread`. No sweat,
 `functional-ruby` is fully compatible with EventMachine. Simple require `eventmachine`
-*before* requiring `functional-ruby` then replace the global thread pool.
+*before* requiring `functional-ruby` then replace the global thread pool with an instance
+of `EventMachineDeferProxy`:
 
 ```ruby
 require 'eventmachine' # do this FIRST

@@ -1,3 +1,3 @@
 module Functional
-  VERSION = '0.5.0.a'
+  VERSION = '0.6.0'
 end
