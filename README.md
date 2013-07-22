@@ -206,7 +206,8 @@ deref count #=> 10
 
 ### Promise (JavaScript)
 
-Documentation: [Promises](https://github.com/jdantonio/functional-ruby/blob/master/md/promise.md)
+* [Promises/A](http://wiki.commonjs.org/wiki/Promises/A)
+* [Promises/A+](http://promises-aplus.github.io/promises-spec/)
 
 ```ruby
 require 'functional/promise'

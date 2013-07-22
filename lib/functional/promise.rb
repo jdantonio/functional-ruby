@@ -16,7 +16,7 @@ module Functional
     # has zero or more children. Promises are resolved asynchronously
     # in the order they are added to the tree. Parents are guaranteed
     # to be resolved before their children. The result of each promise
-    # is passes to each of its children when the child resolves. When
+    # is passed to each of its children upon resolution. When
     # a promise is rejected all its children will be summarily rejected.
     # A promise that is neither resolved or rejected is pending.
     #
@@ -24,6 +24,7 @@ module Functional
     # @param block [Proc] the block to call when attempting fulfillment
     #
     # @see http://wiki.commonjs.org/wiki/Promises/A
+    # @see http://promises-aplus.github.io/promises-spec/
     def initialize(*args, &block)
       if args.first.is_a?(Promise)
         @parent = args.first
