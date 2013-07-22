@@ -50,14 +50,15 @@ module Functional
 
       it 'creates new workers when there are none available' do
         subject.size.should eq 0
-        5.times{ subject << proc{ sleep(0.5) } }
+        5.times{ sleep(0.1); subject << proc{ sleep(1000) } }
+        sleep(1)
         subject.size.should eq 5
       end
 
       it 'uses existing idle threads' do
-        5.times{ subject << proc{ nil } }
+        5.times{ sleep(0.05); subject << proc{ sleep(0.5) } }
         sleep(1)
-        3.times{ subject << proc{ sleep(0.5) } }
+        3.times{ sleep(0.1); subject << proc{ sleep(0.5) } }
         subject.size.should eq 5
       end
     end
