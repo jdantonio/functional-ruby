@@ -9,16 +9,6 @@ module Functional
     include Obligation
     behavior(:future)
 
-    #def cancel
-      #return false if @t.nil? || fulfilled?
-      #t = Thread.kill(@t)
-      #unless t.alive?
-        #@value = nil
-        #@state = :fulfilled
-      #end
-      #return ! t.alive?
-    #end
-
     def initialize(*args)
 
       unless block_given?
@@ -26,7 +16,6 @@ module Functional
       else
         @value = nil
         @state = :pending
-        #@t = Thread.new do
         $GLOBAL_THREAD_POOL.post do
           semaphore.synchronize do
             Thread.pass
@@ -39,7 +28,6 @@ module Functional
             end
           end
         end
-        #@t.abort_on_exception = true
       end
     end
   end

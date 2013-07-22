@@ -30,14 +30,6 @@ module Kernel
   def go(*args, &block)
     return false unless block_given?
     $GLOBAL_THREAD_POOL.post(*args, &block)
-
-    #return false unless block_given?
-    #t = Thread.new(*args){ |*args|
-      #Thread.pass
-      #yield(*args)
-    #}
-    #t.abort_on_exception = false
-    #return t.alive?
   end
   module_function :go
 end

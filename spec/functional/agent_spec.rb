@@ -38,8 +38,6 @@ module Functional
       end
 
       it 'spawns the worker thread' do
-        #t = Thread.new{ sleep }
-        #Thread.should_receive(:new).once.with(any_args()).and_return(t)
         $GLOBAL_THREAD_POOL.should_receive(:post).once.with(any_args())
         Agent.new(0)
       end

@@ -56,7 +56,6 @@ module Functional
         @children << Promise.new(self, &block)
         @children.last.on_reject(@reason) if rejected?
         push(@children.last)
-        #root.thread.run if root.thread.alive?
         @children.last
       end
       return child
@@ -86,7 +85,6 @@ module Functional
     attr_reader :parent
     attr_reader :handler
     attr_reader :rescuers
-    #attr_reader :thread
 
     # @private
     Rescuer = Struct.new(:clazz, :block)
@@ -147,7 +145,6 @@ module Functional
 
     # @private
     def realize(*args) # :nodoc:
-      #@thread = Thread.new(@chain, @mutex, args) do |chain, mutex, args|
       $GLOBAL_THREAD_POOL.post(@chain, @mutex, args) do |chain, mutex, args|
         result = args.length == 1 ? args.first : args
         index = 0
@@ -167,7 +164,6 @@ module Functional
           sleep while index >= chain.length
         end
       end
-      #@thread.abort_on_exception = true
     end
   end
 end

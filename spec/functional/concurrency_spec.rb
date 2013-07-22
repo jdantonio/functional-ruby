@@ -18,16 +18,11 @@ module Functional
       end
 
       it 'returns true if the thread is successfully created' do
-        #t = Thread.new{ sleep }
-        #Thread.stub(:new).with(any_args()).and_return(t)
         $GLOBAL_THREAD_POOL.should_receive(:post).and_return(true)
         go{ nil }.should be_true
       end
 
       it 'returns false if the thread cannot be created' do
-        #t = Thread.new{ nil }
-        #t.stub(:alive?).with(no_args()).and_return(false)
-        #Thread.stub(:new).once.with(any_args()).and_return(t)
         $GLOBAL_THREAD_POOL.should_receive(:post).and_return(false)
         go{ nil }.should be_false
       end
@@ -36,15 +31,7 @@ module Functional
         go().should be_false
       end
 
-      #it 'creates a new thread' do
-        #t = Thread.new{ Thread.pass; sleep(1) }
-        #Thread.should_receive(:new).with(any_args()).and_return(t)
-        #go{ nil }
-        #sleep(0.1)
-      #end
-
       it 'does not create a thread if no block is given' do
-        #Thread.should_not_receive(:new).with(any_args())
         $GLOBAL_THREAD_POOL.should_not_receive(:post)
         go()
         sleep(0.1)

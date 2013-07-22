@@ -27,8 +27,6 @@ module Functional
       @validator = nil
       @queue = Queue.new
 
-      #@thread = Thread.new{ work }
-      #@thread.abort_on_exception = true
       $GLOBAL_THREAD_POOL << proc{ work }
     end
 
