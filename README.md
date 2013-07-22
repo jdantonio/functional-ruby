@@ -152,12 +152,62 @@ foo.behaves_as?(:bogus)     #=> false
 'foo'.behaves_as? :gen_foo  #=> false
 ```
 
-### Promises (JavaScript)
+### Goroutine (Go)
+
+```ruby
+require 'functional/concurrency'
+
+@expected = nil
+go(1, 2, 3){|a, b, c| @expected = [c, b, a] }
+sleep(0.1)
+@expected #=> [3, 2, 1]
+```
+
+### Agent (Clojure)
+
+```ruby
+require 'functional/agent'
+# or
+require 'functional/concurrency'
+
+score = agent(10)
+score.value #=> 10
+
+score << proc{|current| current + 100 }
+sleep(0.1)
+score.value #=> 110
+
+score << proc{|current| current * 2 }
+sleep(0.1)
+deref score #=> 220
+
+score << proc{|current| current - 50 }
+sleep(0.1)
+score.value #=> 170
+```
+
+### Future (Clojure)
+
+```ruby
+require 'functional/future'
+# or
+require 'functional/concurrency'
+
+count = future{ sleep(1); 10 }
+count.state #=> :pending
+# do stuff...
+count.value #=> 10 (after blocking)
+deref count #=> 10
+```
+
+### Promise (JavaScript)
 
 Documentation: [Promises](https://github.com/jdantonio/functional-ruby/blob/master/md/promise.md)
 
 ```ruby
 require 'functional/promise'
+# or
+require 'functional/concurrency'
 
 p = promise("Jerry", "D'Antonio"){|a, b| "#{a} #{b}" }.
     then{|result| "Hello #{result}." }.
@@ -165,7 +215,33 @@ p = promise("Jerry", "D'Antonio"){|a, b| "#{a} #{b}" }.
     then{|result| "#{result} Would you like to play a game?"}
 sleep(1)
 p.value #=> "Hello Jerry D'Antonio. Would you like to play a game?" 
+```
 
+### Thread Pools
+
+```ruby
+require 'functional/fixed_thread_pool'
+require 'functional/cached_thread_pool'
+# or
+require 'functional/concurrency'
+
+pool = Functional::FixedThreadPool.new(10)
+@expected = 0
+pool.post{ sleep(0.5); @expected += 100 }
+pool.post{ sleep(0.5); @expected += 100 }
+pool.post{ sleep(0.5); @expected += 100 }
+@expected #=> nil
+sleep(1)
+@expected #=> 300
+
+pool = Functional::CachedThreadPool.new
+@expected = 0
+pool << proc{ sleep(0.5); @expected += 10 }
+pool << proc{ sleep(0.5); @expected += 10 }
+pool << proc{ sleep(0.5); @expected += 10 }
+@expected #=> 0
+sleep(1)
+@expected #=> 30
 ```
 
 ### Utilities
