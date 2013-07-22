@@ -7,16 +7,16 @@ module Functional
 
     def post(*args, &block)
       if args.empty?
-        EventMachine.defer(nil, nil, &block)
+        EventMachine.defer(block)
       else
         new_block = proc{ block.call(*args) }
-        EventMachine.defer(nil, nil, &new_block)
+        EventMachine.defer(new_block)
       end
       return true
     end
 
     def <<(block)
-      self.post(&block)
+      EventMachine.defer(block)
       return self
     end
   end
