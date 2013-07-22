@@ -23,6 +23,7 @@ module Functional
       unless block_given?
         @state = :fulfilled
       else
+        @value = nil
         @state = :pending
         @t = Thread.new do
           semaphore.synchronize do
