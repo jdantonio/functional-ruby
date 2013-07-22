@@ -9,35 +9,15 @@ module Functional
     return CachedThreadPool.new
   end
 
-  class CachedThreadPool
+  class CachedThreadPool < ThreadPool
     behavior(:thread_pool)
 
     attr_reader :working
 
     def initialize
-      @status = :running
-      @queue = Queue.new
-      @termination = Event.new
+      super()
       @working = 0
-      @pool = []
       @mutex = Mutex.new
-    end
-
-    def running?
-      return @status == :running
-    end
-
-    def shutdown?
-      return ! running?
-    end
-
-    def terminated?
-      return @status == :terminated
-    end
-
-    def shutdown
-      @pool.size.times{ @queue << :stop }
-      @status = :shuttingdown
     end
 
     def kill
@@ -47,14 +27,6 @@ module Functional
 
     def size
       return @pool.length
-    end
-
-    def wait_for_termination(timeout = nil)
-      if shutdown? || terminated?
-        return true
-      else
-        return @termination.wait(timeout)
-      end
     end
 
     def post(*args, &block)
@@ -71,10 +43,6 @@ module Functional
       else
         return false
       end
-    end
-
-    def <<(block)
-      self.post(&block)
     end
 
     # @private
