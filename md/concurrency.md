@@ -168,7 +168,7 @@ count.reason #=> #<StandardError: Boom!>
 
 ## Promise
 
-A promise is the most powerfule and versatile of the concurrency objects in this library.
+A promise is the most powerful and versatile of the concurrency objects in this library.
 Promises are inspired by the JavaScript [Promises/A](http://wiki.commonjs.org/wiki/Promises/A)
 and [Promises/A+](http://promises-aplus.github.io/promises-spec/) specifications.
 
@@ -269,7 +269,7 @@ sleep(2)
 
 ## Thread Pools
 
-Thread pools are neither a new idea nor an implementation of the actor patter. Nevertheless, thread
+Thread pools are neither a new idea nor an implementation of the actor pattern. Nevertheless, thread
 pools are still an extremely relevant concurrency tool. Every time a thread is created then
 subsequently destroyed there is overhead. Creating a pool of reusable worker threads then repeatedly'
 dipping into the pool can have huge performace benefits for a long-running application like a service.

@@ -38,8 +38,6 @@ module Functional
 
     def pulse
       return set(true)
-      #set
-      #reset
     end
 
     def wait(timeout = nil)
