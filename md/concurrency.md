@@ -172,29 +172,7 @@ A promise is the most powerfule and versatile of the concurrency objects in this
 Promises are inspired by the JavaScript [Promises/A](http://wiki.commonjs.org/wiki/Promises/A)
 and [Promises/A+](http://promises-aplus.github.io/promises-spec/) specifications.
 
-> A promise represents the eventual value returned from the single completion of an operation.
-
-Promises are similar to futures and share many of the same behaviours. Promises are far more robust,
-however. Promises can be chained in a tree structure where each promise may have zero or more children.
-Promises are chained using the `then` method. The result of a call to `then` is always another promise.
-Promises are resolved asynchronously in the order they are added to the tree. Parents are guaranteed
-to be resolved before their children. The result of each promise is passed to each of its children
-upon resolution. When a promise is rejected all its children will be summarily rejected.
-
-Promises have three possible states: *pending*, *rejected*, and *fulfilled*. When a promise is created it is set
-to *pending* and will remain in that state until processing is complete. A completed promise is either *rejected*,
-indicating that an exception was thrown during processing, or *fulfilled*, indicating succedd. If a promise is
-*fulfilled* its `value` will be updated to reflect the result of the operation. If *rejected* the `reason` will
-be updated with a reference to the thrown exception. The predicate methods `pending?`, `rejected`, and `fulfilled?`
-can be called at any time to obtain the state of the promise, as can the `state` method, which returns a symbol.
-
-Retrieving the value of a promise is done through the `value` (alias: `deref`) method. Obtaining the value of
-a promise is a potentially blocking operation. When a promise is *rejected* a call to `value` will return `nil`
-immediately. When a promise is *fulfilled* a call to `value` will immediately return the current value.
-When a promise is *pending* a call to `value` will block until the promise is either *rejected* or *fulfilled*.
-A *timeout* value can be passed to `value` to limit how long the call will block. If `nil` the call will
-block indefinitely. If `0` the call will not block. Any other integer or float value will indicate the
-maximum number of seconds to block.
+Promises are more fully described [here](https://github.com/jdantonio/functional-ruby/blob/master/md/promise.md)
 
 ### Examples
 
