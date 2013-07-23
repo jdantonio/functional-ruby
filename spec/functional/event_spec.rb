@@ -31,9 +31,10 @@ module Functional
       it 'triggers the event' do
         subject.reset
         @expected = false
-        Thread.new{ sleep(0.5); subject.wait; @expected = true }
+        Thread.new{ subject.wait; @expected = true }
+        sleep(0.1)
         subject.set
-        sleep(1)
+        sleep(0.1)
         @expected.should be_true
       end
 
@@ -49,6 +50,25 @@ module Functional
         subject.set
         subject.should be_set
         subject.reset
+        subject.should_not be_set
+      end
+    end
+
+    context '#pulse' do
+
+      it 'triggers the event' do
+        subject.reset
+        @expected = false
+        Thread.new{ subject.wait; @expected = true }
+        sleep(0.1)
+        subject.pulse
+        sleep(0.1)
+        @expected.should be_true
+      end
+
+      it 'sets the state to unset' do
+        subject.pulse
+        sleep(0.1)
         subject.should_not be_set
       end
     end

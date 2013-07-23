@@ -16,7 +16,7 @@ module Functional
       return @set == true
     end
 
-    def set
+    def set(pulse = false)
       return true if set?
       @mutex.synchronize {
         @set = true
@@ -24,13 +24,22 @@ module Functional
           @notifier << :set
           @waiting -= 1
         end
+        @set = ! pulse
       }
+      return true
     end
 
     def reset
       @mutex.synchronize {
         @set = false
       }
+      return true
+    end
+
+    def pulse
+      return set(true)
+      #set
+      #reset
     end
 
     def wait(timeout = nil)
