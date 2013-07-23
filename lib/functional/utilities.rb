@@ -30,6 +30,31 @@ module Kernel
   end
   module_function :delta
 
+  # Try an operation. If it fails (raises an exception), wait a second
+  # and try again. Try no more than the given number of times.
+  #
+  # @yield Tries the given block operation
+  #
+  # @param [Integer] tries The maximum number of times to attempt the operation.
+  # @param [Array] args Optional block arguments
+  #
+  # @return [Boolean] true if the operation succeeds on any attempt,
+  #   false if none of the attempts are successful
+  def retro(tries, *args)
+    tries = tries.to_i
+    return false if tries == 0 || ! block_given?
+    yield(*args)
+    return true
+  rescue Exception
+    sleep(1)
+    if (tries = tries - 1) > 0
+      retry
+    else
+      return false
+    end
+  end
+  module_function :retro
+
   # Sandbox the given operation at a high $SAFE level.
   #
   # @param args [Array] zero or more arguments to pass to the block
