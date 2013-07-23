@@ -36,6 +36,10 @@ seacrhed in order until one matching the current exception is found. That `rescu
 then be called an passed the exception object. If no matching `rescue` block is found, or none
 were configured, then the exception will be suppressed.
 
+Agents also implement Ruby's [Observable](http://ruby-doc.org/stdlib-1.9.3/libdoc/observer/rdoc/Observable.html).
+Code that observes an agent will receive a callback with the new value any time the value
+is changed.
+
 ### Examples
 
 A simple example:
@@ -82,6 +86,27 @@ score.value #=> 0
 score << proc{|current| current + 100 }
 sleep(0.1)
 score.value #=> 100
+```
+
+With observation:
+
+```ruby
+bingo = Class.new{
+  def update(time, score)
+    puts "Bingo! [score: #{score}, time: #{time}]" if score >= 100
+  end
+}.new
+
+score = agent(0)
+score.add_observer(bingo)
+
+score << proc{|current| sleep(0.1); current += 30 }
+score << proc{|current| sleep(0.1); current += 30 }
+score << proc{|current| sleep(0.1); current += 30 }
+score << proc{|current| sleep(0.1); current += 30 }
+
+sleep(1)
+#=> Bingo! [score: 120, time: 2013-07-22 21:26:08 -0400]
 ```
 
 ## Future
