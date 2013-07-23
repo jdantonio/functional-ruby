@@ -1,6 +1,7 @@
 require 'thread'
 
 require 'functional/agent'
+require 'functional/defer'
 require 'functional/future'
 require 'functional/promise'
 
