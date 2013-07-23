@@ -56,7 +56,7 @@ Several features from Erlang, Co, Clojure, and JavaScript have been implemented 
 * Function overloading with Erlang-style [Pattern Matching](https://github.com/jdantonio/functional-ruby/blob/master/md/pattern_matching.md)
 * Interface specifications with Erlang-style [Behavior](https://github.com/jdantonio/functional-ruby/blob/master/md/behavior.md)
 * Chained asynchronous operations inspried by JavaScript [Promises](https://github.com/jdantonio/functional-ruby/blob/master/md/promise.md)
-* Additional Clojure, Go, and Erlang inspired [Concurrency](https://github.com/jdantonio/functional-ruby/blob/master/md/concurrency.md)
+* Additional Clojure, Go, Erlang, and EventMachine inspired [Concurrency](https://github.com/jdantonio/functional-ruby/blob/master/md/concurrency.md)
 * Several useful functional [Utilities](https://github.com/jdantonio/functional-ruby/blob/master/md/utilities.md)
 
 ### Is it any good?

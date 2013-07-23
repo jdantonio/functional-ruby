@@ -166,6 +166,153 @@ rejected?(count) #=> true
 count.reason #=> #<StandardError: Boom!> 
 ```
 
+## Defer
+
+In the pantheon of concurrency objects a `Defer` sits somewhere between `Future` and `Promise`.
+Inspired by [EventMachine's *defer* method](https://github.com/eventmachine/eventmachine/wiki/EM::Deferrable-and-EM.defer),
+a `Defer` can be considered a non-blocking `Future` or a simplified, non-blocking `Promise`.
+
+Unlike `Future` and `Promise` a defer is non-blocking. The deferred *operation* is performed on another
+thread. If the *operation* is successful an optional *callback* is called on the same thread as the *operation*.
+The result of the *operation* is passed to the *callbacl*. If the *operation* fails (by raising an exception)
+then an optional *errorback* (error callback) is called on
+the same thread as the *operation*. The raised exception is passed to the *errorback*. The calling thread is
+never aware of the result of the *operation*. This approach fits much more cleanly within an
+[event-driven](http://en.wikipedia.org/wiki/Event-driven_programming) application.
+
+The operation of a `Defer` can easily be simulated using either `Future` or `Promise` and traditional branching
+(if/then/else) logic. This approach works but it is more verbose and partitions the work across two threads.
+Whenever you find yourself checking the result of a `Future` or a `Promise` then branching based on the result,
+consider a `Defer` instead.
+
+For programmer convenience there are two syntaxes for creating and running a `Defer`. One is idiomatic of Ruby
+and uses chained method calls. The other is more isiomatic of [functional programming](http://en.wikipedia.org/wiki/Functionalprogramming)
+and passes one or more `proc` objects as arguments. Do not mix syntaxes on a single `Defer` invocation.
+
+### Examples
+
+A simple `Defer` using idiomatic Ruby syntax:
+
+```ruby
+require 'functional/defer'
+# or
+require 'functional/concurrency'
+
+deferred = Functional::Defer.new{ puts 'w00t!' }
+# when using idiomatic syntax the #go method must be called
+deferred.go
+sleep(0.1)
+
+#=> 'w00t!'
+```
+
+A simple `Defer` using functional programming syntax:
+
+```ruby
+operation = proc{ puts 'w00t!' }
+Functional::Defer.new(operation) # NOTE: a call to #go is unnecessary
+sleep(0.1)
+
+#=> 'w00t!'
+
+defer(operation)
+sleep(0.1)
+
+#=> 'w00t!'
+```
+
+Adding a *callback*:
+
+```ruby
+Functional::Defer.new{ "Jerry D'Antonio" }.
+                  then{|result| puts "Hello, #{result}!" }.
+                  go
+
+#=> Hello, Jerry D'Antonio!
+
+operation = proc{ "Jerry D'Antonio" }
+callback = proc{|result| puts "Hello, #{result}!" }
+defer(operation, callback, nil)
+sleep(0.1)
+
+#=> Hello, Jerry D'Antonio!
+```
+
+Adding an *errorback*:
+
+```ruby
+Functional::Defer.new{ raise StandardError.new('Boom!') }.
+                  rescue{|ex| puts ex.message }.
+                  go
+sleep(0.1)
+
+#=> "Boom!"
+
+operation = proc{ raise StandardError.new('Boom!') }
+errorback = proc{|ex| puts ex.message }
+defer(operation, nil, errorback)
+
+#=> "Boom!"
+```
+
+Putting it all together:
+
+```ruby
+Functional::Defer.new{ "Jerry D'Antonio" }.
+                  then{|result| puts "Hello, #{result}!" }.
+                  rescue{|ex| puts ex.message }.
+                  go
+
+#=> Hello, Jerry D'Antonio!
+
+operation = proc{ raise StandardError.new('Boom!') }
+errorback = proc{|ex| puts ex.message }
+defer(operation, callback, errorback)
+sleep(0.1)
+
+#=> "Boom!"
+```
+
+Crossing the streams:
+
+```ruby
+operation = proc{ true }
+callback = proc{|result| puts result }
+errorback = proc{|ex| puts ex.message }
+
+Functional::Defer.new(operation, nil, nil){ false }
+#=> ArgumentError: two operations given
+
+defer(nil, callback, errorback)
+# => ArgumentError: no operation given
+
+Functional::Defer.new.go
+# => ArgumentError: no operation given
+
+defer(nil, nil, nil)
+# => ArgumentError: no operation given
+
+Functional::Defer.new(operation, nil, nil).
+                  then{|result| puts result }.
+                  go
+#=> Functional::IllegalMethodCallError: the defer is already running
+
+defer(callback, nil, nil).then{|result| puts result }
+#=> Functional::IllegalMethodCallError: the defer is already running
+
+Functional::Defer.new{ true }.
+                  then{|result| puts "Boom!" }.
+                  then{|result| puts "Bam!" }.
+                  go
+#=> Functional::IllegalMethodCallError: a callback has already been provided
+
+Functional::Defer.new{ raise StandardError }.
+                  rescue{|ex| puts "Boom!" }.
+                  rescue{|ex| puts "Bam!" }.
+                  go
+#=> Functional::IllegalMethodCallError: a errorback has already been provided
+```
+
 ## Promise
 
 A promise is the most powerful and versatile of the concurrency objects in this library.
