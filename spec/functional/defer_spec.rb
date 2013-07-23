@@ -49,20 +49,27 @@ module Functional
 
       it 'raises an exception if called twice' do
         lambda {
-          Defer.new{ nil }.then{|result|  nil }.then{|result|  nil }
+          Defer.new{ nil }.then{|result| nil }.then{|result| nil }
+        }.should raise_error(IllegalMethodCallError)
+      end
+
+      it 'raises an exception if an operation was provided at construction' do
+        lambda {
+          operation = proc{ nil }
+          Defer.new(operation, nil, nil).then{|result| nil }
         }.should raise_error(IllegalMethodCallError)
       end
 
       it 'raises an exception if a callback was provided at construction' do
         lambda {
-          callback = proc{|result|  nil }
-          Defer.new(nil, callback, nil){ nil }.then{|result|  nil }
+          callback = proc{|result|nil }
+          Defer.new(nil, callback, nil){ nil }.then{|result| nil }
         }.should raise_error(IllegalMethodCallError)
       end
 
       it 'returns self' do
         deferred = Defer.new{ nil }
-        deferred.then{|result|  nil }.should eq deferred
+        deferred.then{|result| nil }.should eq deferred
       end
     end
 
@@ -77,6 +84,13 @@ module Functional
       it 'raises an exception if called twice' do
         lambda {
           Defer.new{ nil }.rescue{ nil }.rescue{ nil }
+        }.should raise_error(IllegalMethodCallError)
+      end
+
+      it 'raises an exception if an operation was provided at construction' do
+        lambda {
+          operation = proc{ nil }
+          Defer.new(operation, nil, nil).rescue{|ex| nil }
         }.should raise_error(IllegalMethodCallError)
       end
 
@@ -122,7 +136,7 @@ module Functional
 
       it 'does nothing if thread started at construction' do
         operation = proc{ nil }
-        callback = proc{|result|  nil }
+        callback = proc{|result| nil }
         errorback = proc{|ex| nil }
         deferred = Defer.new(operation, callback, errorback)
         $GLOBAL_THREAD_POOL.should_not_receive(:post)

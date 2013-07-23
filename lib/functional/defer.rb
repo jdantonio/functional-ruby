@@ -25,6 +25,7 @@ module Functional
 
     def then(&block)
       raise IllegalMethodCallError.new('a callback has already been provided') unless @callback.nil?
+      raise IllegalMethodCallError.new('the defer is already running') if @running
       raise ArgumentError.new('no block given') unless block_given?
       @callback = block
       return self
@@ -32,6 +33,7 @@ module Functional
 
     def rescue(&block)
       raise IllegalMethodCallError.new('a errorback has already been provided') unless @errorback.nil?
+      raise IllegalMethodCallError.new('the defer is already running') if @running
       raise ArgumentError.new('no block given') unless block_given?
       @errorback = block
       return self
