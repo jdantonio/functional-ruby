@@ -208,10 +208,26 @@ count.value #=> 10 (after blocking)
 deref count #=> 10
 ```
 
-### Promise (JavaScript)
+### Defer (EventMachine)
 
-* [Promises/A](http://wiki.commonjs.org/wiki/Promises/A)
-* [Promises/A+](http://promises-aplus.github.io/promises-spec/)
+```ruby
+Functional::Defer.new{ "Jerry D'Antonio" }.
+                  then{|result| puts "Hello, #{result}!" }.
+                  rescue{|ex| puts ex.message }.
+                  go
+
+#=> Hello, Jerry D'Antonio!
+
+operation = proc{ raise StandardError.new('Boom!') }
+callback  = proc{|result| puts result }
+errorback = proc{|ex| puts ex.message }
+defer(operation, callback, errorback)
+sleep(0.1)
+
+#=> "Boom!"
+```
+
+### Promise (JavaScript)
 
 ```ruby
 require 'functional/promise'

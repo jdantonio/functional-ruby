@@ -266,6 +266,7 @@ Functional::Defer.new{ "Jerry D'Antonio" }.
 #=> Hello, Jerry D'Antonio!
 
 operation = proc{ raise StandardError.new('Boom!') }
+callback  = proc{|result| puts result }
 errorback = proc{|ex| puts ex.message }
 defer(operation, callback, errorback)
 sleep(0.1)
