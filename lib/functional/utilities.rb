@@ -30,6 +30,28 @@ module Kernel
   end
   module_function :delta
 
+  # Perform an operation numerous times, passing the value of the
+  # previous iteration, and collecting the results into an array.
+  #
+  # @yield iterates over each element in the data set
+  # @yieldparam previous the initial value (or nil) for the first
+  #   iteration then the value of the previous iteration for all
+  #   subsequent iterations
+  #
+  # @param [Integer] count the number of times to perform the operation
+  # @param [Object] initial the initial value to pass to the first iteration
+  #
+  # @return [Array] the results of the iterations collected into an array
+  def repeatedly(count, initial = nil)
+    return [] if (count = count.to_i) == 0
+    return count.times.collect{ nil } unless block_given?
+    previous = initial
+    return count.times.collect do
+      previous = yield(previous)
+    end
+  end
+  module_function :repeatedly
+
   # Try an operation. If it fails (raises an exception), wait a second
   # and try again. Try no more than the given number of times.
   #

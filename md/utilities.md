@@ -21,6 +21,8 @@ pp_s [1,2,3,4] #=> "[1, 2, 3, 4]\n" props to Rha7
 
 delta(-1, 1) #=> 2
 delta({count: -1}, {count: 1}){|item| item[:count]} #=> 2
+
+repeatedly(10, 1){|previous| previous * 2 } #=> [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024]
 ```
 
 ## Copyright

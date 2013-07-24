@@ -36,6 +36,41 @@ describe 'utilities' do
     end
   end
 
+  context '#repeatedly' do
+
+    it 'returns an empty array when requested times is zero' do
+      expected = repeatedly(0){ 1 }
+      expected.should be_empty
+    end
+
+    it 'returns an array with all nil values when no block is given' do
+      expected = repeatedly(10)
+      expected.length.should eq 10
+      expected.each do |elem|
+        elem.should be_nil
+      end
+    end
+
+    it 'iterates the requested number of times and puts the results into an array' do
+      expected = repeatedly(10){ 5 }
+      expected.length.should eq 10
+      expected.each do |elem|
+        elem.should eq 5
+      end
+    end
+
+    it 'passes the initial value to the first iteration' do
+      @expected = nil
+      repeatedly(1,100){|previous| @expected = previous }
+      @expected.should eq 100
+    end
+
+    it 'passes the result of each iteration to the next iteration' do
+      expected = repeatedly(10, 1){|previous| previous * 2 }
+      expected.should eq [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024]
+    end
+  end
+
   context '#retro' do
 
     it 'does not run the block if requested times is zero' do
