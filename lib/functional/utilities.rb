@@ -45,9 +45,8 @@ module Kernel
   def repeatedly(count, initial = nil)
     return [] if (count = count.to_i) == 0
     return count.times.collect{ nil } unless block_given?
-    previous = initial
     return count.times.collect do
-      previous = yield(previous)
+      initial = yield(initial)
     end
   end
   module_function :repeatedly
