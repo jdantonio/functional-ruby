@@ -84,12 +84,12 @@ Once you've installed the gem you must `require` it in your project:
 require 'functional'
 ```
 
-## Examples
+### Examples
 
 For complete examples, see the specific documentation linked above. Below are a
 few examples to whet your appetite.
 
-### Pattern Matching (Erlang)
+#### Pattern Matching (Erlang)
 
 Documentation: [Pattern Matching](https://github.com/jdantonio/functional-ruby/blob/master/md/pattern_matching.md)
 
@@ -113,7 +113,7 @@ foo.greet(:male)   #=> "Hello, sir!"
 foo.greet(:female) #=> "Hello, ma'am!"
 ```
 
-### Behavior (Erlang)
+#### Behavior (Erlang)
 
 Documentation: [Behavior](https://github.com/jdantonio/functional-ruby/blob/master/md/behavior.md)
 
@@ -141,7 +141,7 @@ foo.behaves_as?(:bogus)     #=> false
 'foo'.behaves_as? :gen_foo  #=> false
 ```
 
-### Utilities
+#### Utilities
 
 Documentation: [Utilities](https://github.com/jdantonio/functional-ruby/blob/master/md/utilities.md)
 
