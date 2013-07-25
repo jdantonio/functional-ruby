@@ -6,7 +6,7 @@ require 'bundler/gem_tasks'
 require 'rspec'
 require 'rspec/core/rake_task'
 
-require 'functional/all'
+require 'functional'
 
 Bundler::GemHelper.install_tasks
 
