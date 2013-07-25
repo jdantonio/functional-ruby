@@ -1,6 +1,9 @@
 # Functional Ruby [![Build Status](https://secure.travis-ci.org/jdantonio/functional-ruby.png)](https://travis-ci.org/jdantonio/functional-ruby?branch=master) [![Dependency Status](https://gemnasium.com/jdantonio/functional-ruby.png)](https://gemnasium.com/jdantonio/functional-ruby)
 
-A gem for adding Erlang, Clojure, and Go inspired concurrency and functional programming tools to Ruby.
+A gem for adding Erlang, Clojure, and Go inspired functional programming tools to Ruby.
+
+*NOTE: As of version 0.7.0 the concurrency tools from this gem have been moved to the
+[concurrent-ruby](https://github.com/jdantonio/concurrent-ruby) gem.*
 
 The project is hosted on the following sites:
 
@@ -27,19 +30,11 @@ area. Ruby 2.0 is now a [relevant](https://blog.heroku.com/archives/2013/6/17/ru
 platform for concurrent applications.
 
 This gem is my small and humble attempt to help Ruby reach its full potential as
-a highly performant, functional, concurrent programming language.
+a highly performant, functional programming language.
 
 ### Goals
 
-My history with high-performance, highly-concurrent programming goes back to my days with C/C++.
-I have the same scars as everyone else doing that kind of work with those languages.
-I'm fascinated by modern concurrency patterns like [Actors](http://en.wikipedia.org/wiki/Actor_model),
-[Agents](http://doc.akka.io/docs/akka/snapshot/java/agents.html), and
-[Promises](http://promises-aplus.github.io/promises-spec/). I'm equally fascinated by languages
-with strong concurrency support like [Erlang](http://www.erlang.org/doc/getting_started/conc_prog.html),
-[Go](http://golang.org/doc/articles/concurrency_patterns.html), and
-[Clojure](http://clojure.org/concurrent_programming) (I program with Erlang at work).
-My goal is to implement those patterns in Ruby. Specifically:
+My goal is to implement various functional programming patterns in Ruby. Specifically:
 
 * Stay true to the spirit of the languages providing inspiration
 * But implement in a way that makes sense for Ruby
@@ -51,12 +46,10 @@ My goal is to implement those patterns in Ruby. Specifically:
 
 ## Features (and Documentation)
 
-Several features from Erlang, Co, Clojure, and JavaScript have been implemented this far:
+Several features from Erlang, Go, and Clojure have been implemented thus far:
 
 * Function overloading with Erlang-style [Pattern Matching](https://github.com/jdantonio/functional-ruby/blob/master/md/pattern_matching.md)
 * Interface specifications with Erlang-style [Behavior](https://github.com/jdantonio/functional-ruby/blob/master/md/behavior.md)
-* Chained asynchronous operations inspried by JavaScript [Promises](https://github.com/jdantonio/functional-ruby/blob/master/md/promise.md)
-* Additional Clojure, Go, Erlang, and EventMachine inspired [Concurrency](https://github.com/jdantonio/functional-ruby/blob/master/md/concurrency.md)
 * Several useful functional [Utilities](https://github.com/jdantonio/functional-ruby/blob/master/md/utilities.md)
 
 ### Is it any good?
@@ -85,22 +78,10 @@ gem 'functional-ruby'
 
 and run `bundle install` from your shell.
 
-Once you've installed the gem you must `require` it in your project. Becuase this gem includes multiple features
-that not all users may want, several `require` options are available:
+Once you've installed the gem you must `require` it in your project:
 
 ```ruby
-require 'functional/behavior'
-require 'functional/behaviour' # alternate spelling
-require 'functional/concurrency'
-require 'functional/pattern_matching'
-require 'functional/promise'
-require 'functional/utilities'
-```
-
-If you want everything you can do that, too:
-
-```ruby
-require 'functional/all'
+require 'functional'
 ```
 
 ## Examples
@@ -158,115 +139,6 @@ foo = Foo.new
 foo.behaves_as? :gen_foo    #=> true
 foo.behaves_as?(:bogus)     #=> false
 'foo'.behaves_as? :gen_foo  #=> false
-```
-
-### Goroutine (Go)
-
-```ruby
-require 'functional/concurrency'
-
-@expected = nil
-go(1, 2, 3){|a, b, c| @expected = [c, b, a] }
-sleep(0.1)
-@expected #=> [3, 2, 1]
-```
-
-### Agent (Clojure)
-
-```ruby
-require 'functional/agent'
-# or
-require 'functional/concurrency'
-
-score = agent(10)
-score.value #=> 10
-
-score << proc{|current| current + 100 }
-sleep(0.1)
-score.value #=> 110
-
-score << proc{|current| current * 2 }
-sleep(0.1)
-deref score #=> 220
-
-score << proc{|current| current - 50 }
-sleep(0.1)
-score.value #=> 170
-```
-
-### Future (Clojure)
-
-```ruby
-require 'functional/future'
-# or
-require 'functional/concurrency'
-
-count = future{ sleep(1); 10 }
-count.state #=> :pending
-# do stuff...
-count.value #=> 10 (after blocking)
-deref count #=> 10
-```
-
-### Defer (EventMachine)
-
-```ruby
-Functional::Defer.new{ "Jerry D'Antonio" }.
-                  then{|result| puts "Hello, #{result}!" }.
-                  rescue{|ex| puts ex.message }.
-                  go
-
-#=> Hello, Jerry D'Antonio!
-
-operation = proc{ raise StandardError.new('Boom!') }
-callback  = proc{|result| puts result }
-errorback = proc{|ex| puts ex.message }
-defer(operation, callback, errorback)
-sleep(0.1)
-
-#=> "Boom!"
-```
-
-### Promise (JavaScript)
-
-```ruby
-require 'functional/promise'
-# or
-require 'functional/concurrency'
-
-p = promise("Jerry", "D'Antonio"){|a, b| "#{a} #{b}" }.
-    then{|result| "Hello #{result}." }.
-    rescue(StandardError){|ex| puts "Boom!" }.
-    then{|result| "#{result} Would you like to play a game?"}
-sleep(1)
-p.value #=> "Hello Jerry D'Antonio. Would you like to play a game?" 
-```
-
-### Thread Pools
-
-```ruby
-require 'functional/fixed_thread_pool'
-require 'functional/cached_thread_pool'
-# or
-require 'functional/concurrency'
-
-pool = Functional::FixedThreadPool.new(10)
-@expected = 0
-pool.post{ sleep(0.5); @expected += 100 }
-pool.post{ sleep(0.5); @expected += 100 }
-pool.post{ sleep(0.5); @expected += 100 }
-@expected #=> nil
-sleep(1)
-@expected #=> 300
-
-pool = Functional::CachedThreadPool.new
-@expected = 0
-pool << proc{ sleep(0.5); @expected += 10 }
-pool << proc{ sleep(0.5); @expected += 10 }
-pool << proc{ sleep(0.5); @expected += 10 }
-@expected #=> 0
-sleep(1)
-@expected #=> 30
 ```
 
 ### Utilities

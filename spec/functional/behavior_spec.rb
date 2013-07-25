@@ -107,7 +107,7 @@ describe '-behavior' do
 
       lambda {
         clazz.new
-      }.should_not raise_error(BehaviorError)
+      }.should_not raise_error
     end
 
     it 'creates the object when function definitions match' do
@@ -120,7 +120,7 @@ describe '-behavior' do
 
       lambda {
         clazz.new
-      }.should_not raise_error(BehaviorError)
+      }.should_not raise_error
     end
   end
 

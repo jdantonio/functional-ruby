@@ -130,7 +130,7 @@ describe 'utilities' do
     it 'allows safe operations' do
       lambda {
         safe{ 1 + 1 }
-      }.should_not raise_error(SecurityError)
+      }.should_not raise_error
     end
 
     it 'returns the value of the block when safe' do

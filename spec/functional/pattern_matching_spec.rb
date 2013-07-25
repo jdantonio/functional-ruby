@@ -44,7 +44,7 @@ describe PatternMatching do
 
     it 'can pattern match the constructor' do
 
-      unless RUBY_VERSION = '1.9.2'
+      unless RUBY_VERSION == '1.9.2'
         subject.defn(:initialize, PatternMatching::UNBOUND, PatternMatching::UNBOUND, PatternMatching::UNBOUND) { 'three args' }
         subject.defn(:initialize, PatternMatching::UNBOUND, PatternMatching::UNBOUND) { 'two args' }
         subject.defn(:initialize, PatternMatching::UNBOUND) { 'one arg' }
@@ -152,7 +152,7 @@ describe PatternMatching do
 
       lambda {
         obj.foo
-      }.should_not raise_error(NoMethodError)
+      }.should_not raise_error
     end
 
     it 'does not accept any parameters' do

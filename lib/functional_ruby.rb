@@ -1,1 +1,1 @@
-require 'functional/all'
+require 'functional'
