@@ -75,6 +75,8 @@ class Object
   # methods are implemented
   def behaves_as?(name)
 
+    raise StandardError if self.is_a?(Class)
+
     name = name.to_sym
     bi = $__behavior_info__[name]
     return false if bi.nil?
