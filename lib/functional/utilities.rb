@@ -79,7 +79,6 @@ module Kernel
   # Sandbox the given operation at a high $SAFE level.
   #
   # @param args [Array] zero or more arguments to pass to the block
-  # @param block [Proc] the block to isolate
   #
   # @return [Object] the result of the block operation
   def safe(*args)
@@ -97,6 +96,7 @@ module Kernel
   # Open a file, read it, close the file, and return its contents.
   #
   # @param file [String] path to and name of the file to open
+  #
   # @return [String] file contents
   #
   # @see slurpee
@@ -110,6 +110,7 @@ module Kernel
   #
   # @param file [String] path to and name of the file to open
   # @param safe_level [Integer] when not nil, ERB will $SAFE set to this
+  #
   # @return [String] file contents
   #
   # @see slurpee
@@ -117,6 +118,24 @@ module Kernel
     ERB.new(slurp(file), safe_level).result
   end
   module_function :slurpee
+
+  # Run the given block and time how long it takes in seconds. All arguments
+  # will be passed to the block. The function will return two values. The
+  # first value will be the duration of the timer in seconds. The second
+  # return value will be the result of the block.
+  #
+  # @param args [Array] zero or more arguments to pass to the block
+  #
+  # @return [Integer, Object] the duration of the operation in seconds and
+  #   the result of the block operation
+  def timer(*args)
+    return 0,nil unless block_given?
+    t1 = Time.now
+    result = yield(*args)
+    t2 = Time.now
+    return (t2 - t1), result
+  end
+  module_function :timer
 
   #############################################################################
 
@@ -130,15 +149,6 @@ module Kernel
   def timestamp # :nodoc:
     return Time.now.getutc.to_i
   end
-
-  # @private
-  def timer(*args) # :nodoc:
-    t1 = Time.now
-    result = yield(*args)
-    t2 = Time.now
-    return (t2 - t1)
-  end
-  module_function :timer
 
   # @private
   def strftimer(seconds) # :nodoc:
