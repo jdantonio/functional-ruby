@@ -140,21 +140,15 @@ module Kernel
   #############################################################################
 
   # @private
-  def repl? # :nodoc:
-    return ($0 == 'irb' || $0 == 'pry' || $0 == 'script/rails' || !!($0 =~ /bin\/bundle$/))
+  # @see http://cirw.in/blog/find-references
+  def object_counts # :nodoc:
+    counts = Hash.new{ 0 }
+    ObjectSpace.each_object do |obj|
+      counts[obj.class] += 1
+    end
+    return counts
   end
-  module_function :repl?
-
-  # @private
-  def timestamp # :nodoc:
-    return Time.now.getutc.to_i
-  end
-
-  # @private
-  def strftimer(seconds) # :nodoc:
-    Time.at(seconds).gmtime.strftime('%R:%S.%L')
-  end
-  module_function :strftimer
+  module_function :object_counts
 
   # @private
   # @see http://rhaseventh.blogspot.com/2008/07/ruby-and-rails-how-to-get-pp-pretty.html
@@ -167,4 +161,27 @@ module Kernel
     s.read
   end
   module_function :pp_s
+
+  # @private
+  def repl? # :nodoc:
+    return ($0 == 'irb' || $0 == 'pry' || $0 == 'script/rails' || !!($0 =~ /bin\/bundle$/))
+  end
+  module_function :repl?
+
+  # @private
+  def strftimer(seconds) # :nodoc:
+    Time.at(seconds).gmtime.strftime('%R:%S.%L')
+  end
+  module_function :strftimer
+
+  # @private
+  def timestamp # :nodoc:
+    return Time.now.getutc.to_i
+  end
+
+  def write_object_counts(name = 'ruby')
+    file = "#{name}_#{Time.now.to_i}.txt"
+    File.open(file, 'w') {|f| f.write(pp_s(object_counts)) }
+  end
+  module_function :write_object_counts
 end
