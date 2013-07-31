@@ -248,6 +248,7 @@ describe '-behavior' do
         }
 
         clazz.behaves_as?(:gen_foo).should be_true
+        clazz.new.behaves_as?(:gen_foo).should be_true
       end
 
       it 'accepts any arity when function arity is set to :any' do
@@ -257,6 +258,7 @@ describe '-behavior' do
         }
 
         clazz.behaves_as?(:gen_foo).should be_true
+        clazz.new.behaves_as?(:gen_foo).should be_true
       end
 
       it 'returns false when the behavior is partially supported' do
@@ -267,6 +269,7 @@ describe '-behavior' do
         }
 
         clazz.behaves_as?(:gen_foo).should be_false
+        clazz.new.behaves_as?(:gen_foo).should be_false
       end
 
       it 'returns false when the behavior is not supported at all' do

@@ -75,15 +75,27 @@ class Object
   # methods are implemented
   def behaves_as?(name)
 
-    raise StandardError if self.is_a?(Class)
-
     name = name.to_sym
     bi = $__behavior_info__[name]
     return false if bi.nil?
 
+    validator = proc do |obj, method, arity|
+      (obj.respond_to?(method) && arity == :any) || obj.method(method).arity == arity
+    end
+
     bi.each do |method, arity|
       begin
-        return false unless arity == :any || self.method(method).arity == arity
+        method = method.to_s
+        obj = self
+
+        if self.is_a?(Class) && method =~ /^self_/
+          method = method.gsub(/^self_/, '')
+        elsif method =~ /^self_/
+          method = method.gsub(/^self_/, '')
+          obj = self.class
+        end
+
+        return false unless validator.call(obj, method, arity)
       rescue NameError
         return false
       end
