@@ -79,7 +79,6 @@ module Kernel
   # Sandbox the given operation at a high $SAFE level.
   #
   # @param args [Array] zero or more arguments to pass to the block
-  # @param block [Proc] the block to isolate
   #
   # @return [Object] the result of the block operation
   def safe(*args)
@@ -97,6 +96,7 @@ module Kernel
   # Open a file, read it, close the file, and return its contents.
   #
   # @param file [String] path to and name of the file to open
+  #
   # @return [String] file contents
   #
   # @see slurpee
@@ -110,6 +110,7 @@ module Kernel
   #
   # @param file [String] path to and name of the file to open
   # @param safe_level [Integer] when not nil, ERB will $SAFE set to this
+  #
   # @return [String] file contents
   #
   # @see slurpee
@@ -118,33 +119,36 @@ module Kernel
   end
   module_function :slurpee
 
-  #############################################################################
-
-  # @private
-  def repl? # :nodoc:
-    return ($0 == 'irb' || $0 == 'pry' || $0 == 'script/rails' || !!($0 =~ /bin\/bundle$/))
-  end
-  module_function :repl?
-
-  # @private
-  def timestamp # :nodoc:
-    return Time.now.getutc.to_i
-  end
-
-  # @private
-  def timer(*args) # :nodoc:
+  # Run the given block and time how long it takes in seconds. All arguments
+  # will be passed to the block. The function will return two values. The
+  # first value will be the duration of the timer in seconds. The second
+  # return value will be the result of the block.
+  #
+  # @param args [Array] zero or more arguments to pass to the block
+  #
+  # @return [Integer, Object] the duration of the operation in seconds and
+  #   the result of the block operation
+  def timer(*args)
+    return 0,nil unless block_given?
     t1 = Time.now
     result = yield(*args)
     t2 = Time.now
-    return (t2 - t1)
+    return (t2 - t1), result
   end
   module_function :timer
 
+  #############################################################################
+
   # @private
-  def strftimer(seconds) # :nodoc:
-    Time.at(seconds).gmtime.strftime('%R:%S.%L')
+  # @see http://cirw.in/blog/find-references
+  def object_counts # :nodoc:
+    counts = Hash.new{ 0 }
+    ObjectSpace.each_object do |obj|
+      counts[obj.class] += 1
+    end
+    return counts
   end
-  module_function :strftimer
+  module_function :object_counts
 
   # @private
   # @see http://rhaseventh.blogspot.com/2008/07/ruby-and-rails-how-to-get-pp-pretty.html
@@ -157,4 +161,27 @@ module Kernel
     s.read
   end
   module_function :pp_s
+
+  # @private
+  def repl? # :nodoc:
+    return ($0 == 'irb' || $0 == 'pry' || $0 == 'script/rails' || !!($0 =~ /bin\/bundle$/))
+  end
+  module_function :repl?
+
+  # @private
+  def strftimer(seconds) # :nodoc:
+    Time.at(seconds).gmtime.strftime('%R:%S.%L')
+  end
+  module_function :strftimer
+
+  # @private
+  def timestamp # :nodoc:
+    return Time.now.getutc.to_i
+  end
+
+  def write_object_counts(name = 'ruby')
+    file = "#{name}_#{Time.now.to_i}.txt"
+    File.open(file, 'w') {|f| f.write(pp_s(object_counts)) }
+  end
+  module_function :write_object_counts
 end

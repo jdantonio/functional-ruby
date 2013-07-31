@@ -234,4 +234,35 @@ describe 'utilities' do
       repl?.should be_false
     end
   end
+
+  context '#timer' do
+
+    it 'returns [0, nil] if no block is given' do
+      duration, result = timer()
+      duration.should eq 0
+      result.should be_nil
+    end
+
+    it 'yields to the block' do
+      @expected = false
+      duration, result = timer{ @expected = true }
+      @expected.should be_true
+    end
+
+    it 'passes all arguments to the block' do
+      @expected = nil
+      duration, result = timer(1,2,3){|a,b,c| @expected = [a,b,c]}
+      @expected.should eq [1,2,3]
+    end
+
+    it 'returns the duration as the first return value' do
+      duration, result = timer{ sleep(0.1) }
+      duration.should > 0
+    end
+
+    it 'returns the block result as the second return value' do
+      duration, result = timer{ 42 }
+      result.should eq 42
+    end
+  end
 end
