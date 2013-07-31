@@ -11,14 +11,10 @@ Forget to implement a required method and Ruby will let you know. See the exampl
 
 ## Usage
 
-The `behavior` functionality is not imported by default. It needs a separate `require` statement:
+Require the gem
 
 ```ruby
-require 'functional/behavior'
-
-# -or-
-
-require 'functional/behaviour'
+require 'functional'
 ```
 
 ### behavior_info
@@ -34,7 +30,6 @@ behaviour_info(:gen_foo, foo: 0, bar: 1, baz: 2)
 # -or (for the Java/C# crowd)
 
 interface(:gen_foo, foo: 0, bar: 1, baz: 2)
-
 ```
 
 Each function name can be listed only once and the arity must follow the rules of the
@@ -42,6 +37,12 @@ Each function name can be listed only once and the arity must follow the rules o
 Though not explicitly documented, block arguments do not count toward a method's arity.
 methods defined using this gem's `defn` function will always have an arity of -1,
 regardless of how many overloads are defined.
+
+To specify class/module methods prepend the methid name with 'self_'
+
+```ruby
+behaviour_info(:gen_foo, self_foo: 0, self_bar: 1, baz: 2)
+```
 
 ### behavior
 
@@ -84,12 +85,12 @@ monkey-patched with a `behaves_as?` predicate method.
 A complete example:
 
 ```ruby
-behaviour_info(:gen_foo, foo: 0, bar: 1, baz: 2, boom: -1, bam: :any)
+behaviour_info(:gen_foo, self_foo: 0, bar: 1, baz: 2, boom: -1, bam: :any)
 
 class Foo
   behavior(:gen_foo)
 
-  def foo
+  def self.foo
     return 'foo/0'
   end
 
@@ -112,6 +113,7 @@ end
 
 foo = Foo.new
 
+Foo.behaves_as? :gen_foo    #=> true
 foo.behaves_as? :gen_foo    #=> true
 foo.behaves_as?(:bogus)     #=> false
 'foo'.behaves_as? :gen_foo  #=> false

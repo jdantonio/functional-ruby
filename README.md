@@ -120,7 +120,7 @@ Documentation: [Behavior](https://github.com/jdantonio/functional-ruby/blob/mast
 ```ruby
 require 'functional/behavior'
 
-behaviour_info(:gen_foo, foo: 0, bar: 1)
+behaviour_info(:gen_foo, foo: 0, self_bar: 1)
 
 class Foo
   behavior(:gen_foo)
@@ -129,14 +129,15 @@ class Foo
     return 'foo/0'
   end
 
-  def bar(one, &block)
+  def self.bar(one, &block)
     return 'bar/1'
   end
 end
 
 foo = Foo.new
 
-foo.behaves_as? :gen_foo    #=> true
+Foo.behaves_as? :gen_foo    #=> true
+foo.behaves_as?(:gen_foo)   #=> true
 foo.behaves_as?(:bogus)     #=> false
 'foo'.behaves_as? :gen_foo  #=> false
 ```

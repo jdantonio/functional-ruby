@@ -240,11 +240,11 @@ describe '-behavior' do
     context 'Class' do
 
       it 'returns true when the behavior is fully suported' do
-        behavior_info(:gen_foo, self_foo: 0, self_bar: 1, self_baz: 2)
+        behavior_info(:gen_foo, self_foo: 0, self_bar: 1, baz: 2)
         clazz = Class.new {
           def self.foo() nil; end
           def self.bar(first) nil; end
-          def self.baz(first, second) nil; end
+          def baz(first, second) nil; end
         }
 
         clazz.behaves_as?(:gen_foo).should be_true
@@ -262,10 +262,10 @@ describe '-behavior' do
       end
 
       it 'returns false when the behavior is partially supported' do
-        behavior_info(:gen_foo, self_foo: 0, self_bar: 1, self_baz: 2)
+        behavior_info(:gen_foo, self_foo: 0, bar: 1, self_baz: 2)
         clazz = Class.new {
           def self.foo() nil; end
-          def self.bar(first) nil; end
+          def self(first) nil; end
         }
 
         clazz.behaves_as?(:gen_foo).should be_false

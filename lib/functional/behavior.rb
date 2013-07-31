@@ -83,12 +83,16 @@ class Object
       (obj.respond_to?(method) && arity == :any) || obj.method(method).arity == arity
     end
 
+    if self.is_a?(Class) || self.is_a?(Module)
+      bi = bi.select{|method, arity| method.to_s =~ /^self_/ }
+    end
+
     bi.each do |method, arity|
       begin
         method = method.to_s
         obj = self
 
-        if self.is_a?(Class) && method =~ /^self_/
+        if (self.is_a?(Class) || self.is_a?(Module)) && method =~ /^self_/
           method = method.gsub(/^self_/, '')
         elsif method =~ /^self_/
           method = method.gsub(/^self_/, '')
