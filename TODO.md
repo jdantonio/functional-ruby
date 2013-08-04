@@ -23,5 +23,5 @@ threads in Ruby make long-lived send/receive loops compelling.
 
 ## Other stuff
 
-* retry - retries something x times if it fails
+* C# sealed - http://msdn.microsoft.com/en-us/library/88c54tsw.aspx
 * ada range type - http://en.wikibooks.org/wiki/Ada_Programming/Types/range
