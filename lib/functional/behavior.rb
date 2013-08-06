@@ -48,9 +48,17 @@ module Kernel
       end
     end
 
+    if self.class == Class
+      unless self.respond_to?(:__new)
+        class << clazz
+          alias_method(:__new, :new)
+        end
+      end
+    end
+
     class << clazz
       def new(*args, &block)
-        obj = super
+        obj = __new(*args, &block)
         self.ancestors.each do |clazz|
           if clazz.respond_to?(:behaviors)
             clazz.behaviors.each do |behavior|
