@@ -1,4 +1,4 @@
-# For good -behavior(timeoff).
+# For good -behavior(:timeoff).
 
 One of Ruby's greatest strengths is [duck typing](http://rubylearning.com/satishtalim/duck_typing.html).
 Usually this is awesome and I'm happy to not have to deal with static typing and the compiler. Usually.
