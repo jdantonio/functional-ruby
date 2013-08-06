@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'fakefs/safe'
+require 'rbconfig'
 
 describe 'utilities' do
 
@@ -141,16 +142,18 @@ describe 'utilities' do
       safe(1, 2, 3){|x, y, z| x + y + z }.should eq 6
     end
 
-    it 'rejects unsafe operations on tainted objects' do
-      lambda {
-        safe{ Signal.trap('INT'.taint) }
-      }.should raise_error(SecurityError)
-    end
+    if RbConfig::CONFIG['ruby_install_name'] =~ /^ruby$/i
+      it 'rejects unsafe operations on tainted objects' do
+        lambda {
+          safe{ Signal.trap('INT'.taint) }
+        }.should raise_error(SecurityError)
+      end
 
-    it 'rejects the use of #eval' do
-      lambda {
-        safe{ eval 'puts 1' }
-      }.should raise_error(SecurityError)
+      it 'rejects the use of #eval' do
+        lambda {
+          safe{ eval 'puts 1' }
+        }.should raise_error(SecurityError)
+      end
     end
   end
 

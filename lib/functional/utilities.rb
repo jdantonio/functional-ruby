@@ -1,6 +1,7 @@
 require 'pp'
 require 'stringio'
 require 'erb'
+require 'rbconfig'
 
 Infinity = 1/0.0 unless defined?(Infinity)
 NaN = 0/0.0 unless defined?(NaN)
@@ -83,13 +84,17 @@ module Kernel
   # @return [Object] the result of the block operation
   def safe(*args)
     raise ArgumentError.new('no block given') unless block_given?
-    result = nil
-    t = Thread.new do
-      $SAFE = 3
-      result = yield(*args)
+    if RbConfig::CONFIG['ruby_install_name'] =~ /^ruby$/i
+      result = nil
+      t = Thread.new do
+        $SAFE = 3
+        result = yield(*args)
+      end
+      t.join
+      return result
+    else
+      return yield(*args)
     end
-    t.join
-    return result
   end
   module_function :safe
 
