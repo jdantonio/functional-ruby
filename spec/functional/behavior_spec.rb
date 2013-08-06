@@ -74,6 +74,31 @@ describe '-behavior' do
 
   context 'object creation' do
 
+    it 'checks all required behaviors' do
+      behavior_info(:gen_foo, foo: 0)
+      behavior_info(:gen_bar, bar: 1)
+
+      clazz = Class.new {
+        behavior(:gen_foo)
+        behavior(:gen_bar)
+        def foo() nil; end
+      }
+      lambda{ clazz.new }.should raise_error(BehaviorError)
+
+      clazz = Class.new {
+        behavior(:gen_foo)
+        behavior(:gen_bar)
+        def bar() nil; end
+      }
+      lambda{ clazz.new }.should raise_error(BehaviorError)
+
+      clazz = Class.new {
+        behavior(:gen_foo)
+        behavior(:gen_bar)
+      }
+      lambda{ clazz.new }.should raise_error(BehaviorError)
+    end
+
     context 'instance methods' do
 
       it 'raises an exception when one or more function definitions are missing' do
@@ -175,6 +200,35 @@ describe '-behavior' do
         lambda {
           clazz.new
         }.should_not raise_error
+      end
+    end
+
+    context 'inheritance' do
+
+      it 'raises an exception if a superclass includes a behavior the subclass does not support' do
+        behavior_info(:gen_foo, foo: 0)
+        superclass = Class.new{
+          behavior(:gen_foo)
+        }
+        subclass = Class.new(superclass)
+
+        lambda {
+          subclass.new
+        }.should raise_error(BehaviorError)
+      end
+
+      it 'raises an exception if a module includes a behavior the containing class does not support' do
+        behavior_info(:gen_foo, foo: 0)
+        mod = Module.new{
+          behavior(:gen_foo)
+        }
+        subclass = Class.new{
+          include mod
+        }
+
+        lambda {
+          subclass.new
+        }.should raise_error(BehaviorError)
       end
     end
   end

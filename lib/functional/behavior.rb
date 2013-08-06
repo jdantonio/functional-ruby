@@ -38,15 +38,29 @@ module Kernel
 
     clazz.behaviors << name
 
+    if self.class == Module
+      (class << self; self; end).class_eval do
+        define_method(:included) do |base|
+          base.class_eval do
+            behavior(name)
+          end
+        end
+      end
+    end
+
     class << clazz
       def new(*args, &block)
-        name = self.behaviors.first
         obj = super
-        unless obj.behaves_as?(name)
-          raise BehaviorError.new("undefined callback functions in #{self} (behavior '#{name}')")
-        else
-          return obj
+        self.ancestors.each do |clazz|
+          if clazz.respond_to?(:behaviors)
+            clazz.behaviors.each do |behavior|
+              unless obj.behaves_as?(behavior)
+                raise BehaviorError.new("undefined callback functions in #{self} (behavior '#{behavior}')")
+              end
+            end
+          end
         end
+        return obj
       end
     end
   end
