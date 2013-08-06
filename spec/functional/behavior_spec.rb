@@ -230,6 +230,101 @@ describe '-behavior' do
           subclass.new
         }.should raise_error(BehaviorError)
       end
+
+      it 'supports behaviors from multiple ancestors' do
+        behavior_info(:gen_foo, foo: 0)
+        behavior_info(:gen_bar, bar: 0)
+        behavior_info(:gen_baz, baz: 0)
+
+        rootclass = Class.new{ behavior(:gen_foo) }
+        superclass = Class.new(rootclass){ behavior(:gen_bar) }
+        
+        subclass = Class.new(superclass){
+          behavior(:gen_baz)
+          def bar() nil; end
+          def baz() nil; end
+        }
+        lambda {
+          subclass.new
+        }.should raise_error(BehaviorError)
+
+        subclass = Class.new(superclass){
+          behavior(:gen_baz)
+          def foo() nil; end
+          def baz() nil; end
+        }
+        lambda {
+          subclass.new
+        }.should raise_error(BehaviorError)
+        
+        subclass = Class.new(superclass){
+          behavior(:gen_baz)
+          def foo() nil; end
+          def bar() nil; end
+        }
+        lambda {
+          subclass.new
+        }.should raise_error(BehaviorError)
+        
+        subclass = Class.new(superclass){
+          behavior(:gen_baz)
+          def foo() nil; end
+          def bar() nil; end
+          def baz() nil; end
+        }
+        lambda {
+          subclass.new
+        }.should_not raise_error
+      end
+
+      it 'supports multiple behaviors in an included module' do
+        behavior_info(:gen_foo, foo: 0)
+        behavior_info(:gen_bar, bar: 0)
+        behavior_info(:gen_baz, baz: 0)
+
+        mod = Module.new{
+          behavior(:gen_foo)
+          behavior(:gen_bar)
+          behavior(:gen_baz)
+        }
+
+        subclass = Class.new{
+          include mod
+          def bar() nil; end
+          def baz() nil; end
+        }
+        lambda {
+          subclass.new
+        }.should raise_error(BehaviorError)
+
+        subclass = Class.new{
+          include mod
+          def foo() nil; end
+          def baz() nil; end
+        }
+        lambda {
+          subclass.new
+        }.should raise_error(BehaviorError)
+
+        subclass = Class.new{
+          include mod
+          def foo() nil; end
+          def bar() nil; end
+        }
+        lambda {
+          subclass.new
+        }.should raise_error(BehaviorError)
+
+        subclass = Class.new{
+          include mod
+          def foo() nil; end
+          def bar() nil; end
+          def baz() nil; end
+        }
+        lambda {
+          subclass.new
+        }.should_not raise_error
+      end
     end
   end
 
