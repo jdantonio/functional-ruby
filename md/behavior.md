@@ -75,6 +75,45 @@ raise an exception when you try to create an object from the class:
 Baz.new #=> ArgumentError: undefined callback functions in Baz (behavior 'gen_foo')
 ```
 
+A class may support multiple behaviors:
+
+```ruby
+behavior_info(:gen_foo, foo: 0)
+behavior_info(:gen_bar, bar: 1)
+
+class FooBar
+  behavior(:gen_foo)
+  behavior(:gen_bar)
+  ...
+end
+```
+
+Inheritance and module inclusion are supported as well:
+
+```ruby
+behavior_info(:gen_foo, foo: 0)
+behavior_info(:gen_bar, bar: 0)
+
+class Foo
+  behavior(:gen_foo)
+  def foo() nil; end
+end
+
+module Bar
+  behavior(:gen_bar)
+  def bar() nil; end
+end
+
+class FooBar < Foo
+  include Bar
+end
+
+foobar = FooBar.new
+
+foobar.behaves_as?(:gen_foo) #=> true
+foobar.behaves_as?(:gen_bar) #=> true
+```
+
 ### behaves_as?
 
 As an added bonus, Ruby [Object](http://ruby-doc.org/core-1.9.3/Object.html) will be
