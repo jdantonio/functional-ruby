@@ -126,23 +126,23 @@ describe 'utilities' do
     end
   end
 
-  context '#safe' do
+  if RbConfig::CONFIG['ruby_install_name'] =~ /^ruby$/i
+    context '#safe' do
 
-    it 'allows safe operations' do
-      lambda {
-        safe{ 1 + 1 }
-      }.should_not raise_error
-    end
+      it 'allows safe operations' do
+        lambda {
+          safe{ 1 + 1 }
+        }.should_not raise_error
+      end
 
-    it 'returns the value of the block when safe' do
-      safe{ 1 + 1 }.should eq 2
-    end
+      it 'returns the value of the block when safe' do
+        safe{ 1 + 1 }.should eq 2
+      end
 
-    it 'passes all arguments to the block' do
-      safe(1, 2, 3){|x, y, z| x + y + z }.should eq 6
-    end
+      it 'passes all arguments to the block' do
+        safe(1, 2, 3){|x, y, z| x + y + z }.should eq 6
+      end
 
-    if RbConfig::CONFIG['ruby_install_name'] =~ /^ruby$/i
       it 'rejects unsafe operations on tainted objects' do
         lambda {
           safe{ Signal.trap('INT'.taint) }
