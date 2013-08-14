@@ -384,6 +384,50 @@ describe '-behavior' do
         clazz = Class.new { }
         clazz.new.behaves_as?(:gen_foo).should be_false
       end
+
+      it 'raises an exception on failure when abend is true' do
+        behavior_info(:gen_foo, foo: 0)
+        behavior_info(:gen_bar, self_bar: 1)
+        behavior_info(:gen_baz, baz: :any)
+        clazz = Class.new { }
+
+        lambda {
+          clazz.new.behaves_as?(:gen_foo, true)
+        }.should raise_error(BehaviorError)
+
+        lambda {
+          clazz.new.behaves_as?(:gen_bar, true)
+        }.should raise_error(BehaviorError)
+        
+        lambda {
+          clazz.new.behaves_as?(:gen_baz, true)
+        }.should raise_error(BehaviorError)
+      end
+
+      it 'exception includes the name and arity of the first missing function' do
+        behavior_info(:gen_foo, foo: 0)
+        behavior_info(:gen_bar, self_bar: 1)
+        behavior_info(:gen_baz, baz: :any)
+        clazz = Class.new { }
+
+        begin
+          clazz.new.behaves_as?(:gen_foo, true)
+        rescue BehaviorError => ex
+          ex.message.should =~ /foo\/0/
+        end
+
+        begin
+          clazz.new.behaves_as?(:gen_bar, true)
+        rescue BehaviorError => ex
+          ex.message.should =~ /#self\.bar\/1/
+        end
+
+        begin
+          clazz.new.behaves_as?(:gen_baz, true)
+        rescue BehaviorError => ex
+          ex.message.should =~ /#baz\/:any/
+        end
+      end
     end
 
     context 'Class' do

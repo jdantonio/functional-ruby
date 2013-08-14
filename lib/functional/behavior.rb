@@ -62,9 +62,10 @@ module Kernel
         self.ancestors.each do |clazz|
           if clazz.respond_to?(:behaviors)
             clazz.behaviors.each do |behavior|
-              unless obj.behaves_as?(behavior)
-                raise BehaviorError.new("undefined callback functions in #{self} (behavior '#{behavior}')")
-              end
+              valid = obj.behaves_as?(behavior, true)
+              #unless obj.behaves_as?(behavior)
+                #raise BehaviorError.new("undefined callback functions in #{self} (behavior '#{behavior}')")
+              #end
             end
           end
         end
@@ -85,17 +86,16 @@ class Object
 
   # Does the object implement the given #behavior_info?
   #
-  # @note Will return true if the object implements the
-  # required methods. The object's class hierarchy does
-  # not necessarily have to include a corresponding
-  # #behavior call.
+  # @note Will return true if the object implements the required methods. The
+  #   object's class hierarchy does not necessarily have to include a corresponding
+  #   #behavior call.
   #
-  # @param name [Symbol] name of the #behavior_info to
-  # verify behavior against.
+  # @param name [Symbol] name of the #behavior_info to verify behavior against.
+  # @param abend [Boolean] raise an exception when true and the there are
+  #   unimplemented methods
   #
-  # @return [Boolean] whether or not the required public
-  # methods are implemented
-  def behaves_as?(name)
+  # @return [Boolean] whether or not the required public methods are implemented
+  def behaves_as?(name, abend = false)
 
     name = name.to_sym
     bi = $__behavior_info__[name]
@@ -111,19 +111,26 @@ class Object
 
     bi.each do |method, arity|
       begin
-        method = method.to_s
+        func = method.to_s
         obj = self
 
-        if (self.is_a?(Class) || self.is_a?(Module)) && method =~ /^self_/
-          method = method.gsub(/^self_/, '')
+        if (self.is_a?(Class) || self.is_a?(Module)) && func =~ /^self_/
+          func = func.gsub(/^self_/, '')
         elsif method =~ /^self_/
-          method = method.gsub(/^self_/, '')
+          func = func.gsub(/^self_/, '')
           obj = self.class
         end
 
-        return false unless validator.call(obj, method, arity)
+        valid = validator.call(obj, func, arity)
+        raise NameError if abend && ! valid
+        return valid unless valid
       rescue NameError
-        return false
+        if abend
+          func = "#{method.to_s.gsub(/^self_/, 'self.')}/#{arity.to_s.gsub(/^any$/, ':any')}"
+          raise BehaviorError.new("undefined callback function ##{func} in #{self} (behavior '#{name}')")
+        else
+          return false
+        end
       end
     end
 
