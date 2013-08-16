@@ -151,7 +151,7 @@ module Functional
       }
     end
 
-    # ruby-1.9.3
+    # ruby-1.9.3 linux
     let(:mri_193) do
       {
         :MAJOR => '1',
@@ -161,6 +161,19 @@ module Functional
         :ruby_install_name => 'ruby',
         :ruby_version => '1.9.1',
         :host_os => 'linux-gnu'
+      }
+    end
+
+    # ruby-1.9.3 windows
+    let(:mri_193_win) do
+      {
+        :MAJOR => '1',
+        :MINOR => '9',
+        :TEENY => '1',
+        :PATCHLEVEL => '448',
+        :ruby_install_name => 'ruby',
+        :ruby_version => '1.9.1',
+        :host_os => 'mingw32'
       }
     end
 
@@ -191,7 +204,12 @@ module Functional
         platform.should_not be_osx
       end
 
-      it 'properly detects Windows'
+      it 'properly detects Windows' do
+        platform = platform_for(mri_193_win)
+        platform.should_not be_linux
+        platform.should be_windows
+        platform.should_not be_osx
+      end
 
       it 'properly detects OS X' do
         platform = platform_for(jruby_170_osx)

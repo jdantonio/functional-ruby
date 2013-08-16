@@ -4,9 +4,9 @@ module Functional
 
   class Platform
 
-    attr_reader :ruby_version,
-      :host_os,
-      :ruby_name
+    attr_reader :ruby_version
+    attr_reader :host_os
+    attr_reader :ruby_name
 
     def rubies
       @rubies ||= [
@@ -32,7 +32,7 @@ module Functional
         raise ArgumentError.new("wrong number of arguments (#{args.size} for 0 or 3)")
       end
 
-      @ruby_version = args[0] || RbConfig::CONFIG['ruby_version']
+      @ruby_version = args[0] || RUBY_VERSION || RbConfig::CONFIG['ruby_version']
       @host_os = args[1] || RbConfig::CONFIG['host_os']
       @ruby_name = args[2] || RbConfig::CONFIG['ruby_install_name']
     end
