@@ -159,42 +159,48 @@ describe 'utilities' do
 
   context '#slurp' do
 
-    before(:all) { FakeFS.activate! }
-    after(:all) { FakeFS.deactivate! }
+    unless PLATFORM.rbx?
 
-    let!(:path){ 'slurp.txt' }
-    let!(:text){ 'Hello, world!' }
+      before(:all) { FakeFS.activate! }
+      after(:all) { FakeFS.deactivate! }
 
-    it 'returns the contents of the file' do
-      File.open(path, 'w+') {|f| f.write(text) }
-      slurp(path).should eq text
-    end
+      let!(:path){ 'slurp.txt' }
+      let!(:text){ 'Hello, world!' }
 
-    it 'raises an exception when the file does not exist' do
-      lambda {
-        slurp('path/does/not/exist')
-      }.should raise_error(Errno::ENOENT)
+      it 'returns the contents of the file' do
+        File.open(path, 'w+') {|f| f.write(text) }
+        slurp(path).should eq text
+      end
+
+      it 'raises an exception when the file does not exist' do
+        lambda {
+          slurp('path/does/not/exist')
+        }.should raise_error(Errno::ENOENT)
+      end
     end
   end
 
   context '#slurpee' do
 
-    before(:all) { FakeFS.activate! }
-    after(:all) { FakeFS.deactivate! }
+    unless PLATFORM.rbx?
 
-    let!(:path){ 'slurp.txt' }
-    let!(:text){ 'You are number 6.' }
-    let!(:erb) { 'You are number <%= 2 * 3 %>.' }
+      before(:all) { FakeFS.activate! }
+      after(:all) { FakeFS.deactivate! }
 
-    it 'returns the processed contents of the file' do
-      File.open(path, 'w+') {|f| f.write(erb) }
-      slurpee(path).should eq text
-    end
+      let!(:path){ 'slurp.txt' }
+      let!(:text){ 'You are number 6.' }
+      let!(:erb) { 'You are number <%= 2 * 3 %>.' }
 
-    it 'raises an exception when the file does not exist' do
-      lambda {
-        slurpee('path/does/not/exist')
-      }.should raise_error(Errno::ENOENT)
+      it 'returns the processed contents of the file' do
+        File.open(path, 'w+') {|f| f.write(erb) }
+        slurpee(path).should eq text
+      end
+
+      it 'raises an exception when the file does not exist' do
+        lambda {
+          slurpee('path/does/not/exist')
+        }.should raise_error(Errno::ENOENT)
+      end
     end
   end
 

@@ -4,16 +4,106 @@ module Functional
 
   describe Platform do
 
-
-    # rubinius-2.0.0.rc1 (rbx) 1.8 mode
-    let(:rubinius_18) do
+    # ruby-2.0.0
+    let(:mri_200) do
       {
-        :ruby_install_name => 'rbx',
+        :MAJOR => '2',
+        :MINOR => '0',
+        :TEENY => '0',
+        :PATCHLEVEL => '195',
+        :ruby_install_name => 'ruby',
+        :ruby_version => '2.0.0',
+        :host_os => 'linux-gnu'
+      }
+    end
+
+    # ruby-1.9.3 windows
+    let(:mri_193_win) do
+      {
+        :MAJOR => '1',
+        :MINOR => '9',
+        :TEENY => '1',
+        :PATCHLEVEL => '448',
+        :ruby_install_name => 'ruby',
+        :ruby_version => '1.9.1',
+        :host_os => 'mingw32'
+      }
+    end
+
+    # ruby-1.9.3 linux
+    let(:mri_193) do
+      {
+        :MAJOR => '1',
+        :MINOR => '9',
+        :TEENY => '1',
+        :PATCHLEVEL => '327',
+        :ruby_install_name => 'ruby',
+        :ruby_version => '1.9.1',
+        :host_os => 'linux-gnu'
+      }
+    end
+
+    # ruby-1.9.2
+    let(:mri_192) do
+      {
+        :MAJOR => '1',
+        :MINOR => '9',
+        :TEENY => '1',
+        :PATCHLEVEL => '320',
+        :ruby_install_name => 'ruby',
+        :ruby_version => '1.9.1',
+        :host_os => 'linux-gnu'
+      }
+    end
+
+    # ruby-1.8.7
+    let(:mri_187) do
+      {
+        :MAJOR => '1',
+        :ruby_version => '1.8',
+        :PATCHLEVEL => '371',
+        :MINOR => '8',
+        :host_os => 'linux-gnu',
+        :TEENY => '7',
+        :ruby_install_name => 'ruby'
+      }
+    end
+
+    # ruby-1.8.6
+    let(:mri_186) do
+      {
+        :MAJOR => '1',
+        :ruby_version => '1.8',
+        :MINOR => '8',
+        :host_os => 'linux-gnu',
+        :ruby_install_name => 'ruby',
+        :TEENY => '6'
+      }
+    end
+
+    # ree-1.8.7-2012.02
+    let(:ree_187) do
+      {
+        :MINOR => '8',
+        :MAJOR => '1',
+        :host_os => 'linux-gnu',
+        :PATCHLEVEL => '358',
+        :ruby_install_name => 'ruby',
+        :TEENY => '7',
+        :ruby_version => '1.8'
+      }
+    end
+
+    # ree-1.8.7 on os x
+    let(:ree_187_osx) do
+      {
         :host_os => 'darwin11.4.2',
+        :ruby_install_name => 'ruby',
+        :MINOR => '8',
+        :MAJOR => '1',
         :ruby_version => '1.8',
         :TEENY => '7',
-        :MAJOR => '1',
-        :MINOR => '8'
+        :PATCHLEVEL => '358'
       }
     end
 
@@ -29,8 +119,44 @@ module Functional
       }
     end
 
-    # jruby-1.6.7
-    let(:jruby_167) do
+    # rubinius-2.0.0.rc1 (rbx) 1.8 mode
+    let(:rubinius_18) do
+      {
+        :ruby_install_name => 'rbx',
+        :host_os => 'darwin11.4.2',
+        :ruby_version => '1.8',
+        :TEENY => '7',
+        :MAJOR => '1',
+        :MINOR => '8'
+      }
+    end
+
+    # jruby-1.7.0
+    let(:jruby_170) do
+      {
+        :MAJOR => '1',
+        :MINOR => '9',
+        :TEENY => '3',
+        :ruby_version => '1.9',
+        :ruby_install_name => 'jruby',
+        :host_os => 'linux'
+      }
+    end
+
+    # jruby-1.7.0 on os x
+    let(:jruby_170_osx) do
+      {
+        :MAJOR => '1',
+        :MINOR => '9',
+        :TEENY => '3',
+        :ruby_version => '1.9',
+        :ruby_install_name => 'jruby',
+        :host_os => 'darwin'
+      }
+    end
+
+    # jruby-1.6.8
+    let(:jruby_168) do
       {
         :MAJOR => '1',
         :MINOR => '8',
@@ -53,8 +179,8 @@ module Functional
       }
     end
 
-    # jruby-1.6.8
-    let(:jruby_168) do
+    # jruby-1.6.7
+    let(:jruby_167) do
       {
         :MAJOR => '1',
         :MINOR => '8',
@@ -62,131 +188,6 @@ module Functional
         :ruby_version => '1.8',
         :ruby_install_name => 'jruby',
         :host_os => 'linux'
-      }
-    end
-
-    # jruby-1.7.0
-    let(:jruby_170) do
-      {
-        :MAJOR => '1',
-        :MINOR => '9',
-        :TEENY => '3',
-        :ruby_version => '1.9',
-        :ruby_install_name => 'jruby',
-        :host_os => 'linux'
-      }
-    end
-
-    let(:jruby_170_osx) do
-      {
-        :MAJOR => '1',
-        :MINOR => '9',
-        :TEENY => '3',
-        :ruby_version => '1.9',
-        :ruby_install_name => 'jruby',
-        :host_os => 'darwin'
-      }
-    end
-
-    # ree-1.8.7-2012.02
-    let(:ree_187) do
-      {
-        :MINOR => '8',
-        :MAJOR => '1',
-        :host_os => 'linux-gnu',
-        :PATCHLEVEL => '358',
-        :ruby_install_name => 'ruby',
-        :TEENY => '7',
-        :ruby_version => '1.8'
-      }
-    end
-
-    let(:ree_187_osx) do
-      {
-        :host_os => 'darwin11.4.2',
-        :ruby_install_name => 'ruby',
-        :MINOR => '8',
-        :MAJOR => '1',
-        :ruby_version => '1.8',
-        :TEENY => '7',
-        :PATCHLEVEL => '358'
-      }
-    end
-
-    # ruby-1.8.6
-    let(:mri_186) do
-      {
-        :MAJOR => '1',
-        :ruby_version => '1.8',
-        :MINOR => '8',
-        :host_os => 'linux-gnu',
-        :ruby_install_name => 'ruby',
-        :TEENY => '6'
-      }
-    end
-
-    # ruby-1.8.7
-    let(:mri_187) do
-      {
-        :MAJOR => '1',
-        :ruby_version => '1.8',
-        :PATCHLEVEL => '371',
-        :MINOR => '8',
-        :host_os => 'linux-gnu',
-        :TEENY => '7',
-        :ruby_install_name => 'ruby'
-      }
-    end
-
-    # ruby-1.9.2
-    let(:mri_192) do
-      {
-        :MAJOR => '1',
-        :MINOR => '9',
-        :TEENY => '1',
-        :PATCHLEVEL => '320',
-        :ruby_install_name => 'ruby',
-        :ruby_version => '1.9.1',
-        :host_os => 'linux-gnu'
-      }
-    end
-
-    # ruby-1.9.3 linux
-    let(:mri_193) do
-      {
-        :MAJOR => '1',
-        :MINOR => '9',
-        :TEENY => '1',
-        :PATCHLEVEL => '327',
-        :ruby_install_name => 'ruby',
-        :ruby_version => '1.9.1',
-        :host_os => 'linux-gnu'
-      }
-    end
-
-    # ruby-1.9.3 windows
-    let(:mri_193_win) do
-      {
-        :MAJOR => '1',
-        :MINOR => '9',
-        :TEENY => '1',
-        :PATCHLEVEL => '448',
-        :ruby_install_name => 'ruby',
-        :ruby_version => '1.9.1',
-        :host_os => 'mingw32'
-      }
-    end
-
-    # ruby-2.0.0
-    let(:mri_200) do
-      {
-        :MAJOR => '2',
-        :MINOR => '0',
-        :TEENY => '0',
-        :PATCHLEVEL => '195',
-        :ruby_install_name => 'ruby',
-        :ruby_version => '2.0.0',
-        :host_os => 'linux-gnu'
       }
     end
 
