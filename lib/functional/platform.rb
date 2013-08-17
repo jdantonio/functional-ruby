@@ -115,6 +115,6 @@ module Functional
       return value == 0
     end
   end
-end
 
-PLATFORM = Functional::Platform.new unless defined?(PLATFORM)
+  PLATFORM = Functional::Platform.new
+end

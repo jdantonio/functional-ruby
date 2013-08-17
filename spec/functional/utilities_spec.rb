@@ -159,7 +159,7 @@ describe 'utilities' do
 
   context '#slurp' do
 
-    unless PLATFORM.rbx?
+    unless Functional::PLATFORM.rbx?
 
       before(:all) { FakeFS.activate! }
       after(:all) { FakeFS.deactivate! }
@@ -182,7 +182,7 @@ describe 'utilities' do
 
   context '#slurpee' do
 
-    unless PLATFORM.rbx?
+    unless Functional::PLATFORM.rbx?
 
       before(:all) { FakeFS.activate! }
       after(:all) { FakeFS.deactivate! }
