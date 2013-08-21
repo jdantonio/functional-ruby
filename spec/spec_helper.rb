@@ -1,3 +1,12 @@
+require 'simplecov'
+SimpleCov.start do
+  project_name 'functional-ruby'
+  add_filter '/md/'
+  add_filter '/pkg/'
+  add_filter '/spec/'
+  add_filter '/tasks/'
+end
+
 require 'functional'
 
 # import all the support files

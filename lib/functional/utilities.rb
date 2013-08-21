@@ -3,9 +3,6 @@ require 'stringio'
 require 'erb'
 require 'rbconfig'
 
-Infinity = 1/0.0 unless defined?(Infinity)
-NaN = 0/0.0 unless defined?(NaN)
-
 module Kernel
 
   # Compute the difference (delta) between two values.

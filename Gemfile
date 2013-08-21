@@ -8,6 +8,7 @@ end
 group :testing do
   gem 'rake'
   gem 'rspec'
+  gem 'simplecov'
   gem 'fakefs'
   gem 'countloc', :platforms => :mri
   gem 'irbtools', :platforms => :mri

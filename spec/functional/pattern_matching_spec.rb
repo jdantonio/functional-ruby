@@ -412,7 +412,5 @@ describe PatternMatching do
         subject.defn(:foo).when
       }.should raise_error(ArgumentError)
     end
-
   end
-
 end
