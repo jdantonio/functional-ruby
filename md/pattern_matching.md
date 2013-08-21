@@ -36,13 +36,13 @@ This gem may not make much sense if you don't understand how Erlang dispatches f
 In the Ruby class file where you want to use pattern matching, require the *functional-ruby* gem:
 
 ```ruby
-require 'functional/pattern_matching'
+require 'functional'
 ```
 
 Then include `PatternMatching` in your class:
 
 ```ruby
-require 'functional/pattern_matching'
+require 'functional'
 
 class Foo
   include PatternMatching

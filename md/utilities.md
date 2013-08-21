@@ -1,9 +1,9 @@
 # Utility Functions
 
-Convenience functions are not imported by default. They need a separate `require` statement:
+Start by requiring the Functional Ruby gem:
 
 ```ruby
-require 'functional/utilities'
+require 'functional'
 ```
 
 This gives you access to a few constants and functions:
