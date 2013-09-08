@@ -7,6 +7,9 @@ SimpleCov.start do
   add_filter '/tasks/'
 end
 
+require 'coveralls'
+Coveralls.wear!
+
 require 'functional'
 
 # import all the support files
