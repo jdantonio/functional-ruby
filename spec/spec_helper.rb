@@ -1,4 +1,11 @@
 require 'simplecov'
+require 'coveralls'
+
+SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
+  SimpleCov::Formatter::HTMLFormatter,
+  Coveralls::SimpleCov::Formatter
+]
+
 SimpleCov.start do
   project_name 'functional-ruby'
   add_filter '/md/'
@@ -6,9 +13,6 @@ SimpleCov.start do
   add_filter '/spec/'
   add_filter '/tasks/'
 end
-
-require 'coveralls'
-Coveralls.wear!
 
 require 'functional'
 
@@ -26,5 +30,4 @@ RSpec.configure do |config|
 
   config.after(:each) do
   end
-
 end
