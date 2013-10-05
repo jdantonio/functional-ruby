@@ -99,6 +99,26 @@ describe '-behavior' do
       lambda{ clazz.new }.should raise_error(BehaviorError)
     end
 
+    it 'allows constructor check to be permanently disabled when gem loaded' do
+
+      @original_config = $ENABLE_BEHAVIOR_CHECK_ON_CONSTRUCTION
+
+      behavior_info(:gen_foo, foo: 0)
+
+      $ENABLE_BEHAVIOR_CHECK_ON_CONSTRUCTION = true
+      load(File.join(File.dirname(__FILE__), '../../', 'lib/functional/behavior.rb'))
+      clazz = Class.new { behavior(:gen_foo) }
+      expect { clazz.new }.to raise_error(BehaviorError)
+
+      $ENABLE_BEHAVIOR_CHECK_ON_CONSTRUCTION = false
+      load(File.join(File.dirname(__FILE__), '../../', 'lib/functional/behavior.rb'))
+      clazz = Class.new { behavior(:gen_foo) }
+      expect { clazz.new }.not_to raise_error()
+
+      $ENABLE_BEHAVIOR_CHECK_ON_CONSTRUCTION = @original_config
+      load(File.join(File.dirname(__FILE__), '../../', 'lib/functional/behavior.rb'))
+    end
+
     context 'instance methods' do
 
       it 'raises an exception when one or more function definitions are missing' do

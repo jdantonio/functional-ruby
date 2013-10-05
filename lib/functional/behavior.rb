@@ -56,20 +56,19 @@ module Kernel
       end
     end
 
-    class << clazz
-      def new(*args, &block)
-        obj = __new(*args, &block)
-        self.ancestors.each do |clazz|
-          if clazz.respond_to?(:behaviors)
-            clazz.behaviors.each do |behavior|
-              valid = obj.behaves_as?(behavior, true)
-              #unless obj.behaves_as?(behavior)
-                #raise BehaviorError.new("undefined callback functions in #{self} (behavior '#{behavior}')")
-              #end
+    if $ENABLE_BEHAVIOR_CHECK_ON_CONSTRUCTION == true
+      class << clazz
+        def new(*args, &block)
+          obj = __new(*args, &block)
+          self.ancestors.each do |clazz|
+            if clazz.respond_to?(:behaviors)
+              clazz.behaviors.each do |behavior|
+                valid = obj.behaves_as?(behavior, true)
+              end
             end
           end
+          return obj
         end
-        return obj
       end
     end
   end
