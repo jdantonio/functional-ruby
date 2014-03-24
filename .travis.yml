@@ -6,4 +6,13 @@ rvm:
   - 1.9.2
   - ruby-head
   - jruby-19mode
-  #- jruby-head
+  - jruby-head
+  - rbx-2
+branches:
+  only:
+    - master
+    - tvars
+matrix:
+  allow_failures:
+    - rvm: ruby-head
+    - rvm: jruby-head
