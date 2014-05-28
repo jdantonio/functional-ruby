@@ -22,7 +22,7 @@ module Functional
         sample = [31, 37, 26, 30, 2, 30, 1, 33, 5, 14, 11, 13, 17, 35, 4]
         count = sample.count
         sorted = Sort.insertion_sort!(sample)
-        Functional.ascending?(sorted).should be_true
+        Functional.non_descending?(sorted).should be_true
         sorted.count.should eq count
       end
 
@@ -46,7 +46,7 @@ module Functional
 
         count = sample.count
         sorted = Sort.insertion_sort!(sample){|item| item[:count]}
-        Functional.ascending?(sorted){|item| item[:count]}.should be_true
+        Functional.non_descending?(sorted){|item| item[:count]}.should be_true
         sorted.count.should eq count
       end
 
