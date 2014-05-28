@@ -24,7 +24,7 @@ module Functional
     end
 
     # Return the index where to insert item x in list a, assuming a is sorted.
-    #   
+    #
     # The return value i is such that all e in a[:i] have e < x, and all e in
     # a[i:] have e >= x.  So if x already appears in the list, a.insert(x) will
     # insert just before the leftmost x already there.
@@ -88,11 +88,11 @@ module Functional
     alias_method :bisect, :bisect_right
 
     # Insert item x in list a, and keep it sorted assuming a is sorted.
-    # 
+    #
     # If x is already in a, insert it to the left of the leftmost x.
     #
     # Optional args lo (default 0) and hi (default len(a)) bound the
-    # slice of a to be searched. 
+    # slice of a to be searched.
     #
     # @see http://docs.python.org/3/library/bisect.html
     # @see http://hg.python.org/cpython/file/3.3/Lib/bisect.py
@@ -109,11 +109,11 @@ module Functional
 
     # Insert item x in list a, and keep it sorted assuming a is sorted.
     # Returns a duplicate of the original list, leaving it intact.
-    # 
+    #
     # If x is already in a, insert it to the left of the leftmost x.
     #
     # Optional args lo (default 0) and hi (default len(a)) bound the
-    # slice of a to be searched. 
+    # slice of a to be searched.
     #
     # @see http://docs.python.org/3/library/bisect.html
     # @see http://hg.python.org/cpython/file/3.3/Lib/bisect.py
@@ -133,7 +133,7 @@ module Functional
     # If x is already in a, insert it to the right of the rightmost x.
     #
     # Optional args lo (default 0) and hi (default len(a)) bound the
-    # slice of a to be searched. 
+    # slice of a to be searched.
     #
     # @see http://docs.python.org/3/library/bisect.html
     # @see http://hg.python.org/cpython/file/3.3/Lib/bisect.py
@@ -155,7 +155,7 @@ module Functional
     # If x is already in a, insert it to the right of the rightmost x.
     #
     # Optional args lo (default 0) and hi (default len(a)) bound the
-    # slice of a to be searched. 
+    # slice of a to be searched.
     #
     # @see http://docs.python.org/3/library/bisect.html
     # @see http://hg.python.org/cpython/file/3.3/Lib/bisect.py
@@ -174,7 +174,7 @@ module Functional
     # Collect sample data from a generic collection, processing each item
     # with a block when given. Returns an array of the items from +data+
     # in order.
-    # 
+    #
     # When a block is given the block will be applied to both arguments.
     # Using a block in this way allows computation against a specific field
     # in a data set of hashes or objects.
@@ -205,7 +205,7 @@ module Functional
     # @example
     #   sample = [5, 1, 9, 3, 14, 9, 7]
     #   Collection.catalog(sample) #=> [[0, 5], [1, 1], [2, 9], [3, 3], [4, 14], [5, 9], [6, 7]]
-    # 
+    #
     # When a block is given the block will be applied to both arguments.
     # Using a block in this way allows computation against a specific field
     # in a data set of hashes or objects.
@@ -231,7 +231,7 @@ module Functional
     alias_method :index_and_catalogue, :index_and_catalog
 
     # Convert a hash to catalog.
-    # 
+    #
     # When a block is given the block will be applied to both arguments.
     # Using a block in this way allows computation against a specific field
     # in a data set of hashes or objects.
@@ -257,7 +257,7 @@ module Functional
 
     # Convert a catalog to a hash. Keeps the last value when keys are
     # duplicated.
-    # 
+    #
     # When a block is given the block will be applied to both arguments.
     # Using a block in this way allows computation against a specific field
     # in a data set of hashes or objects.
@@ -281,58 +281,119 @@ module Functional
 
     alias_method :hash_catalogue, :hash_catalog
 
-    # Scan a collection and determine if the elements are all in
-    # ascending order. Returns true for an empty set and false for
-    # a nil sample.
-    # 
-    # When a block is given the block will be applied to both arguments.
-    # Using a block in this way allows computation against a specific field
-    # in a data set of hashes or objects.
+    # Helper function for determine if the elements in a collection
+    # are in monotonical order.
     #
-    # @yield iterates over each element in the data set
-    # @yieldparam item each element in the data set
+    # @param [Enumerable] data the data to convert
     #
-    # @param [Enumerable] data the data set to search
-    # @param [Hash] opts search options
-    #
-    # @return [true, false] if the data set is in ascending order
-    def ascending?(data, opts={})
-      return false if data.nil?
-      (data.size-1).times do |i|
-        if block_given?
-          return false if yield(data[i]) > yield(data[i+1])
+    # @return [Lambda] a Lambda to determine if the elements in a collection
+    # are in monotonical order the user set
+    def in_order?(compare_fn)
+      -> col, &blk do
+        if blk
+          col.map {|e| blk[e] }
+             .each_cons(2)
+             .all? { |e1, e2| e1.send(compare_fn, e2) }
         else
-          return false if data[i] > data[i+1]
+          col.each_cons(2).all? { |e1, e2| e1.send(compare_fn, e2) }
         end
       end
-      return true
     end
 
     # Scan a collection and determine if the elements are all in
-    # descending order. Returns true for an empty set and false for
+    # monotonical ascending order. Returns true for an empty set and false for
     # a nil sample.
-    # 
+    #
     # When a block is given the block will be applied to both arguments.
     # Using a block in this way allows computation against a specific field
     # in a data set of hashes or objects.
+    #
+    # @example
+    #
+    #   ascending? [1,2,2,3] ==> false
+    #   ascending? ["z", "mn", "abc"] ==> false
+    #   ascending? ["z", "mn", "abc"], &:length ==> true
     #
     # @yield iterates over each element in the data set
     # @yieldparam item each element in the data set
     #
     # @param [Enumerable] data the data set to search
-    # @param [Hash] opts search options
     #
-    # @return [true, false] if the data set is in descending order
-    def descending?(data, opts={})
+    # @return [true, false] if the data set is in ascending order
+    def ascending?(data, &blk)
       return false if data.nil?
-      (data.size-1).times do |i|
-        if block_given?
-          return false if yield(data[i]) < yield(data[i+1])
-        else
-          return false if data[i] < data[i+1]
-        end
-      end
-      return true
+      in_order?(:<)[data, &blk]
+    end
+
+    # Scan a collection and determine if the elements are all in
+    # monotonical descending order. Returns true for an empty set and false for
+    # a nil sample.
+    #
+    # When a block is given the block will be applied to both arguments.
+    # Using a block in this way allows computation against a specific field
+    # in a data set of hashes or objects.
+    #
+    # @example
+    #
+    #    descending? [4, 3, 2, 1]  ==> true
+    #    descending? [4, 3, 3, 2] ==> false
+    #
+    # @yield iterates over each element in the data set
+    # @yieldparam item each element in the data set
+    #
+    # @param [Enumerable] data the data set to search
+    #
+    # @return [true, false] if the data set is in ascending order
+    def descending?(data, &blk)
+      return false if data.nil?
+      in_order?(:>)[data, &blk]
+    end
+
+    # Scan a collection and determine if the elements are all in
+    # monotonical non-ascending order. Returns true for an empty set and false for
+    # a nil sample.
+    #
+    # When a block is given the block will be applied to both arguments.
+    # Using a block in this way allows computation against a specific field
+    # in a data set of hashes or objects.
+    #
+    # @example
+    #
+    #   non_ascending? [4, 3, 3, 2]  ==> true
+    #   non_ascending? [4, 3, 3, 2]  ==> true
+    #
+    # @yield iterates over each element in the data set
+    # @yieldparam item each element in the data set
+    #
+    # @param [Enumerable] data the data set to search
+    #
+    # @return [true, false] if the data set is in ascending order
+    def non_ascending?(data, &blk)
+      return false if data.nil?
+      in_order?(:>=)[data, &blk]
+    end
+
+    # Scan a collection and determine if the elements are all in
+    # monotonical non-descending order. Returns true for an empty set and false for
+    # a nil sample.
+    #
+    # When a block is given the block will be applied to both arguments.
+    # Using a block in this way allows computation against a specific field
+    # in a data set of hashes or objects.
+    #
+    # @example
+    #
+    #   non_descending? [1,2,2,3] ==> true
+    #
+    # @yield iterates over each element in the data set
+    # @yieldparam item each element in the data set
+    #
+    # @param [Enumerable] data the data set to search
+    #
+    # @return [true, false] if the data set is in ascending order
+    def non_descending?(data, &blk)
+      return false if data.nil?
+      in_order?(:<=)[data, &blk]
     end
 
     # Override of #slice from Ruby Array. Provides a consistent interface
