@@ -609,12 +609,13 @@ module Functional
         end
 
         it 'returns false for a non-ascending collection' do
+          Collection.ascending?([1, 3, 3, 4].freeze).should be_false
           Collection.ascending?([1, 3, 2, 4].freeze).should be_false
         end
 
         it 'returns the correct value when given a block' do
           sample = [
-            {:count => 11}, 
+            {:count => 11},
             {:count => 12},
             {:count => 13},
             {:count => 14}
@@ -644,6 +645,7 @@ module Functional
 
         it 'returns false for a non-descending collection' do
           Collection.descending?([1, 3, 2, 4].freeze).should be_false
+          Collection.descending?([1, 3, 3, 4].freeze).should be_false
         end
 
         it 'returns the correct value when given a block' do
@@ -655,6 +657,74 @@ module Functional
           ].freeze
 
           Collection.descending?(sample){|item| item[:count]}.should be_true
+        end
+      end
+
+      context '#non_ascending?' do
+
+        it 'returns false for a nil sample' do
+          Collection.non_ascending?(nil).should be_false
+        end
+
+        it 'returns true for an empty sample' do
+          Collection.non_ascending?([].freeze).should be_true
+        end
+
+        it 'returns true for a one-element sample' do
+          Collection.non_ascending?([100].freeze).should be_true
+        end
+
+        it 'returns true for an descending collection' do
+          Collection.non_ascending?([4, 3, 2, 1].freeze).should be_true
+        end
+
+        it 'returns true for a non-ascending collection' do
+          Collection.non_ascending?([4, 4, 2, 1].freeze).should be_true
+        end
+
+        it 'returns the correct value when given a block' do
+          sample = [
+            {:count => 11},
+            {:count => 11},
+            {:count => 10},
+            {:count => 10}
+          ].freeze
+
+          Collection.non_ascending?(sample){|item| item[:count]}.should be_true
+        end
+      end
+
+      context '#non_descending?' do
+
+        it 'returns false for a nil sample' do
+          Collection.non_descending?(nil).should be_false
+        end
+
+        it 'returns true for an empty sample' do
+          Collection.non_descending?([].freeze).should be_true
+        end
+
+        it 'returns true for a one-element sample' do
+          Collection.non_descending?([100].freeze).should be_true
+        end
+
+        it 'returns true for an non-descending collection' do
+          Collection.non_descending?([4, 4, 5, 6].freeze).should be_true
+        end
+
+        it 'returns false for a descending collection' do
+          Collection.non_descending?([4, 3, 2, 1].freeze).should be_false
+        end
+
+        it 'returns the correct value when given a block' do
+          sample = [
+            {:count => 14},
+            {:count => 14},
+            {:count => 15},
+            {:count => 16}
+          ].freeze
+
+          Collection.non_descending?(sample){|item| item[:count]}.should be_true
         end
       end
     end
