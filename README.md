@@ -3,15 +3,6 @@
 
 A gem for adding Erlang, Clojure, and Go inspired functional programming tools to Ruby.
 
-The project is hosted on the following sites:
-
-* [RubyGems project page](https://rubygems.org/gems/functional-ruby)
-* [Source code on GitHub](https://github.com/jdantonio/functional-ruby)
-* [YARD documentation on RubyDoc.info](http://rubydoc.info/github/jdantonio/functional-ruby/frames)
-* [Continuous integration on Travis-CI](https://travis-ci.org/jdantonio/functional-ruby)
-* [Dependency tracking on Gemnasium](https://gemnasium.com/jdantonio/functional-ruby)
-* [Follow me on Twitter](https://twitter.com/jerrydantonio)
-
 ## Introduction
 
 Two things I love are [Ruby](http://www.ruby-lang.org/en/) and
@@ -63,6 +54,8 @@ dreamed possible.
 
 My goal is to implement various functional programming patterns in Ruby. Specifically:
 
+* Be an 'unopinionted' toolbox that provides useful utilities without debating which is better or why
+* Remain free of external gem dependencies
 * Stay true to the spirit of the languages providing inspiration
 * But implement in a way that makes sense for Ruby
 * Keep the semantics as idiomatic Ruby as possible
@@ -83,10 +76,6 @@ Several features from Erlang, Go, and Clojure have been implemented thus far:
 * Tools for introspecting the runtime [Platform](https://github.com/jdantonio/functional-ruby/blob/master/md/platform.md) for information about the operating system and Ruby version
 * [Search](https://github.com/jdantonio/functional-ruby/blob/master/md/search.md) and [sort](https://github.com/jdantonio/functional-ruby/blob/master/md/sort.md) algorithms like you remember from your algorithms class, but with a functional twist
 * Several useful functional [Utilities](https://github.com/jdantonio/functional-ruby/blob/master/md/utilities.md)
-
-### Is it any good?
-
-[Yes](http://news.ycombinator.com/item?id=3067434)
 
 ### Supported Ruby versions
 
@@ -192,31 +181,19 @@ delta({count: -1}, {count: 1}){|item| item[:count]} #=> 2
 # And many more!
 ```
 
-## Copyright
+## Contributors
 
-*Functional Ruby* is Copyright &copy; 2013 [Jerry D'Antonio](https://twitter.com/jerrydantonio).
-It is free software and may be redistributed under the terms specified in the LICENSE file.
+* [Jerry D'Antonio](https://github.com/jdantonio)
+* [404](https://github.com/404pnf)
 
-## License
+## Contributing
 
-Released under the MIT license.
+1. Fork it
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Add some feature'`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Create new Pull Request
 
-http://www.opensource.org/licenses/mit-license.php  
+## License and Copyright
 
-> Permission is hereby granted, free of charge, to any person obtaining a copy  
-> of this software and associated documentation files (the "Software"), to deal  
-> in the Software without restriction, including without limitation the rights  
-> to use, copy, modify, merge, publish, distribute, sublicense, and/or sell  
-> copies of the Software, and to permit persons to whom the Software is  
-> furnished to do so, subject to the following conditions:  
-> 
-> The above copyright notice and this permission notice shall be included in  
-> all copies or substantial portions of the Software.  
-> 
-> THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR  
-> IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,  
-> FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE  
-> AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER  
-> LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,  
-> OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN  
-> THE SOFTWARE.  
+*Functional Ruby* is free software released under the [MIT License](http://www.opensource.org/licenses/MIT).
