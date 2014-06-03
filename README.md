@@ -54,7 +54,7 @@ dreamed possible.
 
 My goal is to implement various functional programming patterns in Ruby. Specifically:
 
-* Be an 'unopinionted' toolbox that provides useful utilities without debating which is better or why
+* Be an 'unopinionated' toolbox that provides useful utilities without debating which is better or why
 * Remain free of external gem dependencies
 * Stay true to the spirit of the languages providing inspiration
 * But implement in a way that makes sense for Ruby
@@ -69,13 +69,7 @@ My goal is to implement various functional programming patterns in Ruby. Specifi
 Several features from Erlang, Go, and Clojure have been implemented thus far:
 
 * Interface specifications with Erlang-style [Behavior](https://github.com/jdantonio/functional-ruby/blob/master/md/behavior.md)
-* A [Catalog](https://github.com/jdantonio/functional-ruby/blob/master/md/catalog.md) class for managing sets of key/value pairs in a manner similar to Erlang's [proplists](http://www.erlang.org/doc/man/proplists.html)
-* A toolkit of [collection](https://github.com/jdantonio/functional-ruby/blob/master/md/collection.md) utilities for operating on list-like data structures
-* A set of string [inflections](https://github.com/jdantonio/functional-ruby/blob/master/md/inflect.md) borrowed from [Active Support](http://guides.rubyonrails.org/active_support_core_extensions.html#inflections)
 * Function overloading with Erlang-style [Pattern Matching](https://github.com/jdantonio/functional-ruby/blob/master/md/pattern_matching.md)
-* Tools for introspecting the runtime [Platform](https://github.com/jdantonio/functional-ruby/blob/master/md/platform.md) for information about the operating system and Ruby version
-* [Search](https://github.com/jdantonio/functional-ruby/blob/master/md/search.md) and [sort](https://github.com/jdantonio/functional-ruby/blob/master/md/sort.md) algorithms like you remember from your algorithms class, but with a functional twist
-* Several useful functional [Utilities](https://github.com/jdantonio/functional-ruby/blob/master/md/utilities.md)
 
 ### Supported Ruby versions
 
@@ -158,27 +152,6 @@ Foo.behaves_as? :gen_foo    #=> true
 foo.behaves_as?(:gen_foo)   #=> true
 foo.behaves_as?(:bogus)     #=> false
 'foo'.behaves_as? :gen_foo  #=> false
-```
-
-#### Utilities
-
-Documentation: [Utilities](https://github.com/jdantonio/functional-ruby/blob/master/md/utilities.md)
-
-```ruby
-Infinity #=> Infinity
-NaN #=> NaN
-
-repl? #=> true when called under irb, pry, bundle console, or rails console
-
-safe(1, 2){|a, b| a + b} #=> 3
-safe{ eval 'puts "Hello World!"' } #=> SecurityError: Insecure operation
-
-pp_s [1,2,3,4] #=> "[1, 2, 3, 4]\n" props to Rha7
-
-delta(-1, 1) #=> 2
-delta({count: -1}, {count: 1}){|item| item[:count]} #=> 2
-
-# And many more!
 ```
 
 ## Contributors
