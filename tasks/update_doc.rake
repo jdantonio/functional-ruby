@@ -19,6 +19,7 @@ namespace :yard do
     puts "Generating commit: #{message}"
 
     Dir.chdir "#{root}/yardoc" do
+      cmd.call 'git add .'
       cmd.call "git commit -am '#{message}'"
       cmd.call 'git push origin gh-pages'
     end
