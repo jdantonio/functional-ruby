@@ -1,3 +1,4 @@
+# {include:file:doc/pattern_matching.md}
 module PatternMatching
 
   UNBOUND = Class.new

@@ -1,5 +1,3 @@
-# For good -behavior(:timeoff).
-
 One of Ruby's greatest strengths is [duck typing](http://rubylearning.com/satishtalim/duck_typing.html).
 Usually this is awesome and I'm happy to not have to deal with static typing and the compiler. Usually.
 The problem with duck typing is that is is impossible in Ruby to enforce an interface definition.

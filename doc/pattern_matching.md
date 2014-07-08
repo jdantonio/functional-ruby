@@ -1,5 +1,3 @@
-# Erlang-style Pattern Matching
-
 As much as I love Ruby I've always been a little disappointed that Ruby doesn't
 support function overloading. Function overloading tends to reduce branching
 and keep function signatures simpler. No sweat, I learned to do without. Then

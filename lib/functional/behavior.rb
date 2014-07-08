@@ -20,6 +20,8 @@ module Kernel
 
   # Specify a #behavior_info to enforce on the enclosing class
   #
+  # {include:file:doc/behavior.md}
+  #
   # @param name [Symbol] name of the #behavior_info being implemented
   def behavior(name)
 
