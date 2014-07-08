@@ -56,7 +56,7 @@ describe '-behavior' do
         Class.new{
           behavior(:gen_foo)
         }
-      }.should raise_error(BehaviorError)
+      }.should raise_error(Functional::BehaviorError)
     end
 
     it 'can be called multiple times for one class' do
@@ -74,6 +74,19 @@ describe '-behavior' do
 
   context 'object creation' do
 
+    before(:all) do
+      @behavior_check = Functional.configuration.behavior_check_on_construction?
+      Functional.configure do |config|
+        config.behavior_check_on_construction = true
+      end
+    end
+
+    after(:all) do
+      Functional.configure do |config|
+        config.behavior_check_on_construction = @behavior_check
+      end
+    end
+
     it 'checks all required behaviors' do
       behavior_info(:gen_foo, foo: 0)
       behavior_info(:gen_bar, bar: 1)
@@ -83,40 +96,43 @@ describe '-behavior' do
         behavior(:gen_bar)
         def foo() nil; end
       }
-      lambda{ clazz.new }.should raise_error(BehaviorError)
+      lambda{ clazz.new }.should raise_error(Functional::BehaviorError)
 
       clazz = Class.new {
         behavior(:gen_foo)
         behavior(:gen_bar)
         def bar() nil; end
       }
-      lambda{ clazz.new }.should raise_error(BehaviorError)
+      lambda{ clazz.new }.should raise_error(Functional::BehaviorError)
 
       clazz = Class.new {
         behavior(:gen_foo)
         behavior(:gen_bar)
       }
-      lambda{ clazz.new }.should raise_error(BehaviorError)
+      lambda{ clazz.new }.should raise_error(Functional::BehaviorError)
     end
 
     it 'allows constructor check to be permanently disabled when gem loaded' do
 
-      @original_config = $ENABLE_BEHAVIOR_CHECK_ON_CONSTRUCTION
+      starting_config = Functional.configuration.behavior_check_on_construction?
 
       behavior_info(:gen_foo, foo: 0)
 
-      $ENABLE_BEHAVIOR_CHECK_ON_CONSTRUCTION = true
-      load(File.join(File.dirname(__FILE__), '../../', 'lib/functional/behavior.rb'))
+      Functional.configure do |config|
+        config.behavior_check_on_construction = true
+      end
       clazz = Class.new { behavior(:gen_foo) }
-      expect { clazz.new }.to raise_error(BehaviorError)
+      expect { clazz.new }.to raise_error(Functional::BehaviorError)
 
-      $ENABLE_BEHAVIOR_CHECK_ON_CONSTRUCTION = false
-      load(File.join(File.dirname(__FILE__), '../../', 'lib/functional/behavior.rb'))
+      Functional.configure do |config|
+        config.behavior_check_on_construction = false
+      end
       clazz = Class.new { behavior(:gen_foo) }
       expect { clazz.new }.not_to raise_error()
 
-      $ENABLE_BEHAVIOR_CHECK_ON_CONSTRUCTION = @original_config
-      load(File.join(File.dirname(__FILE__), '../../', 'lib/functional/behavior.rb'))
+      Functional.configure do |config|
+        config.behavior_check_on_construction = starting_config
+      end
     end
 
     context 'instance methods' do
@@ -130,7 +146,7 @@ describe '-behavior' do
 
         lambda {
           clazz.new
-        }.should raise_error(BehaviorError)
+        }.should raise_error(Functional::BehaviorError)
       end
 
       it 'raises an exception when one or more functions do not have proper arity' do
@@ -142,7 +158,7 @@ describe '-behavior' do
 
         lambda {
           clazz.new
-        }.should raise_error(BehaviorError)
+        }.should raise_error(Functional::BehaviorError)
       end
 
       it 'accepts any arity when function arity is set to :any' do
@@ -182,7 +198,7 @@ describe '-behavior' do
 
         lambda {
           clazz.new
-        }.should raise_error(BehaviorError)
+        }.should raise_error(Functional::BehaviorError)
       end
 
       it 'raises an exception when one or more functions do not have proper arity' do
@@ -194,7 +210,7 @@ describe '-behavior' do
 
         lambda {
           clazz.new
-        }.should raise_error(BehaviorError)
+        }.should raise_error(Functional::BehaviorError)
       end
 
       it 'accepts any arity when function arity is set to :any' do
@@ -234,7 +250,7 @@ describe '-behavior' do
 
         lambda {
           subclass.new
-        }.should raise_error(BehaviorError)
+        }.should raise_error(Functional::BehaviorError)
       end
 
       it 'raises an exception if a module includes a behavior the containing class does not support' do
@@ -248,7 +264,7 @@ describe '-behavior' do
 
         lambda {
           subclass.new
-        }.should raise_error(BehaviorError)
+        }.should raise_error(Functional::BehaviorError)
       end
 
       it 'supports behaviors from multiple ancestors' do
@@ -258,7 +274,7 @@ describe '-behavior' do
 
         rootclass = Class.new{ behavior(:gen_foo) }
         superclass = Class.new(rootclass){ behavior(:gen_bar) }
-        
+
         subclass = Class.new(superclass){
           behavior(:gen_baz)
           def bar() nil; end
@@ -266,7 +282,7 @@ describe '-behavior' do
         }
         lambda {
           subclass.new
-        }.should raise_error(BehaviorError)
+        }.should raise_error(Functional::BehaviorError)
 
         subclass = Class.new(superclass){
           behavior(:gen_baz)
@@ -275,8 +291,8 @@ describe '-behavior' do
         }
         lambda {
           subclass.new
-        }.should raise_error(BehaviorError)
-        
+        }.should raise_error(Functional::BehaviorError)
+
         subclass = Class.new(superclass){
           behavior(:gen_baz)
           def foo() nil; end
@@ -284,8 +300,8 @@ describe '-behavior' do
         }
         lambda {
           subclass.new
-        }.should raise_error(BehaviorError)
-        
+        }.should raise_error(Functional::BehaviorError)
+
         subclass = Class.new(superclass){
           behavior(:gen_baz)
           def foo() nil; end
@@ -315,7 +331,7 @@ describe '-behavior' do
         }
         lambda {
           subclass.new
-        }.should raise_error(BehaviorError)
+        }.should raise_error(Functional::BehaviorError)
 
         subclass = Class.new{
           include mod
@@ -324,7 +340,7 @@ describe '-behavior' do
         }
         lambda {
           subclass.new
-        }.should raise_error(BehaviorError)
+        }.should raise_error(Functional::BehaviorError)
 
         subclass = Class.new{
           include mod
@@ -333,7 +349,7 @@ describe '-behavior' do
         }
         lambda {
           subclass.new
-        }.should raise_error(BehaviorError)
+        }.should raise_error(Functional::BehaviorError)
 
         subclass = Class.new{
           include mod
@@ -413,15 +429,15 @@ describe '-behavior' do
 
         lambda {
           clazz.new.behaves_as?(:gen_foo, true)
-        }.should raise_error(BehaviorError)
+        }.should raise_error(Functional::BehaviorError)
 
         lambda {
           clazz.new.behaves_as?(:gen_bar, true)
-        }.should raise_error(BehaviorError)
-        
+        }.should raise_error(Functional::BehaviorError)
+
         lambda {
           clazz.new.behaves_as?(:gen_baz, true)
-        }.should raise_error(BehaviorError)
+        }.should raise_error(Functional::BehaviorError)
       end
 
       it 'exception includes the name and arity of the first missing function' do
@@ -432,19 +448,19 @@ describe '-behavior' do
 
         begin
           clazz.new.behaves_as?(:gen_foo, true)
-        rescue BehaviorError => ex
+        rescue Functional::BehaviorError => ex
           ex.message.should =~ /foo\/0/
         end
 
         begin
           clazz.new.behaves_as?(:gen_bar, true)
-        rescue BehaviorError => ex
+        rescue Functional::BehaviorError => ex
           ex.message.should =~ /#self\.bar\/1/
         end
 
         begin
           clazz.new.behaves_as?(:gen_baz, true)
-        rescue BehaviorError => ex
+        rescue Functional::BehaviorError => ex
           ex.message.should =~ /#baz\/:any/
         end
       end

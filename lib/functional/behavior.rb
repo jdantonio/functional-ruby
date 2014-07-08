@@ -1,6 +1,33 @@
-module Kernel
+module Functional
 
   BehaviorError = Class.new(StandardError)
+
+  #def BehaviorInfo
+  #end
+  #alias_method :BehaviourInfo, :BehaviorInfo
+  #module_function :BehaviorInfo
+  #module_function :BehaviourInfo
+
+  #module Behavior
+
+    #def self.included(base)
+      ## hook into object construction here
+    #end
+  #end
+
+  #module BehaviorCheck
+
+    #def BehavesAs?
+    #end
+    #alias_method :BehaveAs?, :BehavesAs?
+
+    #def BehavesAs!
+    #end
+    #alias_method :BehaveAs!, :BehavesAs!
+  #end
+end
+
+module Kernel
 
   # Define a behavioral specification (interface).
   #
@@ -11,8 +38,8 @@ module Kernel
     $__behavior_info__[name.to_sym] = functions.inject({}){|memo,(k,v)| memo[k.to_sym] = v; memo}
   end
 
-  alias :behaviour_info :behavior_info
-  alias :interface :behavior_info
+  alias_method :behaviour_info, :behavior_info
+  alias_method :interface, :behavior_info
 
   module_function :behavior_info
   module_function :behaviour_info
@@ -26,7 +53,7 @@ module Kernel
   def behavior(name)
 
     name = name.to_sym
-    raise BehaviorError.new("undefined behavior '#{name}'") if $__behavior_info__[name].nil?
+    raise Functional::BehaviorError.new("undefined behavior '#{name}'") if $__behavior_info__[name].nil?
 
     clazz = self.method(:behavior).receiver
 
@@ -48,39 +75,39 @@ module Kernel
           end
         end
       end
-    end
+  end
 
-    if self.class == Class
-      unless self.respond_to?(:__new)
-        class << clazz
-          alias_method(:__new, :new)
-        end
-      end
-    end
-
-    if $ENABLE_BEHAVIOR_CHECK_ON_CONSTRUCTION == true
+  if self.class == Class
+    unless self.respond_to?(:__new)
       class << clazz
-        def new(*args, &block)
-          obj = __new(*args, &block)
-          self.ancestors.each do |clazz|
-            if clazz.respond_to?(:behaviors)
-              clazz.behaviors.each do |behavior|
-                valid = obj.behaves_as?(behavior, true)
-              end
-            end
-          end
-          return obj
-        end
+        alias_method(:__new, :new)
       end
     end
   end
 
-  alias :behaviour :behavior
-  alias :behaves_as :behavior
+  if Functional.configuration.behavior_check_on_construction?
+    class << clazz
+      def new(*args, &block)
+        obj = __new(*args, &block)
+        self.ancestors.each do |clazz|
+          if clazz.respond_to?(:behaviors)
+            clazz.behaviors.each do |behavior|
+              valid = obj.behaves_as?(behavior, true)
+            end
+          end
+        end
+        return obj
+      end
+    end
+  end
+end
 
-  module_function :behavior
-  module_function :behaviour
-  module_function :behaves_as
+alias_method :behaviour, :behavior
+alias_method :behaves_as, :behavior
+
+module_function :behavior
+module_function :behaviour
+module_function :behaves_as
 end
 
 class Object
@@ -128,7 +155,7 @@ class Object
       rescue NameError
         if abend
           func = "#{method.to_s.gsub(/^self_/, 'self.')}/#{arity.to_s.gsub(/^any$/, ':any')}"
-          raise BehaviorError.new("undefined callback function ##{func} in #{self} (behavior '#{name}')")
+          raise Functional::BehaviorError.new("undefined callback function ##{func} in #{self} (behavior '#{name}')")
         else
           return false
         end
