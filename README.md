@@ -71,10 +71,10 @@ Several features from Erlang, Go, and Clojure have been implemented thus far:
 * Interface specifications with Erlang-style [Behavior](https://github.com/jdantonio/functional-ruby/blob/master/md/behavior.md)
 * Function overloading with Erlang-style [Pattern Matching](https://github.com/jdantonio/functional-ruby/blob/master/md/pattern_matching.md)
 
-### Supported Ruby versions
+### Supported Ruby Versions
 
-MRI 1.9.2, 1.9.3, 2.0, 2.1, and JRuby (1.9 mode). This library is pure Ruby and has no gem dependencies.
-It should be fully compatible with any Ruby interpreter that is 1.9.x compliant.
+MRI 1.9.3, 2.0, 2.1, JRuby (1.9 mode), and Rubinius 2.x. This library is pure Ruby and has no gem dependencies.
+It should be fully compatible with any interpreter that is compliant with Ruby 1.9.3 or newer.
 
 ### Install
 

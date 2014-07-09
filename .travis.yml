@@ -1,8 +1,20 @@
+language: ruby
 rvm:
-  - 2.1.1
+  - 2.1.2
   - 2.0.0
   - 1.9.3
-  - 1.9.2
   - ruby-head
   - jruby-19mode
-  - rbx-2.2.6
+  - jruby-head
+  - rbx-2
+jdk:
+  - oraclejdk8
+branches:
+  only:
+    - master
+matrix:
+  allow_failures:
+    - rvm: ruby-head
+    - rvm: jruby-head
+    - rvm: 1.9.3
+script: "bundle exec rake compile && bundle exec rspec --color --backtrace --tag ~unfinished --seed 1 --format documentation ./spec"
