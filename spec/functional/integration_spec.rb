@@ -136,70 +136,70 @@ describe 'integration' do
   let(:name) { 'Pattern Matcher' }
   subject { Foo.new(name) }
 
-  specify { subject.greet.should eq 'Hello, World!' }
+  specify { expect(subject.greet).to eq 'Hello, World!' }
 
-  specify { subject.greet('Jerry').should eq 'Hello, Jerry!' }
+  specify { expect(subject.greet('Jerry')).to eq 'Hello, Jerry!' }
 
-  specify { subject.greet(:male, 'Jerry').should eq 'Hello, Mr. Jerry!' }
-  specify { subject.greet(:female, 'Jeri').should eq 'Hello, Ms. Jeri!' }
-  specify { subject.greet(:unknown, 'Jerry').should eq 'Hello, Jerry!' }
-  specify { subject.greet(nil, 'Jerry').should eq 'Goodbye, Jerry!' }
+  specify { expect(subject.greet(:male, 'Jerry')).to eq 'Hello, Mr. Jerry!' }
+  specify { expect(subject.greet(:female, 'Jeri')).to eq 'Hello, Ms. Jeri!' }
+  specify { expect(subject.greet(:unknown, 'Jerry')).to eq 'Hello, Jerry!' }
+  specify { expect(subject.greet(nil, 'Jerry')).to eq 'Goodbye, Jerry!' }
   specify {
-    lambda { Foo.new.greet(1,2,3,4,5,6,7) }.should raise_error(NoMethodError)
+    expect { Foo.new.greet(1,2,3,4,5,6,7) }.to raise_error(NoMethodError)
   }
 
-  specify { subject.options(bar: :baz, one: 1, many: 2).should == {bar: :baz, one: 1, many: 2} }
+  specify { expect(subject.options(bar: :baz, one: 1, many: 2)).to eq({bar: :baz, one: 1, many: 2}) }
 
-  specify { subject.hashable(:male, {foo: :bar}, :female).should eq :foo_bar }
-  specify { subject.hashable(:male, {foo: :baz}, :female).should eq :baz }
-  specify { subject.hashable(:male, {foo: 1, bar: 2}, :female).should eq [1, 2] }
-  specify { subject.hashable(:male, {foo: 1, baz: 2}, :female).should eq 1 }
-  specify { subject.hashable(:male, {bar: :baz}, :female).should eq :unbound }
-  specify { subject.hashable(:male, {}, :female).should eq :empty }
+  specify { expect(subject.hashable(:male, {foo: :bar}, :female)).to eq :foo_bar }
+  specify { expect(subject.hashable(:male, {foo: :baz}, :female)).to eq :baz }
+  specify { expect(subject.hashable(:male, {foo: 1, bar: 2}, :female)).to eq [1, 2] }
+  specify { expect(subject.hashable(:male, {foo: 1, baz: 2}, :female)).to eq 1 }
+  specify { expect(subject.hashable(:male, {bar: :baz}, :female)).to eq :unbound }
+  specify { expect(subject.hashable(:male, {}, :female)).to eq :empty }
 
-  specify { subject.recurse.should eq 'w00t!' }
-  specify { subject.recurse(:match).should eq 'w00t!' }
-  specify { subject.recurse(:super).should eq 'Hello, World!' }
-  specify { subject.recurse(:instance).should eq name }
-  specify { subject.recurse(:foo).should eq :foo }
+  specify { expect(subject.recurse).to eq 'w00t!' }
+  specify { expect(subject.recurse(:match)).to eq 'w00t!' }
+  specify { expect(subject.recurse(:super)).to eq 'Hello, World!' }
+  specify { expect(subject.recurse(:instance)).to eq name }
+  specify { expect(subject.recurse(:foo)).to eq :foo }
 
-  specify { subject.concat(1, 1).should eq 2 }
-  specify { subject.concat(1, 'shoe').should eq '1 shoe' }
-  specify { subject.concat('shoe', 'fly').should eq 'shoefly' }
-  specify { subject.concat(1, 2.9).should eq 3 }
+  specify { expect(subject.concat(1, 1)).to eq 2 }
+  specify { expect(subject.concat(1, 'shoe')).to eq '1 shoe' }
+  specify { expect(subject.concat('shoe', 'fly')).to eq 'shoefly' }
+  specify { expect(subject.concat(1, 2.9)).to eq 3 }
 
-  specify { subject.all(:one, 'a', 'bee', :see).should == ['a', 'bee', :see] }
-  specify { subject.all(:one, 1, 'bee', :see).should == [1, 'bee', :see] }
-  specify { subject.all(1, 'a', 'bee', :see).should == ['a', ['bee', :see]] }
-  specify { subject.all('a', 'bee', :see).should == ['a', 'bee', :see] }
-  specify { lambda { subject.all }.should raise_error(NoMethodError) }
+  specify { expect(subject.all(:one, 'a', 'bee', :see)).to eq(['a', 'bee', :see]) }
+  specify { expect(subject.all(:one, 1, 'bee', :see)).to eq([1, 'bee', :see]) }
+  specify { expect(subject.all(1, 'a', 'bee', :see)).to eq(['a', ['bee', :see]]) }
+  specify { expect(subject.all('a', 'bee', :see)).to eq(['a', 'bee', :see]) }
+  specify { expect { subject.all }.to raise_error(NoMethodError) }
 
-  specify { subject.old_enough(20).should be true }
-  specify { subject.old_enough(10).should be false }
+  specify { expect(subject.old_enough(20)).to be true }
+  specify { expect(subject.old_enough(10)).to be false }
 
-  specify { subject.right_age(20).should be true }
-  specify { subject.right_age(10).should be false }
-  specify { subject.right_age(110).should be false }
+  specify { expect(subject.right_age(20)).to be true }
+  specify { expect(subject.right_age(10)).to be false }
+  specify { expect(subject.right_age(110)).to be false }
 
-  specify { subject.wrong_age(20).should be false }
-  specify { subject.wrong_age(10).should be true }
-  specify { subject.wrong_age(110).should be true }
+  specify { expect(subject.wrong_age(20)).to be false }
+  specify { expect(subject.wrong_age(10)).to be true }
+  specify { expect(subject.wrong_age(110)).to be true }
 
   context 'inheritance' do
 
-    specify { Fizzbuzz.new.greet(:male, 'Jerry').should eq 'Hello, Mr. Jerry!' }
-    specify { Fizzbuzz.new.greet(:female, 'Jeri').should eq 'Hello, Ms. Jeri!' }
-    specify { Fizzbuzz.new.greet(:unknown, 'Jerry').should eq 'Hello, Jerry!' }
-    specify { Fizzbuzz.new.greet(nil, 'Jerry').should eq 'Goodbye, Jerry!' }
+    specify { expect(Fizzbuzz.new.greet(:male, 'Jerry')).to eq 'Hello, Mr. Jerry!' }
+    specify { expect(Fizzbuzz.new.greet(:female, 'Jeri')).to eq 'Hello, Ms. Jeri!' }
+    specify { expect(Fizzbuzz.new.greet(:unknown, 'Jerry')).to eq 'Hello, Jerry!' }
+    specify { expect(Fizzbuzz.new.greet(nil, 'Jerry')).to eq 'Goodbye, Jerry!' }
 
-    specify { Fizzbuzz.new.who(5).should eq 15 }
-    specify { Fizzbuzz.new.who().should eq 0 }
+    specify { expect(Fizzbuzz.new.who(5)).to eq 15 }
+    specify { expect(Fizzbuzz.new.who()).to eq 0 }
     specify { 
-      lambda {
+      expect {
         Fizzbuzz.new.who('Jerry', 'secret middle name', "D'Antonio")
-      }.should raise_error(NoMethodError)
+      }.to raise_error(NoMethodError)
     }
 
-    specify { Fizzbuzz.new.boom_boom_room.should eq 'zoom zoom zoom' }
+    specify { expect(Fizzbuzz.new.boom_boom_room).to eq 'zoom zoom zoom' }
   end
 end

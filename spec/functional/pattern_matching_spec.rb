@@ -15,28 +15,28 @@ describe PatternMatching do
   context '#defn declaration' do
 
     it 'can be used within a class declaration' do
-      lambda {
+      expect {
         class Clazz
           include PatternMatching
           defn(:foo){}
         end
-      }.should_not raise_error
+      }.not_to raise_error
     end
 
     it 'can be used on a class object' do
-      lambda {
+      expect {
         clazz = Class.new
         clazz.send(:include, PatternMatching)
         clazz.defn(:foo){}
-      }.should_not raise_error
+      }.not_to raise_error
     end
 
     it 'requires a block' do
-      lambda {
+      expect {
         clazz = Class.new
         clazz.send(:include, PatternMatching)
         clazz.defn(:foo)
-      }.should raise_error(ArgumentError)
+      }.to raise_error(ArgumentError)
     end
   end
 
@@ -49,10 +49,10 @@ describe PatternMatching do
         subject.defn(:initialize, PatternMatching::UNBOUND, PatternMatching::UNBOUND) { 'two args' }
         subject.defn(:initialize, PatternMatching::UNBOUND) { 'one arg' }
 
-        lambda { subject.new(1) }.should_not raise_error
-        lambda { subject.new(1, 2) }.should_not raise_error
-        lambda { subject.new(1, 2, 3) }.should_not raise_error
-        lambda { subject.new(1, 2, 3, 4) }.should raise_error
+        expect { subject.new(1) }.not_to raise_error
+        expect { subject.new(1, 2) }.not_to raise_error
+        expect { subject.new(1, 2, 3) }.not_to raise_error
+        expect { subject.new(1, 2, 3, 4) }.to raise_error
       end
     end
   end
@@ -63,18 +63,18 @@ describe PatternMatching do
 
       subject.defn(:foo, true) { 'expected' }
 
-      lambda {
+      expect {
         subject.new.foo()
-      }.should raise_error(NoMethodError)
+      }.to raise_error(NoMethodError)
     end
 
     it 'does not match a call with too many arguments' do
 
       subject.defn(:foo, true) { 'expected' }
 
-      lambda {
+      expect {
         subject.new.foo(true, false)
-      }.should raise_error(NoMethodError)
+      }.to raise_error(NoMethodError)
     end
 
   end
@@ -95,7 +95,7 @@ describe PatternMatching do
       end
 
       subject = UnmatchedCallTesterSubclass.new
-      subject.foo(:bar).should eq :bar
+      expect(subject.foo(:bar)).to eq :bar
     end
 
     it 'can call another match from within a match' do
@@ -103,7 +103,7 @@ describe PatternMatching do
       subject.defn(:foo, :bar) { |arg| foo(:baz) }
       subject.defn(:foo, :baz) { |arg| 'expected' }
 
-      subject.new.foo(:bar).should eq 'expected'
+      expect(subject.new.foo(:bar)).to eq 'expected'
     end
 
     it 'can call a superclass method from within a match' do
@@ -120,7 +120,7 @@ describe PatternMatching do
       end
 
       subject = RecursiveCallTesterSubclass.new
-      subject.foo(:bar).should eq :baz
+      expect(subject.foo(:bar)).to eq :baz
     end
   end
 
@@ -129,17 +129,17 @@ describe PatternMatching do
     it 'matches an argument of the class given in the match parameter' do
 
       subject.defn(:foo, Integer) { 'expected' }
-      subject.new.foo(100).should eq 'expected'
+      expect(subject.new.foo(100)).to eq 'expected'
 
-      lambda {
+      expect {
         subject.new.foo('hello')
-      }.should raise_error(NoMethodError)
+      }.to raise_error(NoMethodError)
     end
 
     it 'passes the matched argument to the block' do
 
       subject.defn(:foo, Integer) { |arg| arg }
-      subject.new.foo(100).should eq 100
+      expect(subject.new.foo(100)).to eq 100
     end
   end
 
@@ -150,9 +150,9 @@ describe PatternMatching do
       subject.defn(:foo){}
       obj = subject.new
 
-      lambda {
+      expect {
         obj.foo
-      }.should_not raise_error
+      }.not_to raise_error
     end
 
     it 'does not accept any parameters' do
@@ -160,14 +160,14 @@ describe PatternMatching do
       subject.defn(:foo){}
       obj = subject.new
 
-      lambda {
+      expect {
         obj.foo(1)
-      }.should raise_error(NoMethodError)
+      }.to raise_error(NoMethodError)
     end
 
     it 'returns the correct value' do
       subject.defn(:foo){ true }
-      subject.new.foo.should be true
+      expect(subject.new.foo).to be true
     end
   end
 
@@ -176,11 +176,11 @@ describe PatternMatching do
     it 'matches a nil parameter' do
 
       subject.defn(:foo, nil) { 'expected' }
-      subject.new.foo(nil).should eq 'expected'
+      expect(subject.new.foo(nil)).to eq 'expected'
 
-      lambda {
+      expect {
         subject.new.foo('no match should be found')
-      }.should raise_error(NoMethodError)
+      }.to raise_error(NoMethodError)
     end
 
     it 'matches a boolean parameter' do
@@ -188,78 +188,78 @@ describe PatternMatching do
       subject.defn(:foo, true) { 'expected' }
       subject.defn(:foo, false) { 'false case' }
 
-      subject.new.foo(true).should eq 'expected'
-      subject.new.foo(false).should eq 'false case'
+      expect(subject.new.foo(true)).to eq 'expected'
+      expect(subject.new.foo(false)).to eq 'false case'
 
-      lambda {
+      expect {
         subject.new.foo('no match should be found')
-      }.should raise_error(NoMethodError)
+      }.to raise_error(NoMethodError)
     end
 
     it 'matches a symbol parameter' do
 
       subject.defn(:foo, :bar) { 'expected' }
-      subject.new.foo(:bar).should eq 'expected'
+      expect(subject.new.foo(:bar)).to eq 'expected'
 
-      lambda {
+      expect {
         subject.new.foo(:baz)
-      }.should raise_error(NoMethodError)
+      }.to raise_error(NoMethodError)
     end
 
     it 'matches a number parameter' do
 
       subject.defn(:foo, 10) { 'expected' }
-      subject.new.foo(10).should eq 'expected'
+      expect(subject.new.foo(10)).to eq 'expected'
 
-      lambda {
+      expect {
         subject.new.foo(11.0)
-      }.should raise_error(NoMethodError)
+      }.to raise_error(NoMethodError)
     end
 
     it 'matches a string parameter' do
 
       subject.defn(:foo, 'bar') { 'expected' }
-      subject.new.foo('bar').should eq 'expected'
+      expect(subject.new.foo('bar')).to eq 'expected'
 
-      lambda {
+      expect {
         subject.new.foo('baz')
-      }.should raise_error(NoMethodError)
+      }.to raise_error(NoMethodError)
     end
 
     it 'matches an array parameter' do
 
       subject.defn(:foo, [1, 2, 3]) { 'expected' }
-      subject.new.foo([1, 2, 3]).should eq 'expected'
+      expect(subject.new.foo([1, 2, 3])).to eq 'expected'
 
-      lambda {
+      expect {
         subject.new.foo([3, 4, 5])
-      }.should raise_error(NoMethodError)
+      }.to raise_error(NoMethodError)
     end
 
     it 'matches a hash parameter' do
 
       subject.defn(:foo, bar: 1, baz: 2) { 'expected' }
-      subject.new.foo(bar: 1, baz: 2).should eq 'expected'
+      expect(subject.new.foo(bar: 1, baz: 2)).to eq 'expected'
 
-      lambda {
+      expect {
         subject.new.foo(foo: 0, bar: 1)
-      }.should raise_error(NoMethodError)
+      }.to raise_error(NoMethodError)
     end
 
     it 'matches an object parameter' do
 
       subject.defn(:foo, OpenStruct.new(foo: :bar)) { 'expected' }
-      subject.new.foo(OpenStruct.new(foo: :bar)).should eq 'expected'
+      expect(subject.new.foo(OpenStruct.new(foo: :bar))).to eq 'expected'
 
-      lambda {
+      expect {
         subject.new.foo(OpenStruct.new(bar: :baz))
-      }.should raise_error(NoMethodError)
+      }.to raise_error(NoMethodError)
     end
 
     it 'matches an unbound parameter' do
 
       subject.defn(:foo, PatternMatching::UNBOUND) {|arg| arg }
-      subject.new.foo(:foo).should eq :foo
+      expect(subject.new.foo(:foo)).to eq :foo
     end
   end
 
@@ -268,11 +268,11 @@ describe PatternMatching do
     it 'matches two bound arguments' do
 
       subject.defn(:foo, :male, :female){ 'expected' }
-      subject.new.foo(:male, :female).should eq 'expected'
+      expect(subject.new.foo(:male, :female)).to eq 'expected'
 
-      lambda {
+      expect {
         subject.new.foo(1, 2)
-      }.should raise_error(NoMethodError)
+      }.to raise_error(NoMethodError)
     end
 
     it 'matches two unbound arguments' do
@@ -280,7 +280,7 @@ describe PatternMatching do
       subject.defn(:foo, PatternMatching::UNBOUND, PatternMatching::UNBOUND) do |first, second|
         [first, second]
       end
-      subject.new.foo(:male, :female).should eq [:male, :female]
+      expect(subject.new.foo(:male, :female)).to eq [:male, :female]
     end
 
     it 'matches when the first argument is bound and the second is not' do
@@ -288,7 +288,7 @@ describe PatternMatching do
       subject.defn(:foo, :male, PatternMatching::UNBOUND) do |second|
         second
       end
-      subject.new.foo(:male, :female).should eq :female
+      expect(subject.new.foo(:male, :female)).to eq :female
     end
 
     it 'matches when the second argument is bound and the first is not' do
@@ -296,7 +296,7 @@ describe PatternMatching do
       subject.defn(:foo, PatternMatching::UNBOUND, :female) do |first|
         first
       end
-      subject.new.foo(:male, :female).should eq :male
+      expect(subject.new.foo(:male, :female)).to eq :male
     end
   end
 
@@ -305,60 +305,60 @@ describe PatternMatching do
     it 'matches an empty argument hash with an empty parameter hash' do
 
       subject.defn(:foo, {}) { true }
-      subject.new.foo({}).should be true
+      expect(subject.new.foo({})).to be true
 
-      lambda {
+      expect {
         subject.new.foo({one: :two})
-      }.should raise_error(NoMethodError)
+      }.to raise_error(NoMethodError)
     end
 
     it 'matches when all hash keys and values match' do
 
       subject.defn(:foo, {bar: :baz}) { true }
-      subject.new.foo(bar: :baz).should be true
+      expect(subject.new.foo(bar: :baz)).to be true
 
-      lambda {
+      expect {
         subject.new.foo({one: :two})
-      }.should raise_error(NoMethodError)
+      }.to raise_error(NoMethodError)
     end
 
     it 'matches when every pattern key/value are in the argument' do
 
       subject.defn(:foo, {bar: :baz}) { true }
-      subject.new.foo(foo: :bar, bar: :baz).should be true
+      expect(subject.new.foo(foo: :bar, bar: :baz)).to be true
     end
 
     it 'matches when all keys with unbound values in the pattern have an argument' do
 
       subject.defn(:foo, {bar: PatternMatching::UNBOUND}) { true }
-      subject.new.foo(bar: :baz).should be true
+      expect(subject.new.foo(bar: :baz)).to be true
     end
 
     it 'passes unbound values to the block' do
 
       subject.defn(:foo, {bar: PatternMatching::UNBOUND}) {|arg| arg }
-      subject.new.foo(bar: :baz).should eq :baz
+      expect(subject.new.foo(bar: :baz)).to eq :baz
     end
 
     it 'passes the matched hash to the block' do
 
       subject.defn(:foo, {bar: :baz}) { |opts| opts }
-      subject.new.foo(bar: :baz).should == {bar: :baz}
+      expect(subject.new.foo(bar: :baz)).to eq({bar: :baz})
     end
 
     it 'does not match a non-hash argument' do
 
       subject.defn(:foo, {}) { true }
 
-      lambda {
+      expect {
         subject.new.foo(:bar)
-      }.should raise_error(NoMethodError)
+      }.to raise_error(NoMethodError)
     end
 
     it 'supports idiomatic has-as-last-argument syntax' do
 
       subject.defn(:foo, PatternMatching::UNBOUND) { |opts| opts }
-      subject.new.foo(bar: :baz, one: 1, many: 2).should == {bar: :baz, one: 1, many: 2}
+      expect(subject.new.foo(bar: :baz, one: 1, many: 2)).to eq({bar: :baz, one: 1, many: 2})
     end
   end
 
@@ -367,9 +367,9 @@ describe PatternMatching do
     it 'supports ALL as the last parameter' do
       
       subject.defn(:foo, 1, 2, PatternMatching::ALL) { |args| args }
-      subject.new.foo(1, 2, 3).should == [3]
-      subject.new.foo(1, 2, :foo, :bar).should == [:foo, :bar]
-      subject.new.foo(1, 2, :foo, :bar, one: 1, two: 2).should == [:foo, :bar, {one: 1, two: 2}]
+      expect(subject.new.foo(1, 2, 3)).to eq([3])
+      expect(subject.new.foo(1, 2, :foo, :bar)).to eq([:foo, :bar])
+      expect(subject.new.foo(1, 2, :foo, :bar, one: 1, two: 2)).to eq([:foo, :bar, {one: 1, two: 2}])
     end
   end
 
@@ -381,7 +381,7 @@ describe PatternMatching do
         true
       }.when{|x| x > 16 }
 
-      subject.new.old_enough(20).should be true
+      expect(subject.new.old_enough(20)).to be true
     end
 
     it 'does not match when the guard clause returns false' do
@@ -390,9 +390,9 @@ describe PatternMatching do
         true
       }.when{|x| x > 16 }
 
-      lambda {
+      expect {
         subject.new.old_enough(10)
-      }.should raise_error(NoMethodError)
+      }.to raise_error(NoMethodError)
     end
 
     it 'continues pattern matching when the guard clause returns false' do
@@ -403,14 +403,14 @@ describe PatternMatching do
 
       subject.defn(:old_enough, PatternMatching::UNBOUND) { false }
 
-      subject.new.old_enough(10).should be false
+      expect(subject.new.old_enough(10)).to be false
     end
 
     it 'raises an exception when the guard clause does not have a block' do
 
-      lambda {
+      expect {
         subject.defn(:foo).when
-      }.should raise_error(ArgumentError)
+      }.to raise_error(ArgumentError)
     end
   end
 end
