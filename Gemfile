@@ -8,7 +8,7 @@ end
 
 group :testing do
   #gem 'rspec', '~> 3.0.0'
-  gem 'rspec', '~> 2.14.1'
+  gem 'rspec', '~> 2.99'
   gem 'coveralls', '~> 0.7.0', require: false
   gem 'timecop', '~> 0.7.1'
   gem 'fakefs', '~> 0.5.2'

@@ -174,16 +174,16 @@ describe 'integration' do
   specify { subject.all('a', 'bee', :see).should == ['a', 'bee', :see] }
   specify { lambda { subject.all }.should raise_error(NoMethodError) }
 
-  specify { subject.old_enough(20).should be_true }
-  specify { subject.old_enough(10).should be_false }
+  specify { subject.old_enough(20).should be true }
+  specify { subject.old_enough(10).should be false }
 
-  specify { subject.right_age(20).should be_true }
-  specify { subject.right_age(10).should be_false }
-  specify { subject.right_age(110).should be_false }
+  specify { subject.right_age(20).should be true }
+  specify { subject.right_age(10).should be false }
+  specify { subject.right_age(110).should be false }
 
-  specify { subject.wrong_age(20).should be_false }
-  specify { subject.wrong_age(10).should be_true }
-  specify { subject.wrong_age(110).should be_true }
+  specify { subject.wrong_age(20).should be false }
+  specify { subject.wrong_age(10).should be true }
+  specify { subject.wrong_age(110).should be true }
 
   context 'inheritance' do
 

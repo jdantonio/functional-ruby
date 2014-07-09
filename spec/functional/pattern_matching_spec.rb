@@ -167,7 +167,7 @@ describe PatternMatching do
 
     it 'returns the correct value' do
       subject.defn(:foo){ true }
-      subject.new.foo.should be_true
+      subject.new.foo.should be true
     end
   end
 
@@ -305,7 +305,7 @@ describe PatternMatching do
     it 'matches an empty argument hash with an empty parameter hash' do
 
       subject.defn(:foo, {}) { true }
-      subject.new.foo({}).should be_true
+      subject.new.foo({}).should be true
 
       lambda {
         subject.new.foo({one: :two})
@@ -315,7 +315,7 @@ describe PatternMatching do
     it 'matches when all hash keys and values match' do
 
       subject.defn(:foo, {bar: :baz}) { true }
-      subject.new.foo(bar: :baz).should be_true
+      subject.new.foo(bar: :baz).should be true
 
       lambda {
         subject.new.foo({one: :two})
@@ -325,13 +325,13 @@ describe PatternMatching do
     it 'matches when every pattern key/value are in the argument' do
 
       subject.defn(:foo, {bar: :baz}) { true }
-      subject.new.foo(foo: :bar, bar: :baz).should be_true
+      subject.new.foo(foo: :bar, bar: :baz).should be true
     end
 
     it 'matches when all keys with unbound values in the pattern have an argument' do
 
       subject.defn(:foo, {bar: PatternMatching::UNBOUND}) { true }
-      subject.new.foo(bar: :baz).should be_true
+      subject.new.foo(bar: :baz).should be true
     end
 
     it 'passes unbound values to the block' do
@@ -381,7 +381,7 @@ describe PatternMatching do
         true
       }.when{|x| x > 16 }
 
-      subject.new.old_enough(20).should be_true
+      subject.new.old_enough(20).should be true
     end
 
     it 'does not match when the guard clause returns false' do
@@ -403,7 +403,7 @@ describe PatternMatching do
 
       subject.defn(:old_enough, PatternMatching::UNBOUND) { false }
 
-      subject.new.old_enough(10).should be_false
+      subject.new.old_enough(10).should be false
     end
 
     it 'raises an exception when the guard clause does not have a block' do
