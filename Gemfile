@@ -9,8 +9,6 @@ end
 group :testing do
   gem 'rspec', '~> 3.0.0'
   gem 'coveralls', '~> 0.7.0', require: false
-  gem 'timecop', '~> 0.7.1'
-  gem 'fakefs', '~> 0.5.2'
 end
 
 group :documentation do
