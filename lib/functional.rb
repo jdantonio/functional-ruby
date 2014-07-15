@@ -1,5 +1,6 @@
 require 'functional/behavior'
 require 'functional/behaviour'
+require 'functional/either'
 require 'functional/pattern_matching'
 require 'functional/version'
 
