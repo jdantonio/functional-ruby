@@ -4,6 +4,12 @@ module Functional
 
   describe Either do
 
+    let!(:value){ :foo }
+    let!(:reason){ StandardError.new }
+
+    let(:left_subject){ Either.left(reason) }
+    let(:right_subject){ Either.right(value) }
+
     context 'initialization' do
 
       it 'cannot be constructed directly' do
@@ -13,29 +19,23 @@ module Functional
       end
 
       it 'sets the left value when constructed by #left' do
-        expect(Either.left(:foo).left).to eq :foo
+        expect(Either.left(value).left).to eq value
       end
 
       it 'sets the right value when constructed by #right' do
-        expect(Either.right(:foo).right).to eq :foo
+        expect(Either.right(value).right).to eq value
       end
 
       it 'aliases #left to #reason' do
-        expect(Either.reason(:foo).left).to eq :foo
+        expect(Either.reason(value).left).to eq value
       end
 
       it 'aliases #right to #value' do
-        expect(Either.value(:foo).right).to eq :foo
+        expect(Either.value(value).right).to eq value
       end
     end
 
     context 'state' do
-
-      let!(:value){ :foo }
-      let!(:reason){ StandardError.new }
-
-      let(:left_subject){ Either.left(reason) }
-      let(:right_subject){ Either.right(value) }
 
       specify '#left? returns true when the left value is set' do
         expect(left_subject).to be_left
@@ -85,6 +85,25 @@ module Functional
       specify 'aliases #right as #value' do
         expect(right_subject.value).to eq value
         expect(left_subject.value).to be_nil
+      end
+    end
+
+    context '#swap' do
+
+      it 'converts a left projection into a right projection' do
+        subject = Either.left(:foo)
+        swapped = subject.swap
+        expect(swapped).to be_right
+        expect(swapped.left).to be_nil
+        expect(swapped.right).to eq :foo
+      end
+
+      it 'converts a right projection into a left projection' do
+        subject = Either.right(:foo)
+        swapped = subject.swap
+        expect(swapped).to be_left
+        expect(swapped.right).to be_nil
+        expect(swapped.left).to eq :foo
       end
     end
   end
