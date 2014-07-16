@@ -73,8 +73,8 @@ Several features from Erlang, Go, and Clojure have been implemented thus far:
 
 ### Supported Ruby Versions
 
-MRI 1.9.3, 2.0, 2.1, JRuby (1.9 mode), and Rubinius 2.x. This library is pure Ruby and has no gem dependencies.
-It should be fully compatible with any interpreter that is compliant with Ruby 1.9.3 or newer.
+MRI 2.0 and higher, JRuby (1.9 mode), and Rubinius 2.x. This library is pure Ruby and has no gem dependencies.
+It should be fully compatible with any interpreter that is compliant with Ruby 2.0 or newer.
 
 ### Install
 
