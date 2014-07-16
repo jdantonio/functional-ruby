@@ -187,18 +187,6 @@ module Functional
         expect(subject.right).to eq :bar
       end
 
-      it 'raises an exception when given less than two arguments' do
-        expect {
-          subject = Either.iff(nil)
-        }.to raise_error(ArgumentError)
-      end
-
-      it 'raises an exception when given more than three arguments' do
-        expect {
-          subject = Either.iff(1, 2, 3, 4)
-        }.to raise_error(ArgumentError)
-      end
-
       it 'raises an exception when both a boolean and a block are given' do
         expect {
           subject = Either.iff(:foo, :bar, true){ nil }
