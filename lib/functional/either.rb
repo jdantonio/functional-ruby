@@ -42,6 +42,22 @@ module Functional
       alias_method :value, :right
     end
 
+    # Create an `Either` with the left value set to an `Exception` object
+    # complete with message and backtrace. This is a convenience method for
+    # supporting the reason/value convention with the reason always being
+    # an `Exception` object. When no exception class is given `StandardError`
+    # will be used. When no message is given the default message for the
+    # given error class will be used.
+    #
+    # @param [String] message The message for the new error object.
+    # @param [Exception] clazz The class for the new error object.
+    # @return [Either] A new either with an error object as the left value.
+    def self.error(message = nil, clazz = StandardError)
+      ex = clazz.new(message)
+      ex.set_backtrace(caller)
+      left(ex)
+    end
+
     private_class_method :new
 
     ### instance methods
@@ -53,6 +69,7 @@ module Functional
       @is_left
     end
     alias_method :reason?, :left?
+    alias_method :rejected?, :left?
 
     # Returns true if this either is a right, false otherwise.
     #
@@ -61,6 +78,7 @@ module Functional
       ! left?
     end
     alias_method :value?, :right?
+    alias_method :fulfilled?, :right?
 
     # If this is a left, then return the left value in right, or vice versa.
     #

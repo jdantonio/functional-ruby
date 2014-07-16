@@ -38,6 +38,33 @@ module Functional
       it 'aliases #right to #value' do
         expect(Either.value(value).right).to eq value
       end
+
+      context '#error' do
+
+        it 'sets left to a StandardError with backtrace when no arguments given' do
+          either = Either.error
+          expect(either.left).to be_a StandardError
+          expect(either.left.message).to_not be nil
+          expect(either.left.backtrace).to_not be_empty
+        end
+
+        it 'sets left to a StandardError with the given message' do
+          message = 'custom error message'
+          either = Either.error(message)
+          expect(either.left).to be_a StandardError
+          expect(either.left.message).to eq message
+          expect(either.left.backtrace).to_not be_empty
+        end
+
+        it 'sets left to an object of the given class with the given message' do
+          message = 'custom error message'
+          error_class = ArgumentError
+          either = Either.error(message, error_class)
+          expect(either.left).to be_a error_class
+          expect(either.left.message).to eq message
+          expect(either.left.backtrace).to_not be_empty
+        end
+      end
     end
 
     context 'state' do
