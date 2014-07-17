@@ -1,32 +1,3 @@
-module Functional
-
-  BehaviorError = Class.new(StandardError)
-
-  #def BehaviorInfo
-  #end
-  #alias_method :BehaviourInfo, :BehaviorInfo
-  #module_function :BehaviorInfo
-  #module_function :BehaviourInfo
-
-  #module Behavior
-
-    #def self.included(base)
-      ## hook into object construction here
-    #end
-  #end
-
-  #module BehaviorCheck
-
-    #def BehavesAs?
-    #end
-    #alias_method :BehaveAs?, :BehavesAs?
-
-    #def BehavesAs!
-    #end
-    #alias_method :BehaveAs!, :BehavesAs!
-  #end
-end
-
 module Kernel
 
   # Define a behavioral specification (interface).
