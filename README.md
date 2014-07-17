@@ -1,7 +1,8 @@
 # Functional Ruby
 [![Gem Version](https://badge.fury.io/rb/functional-ruby.png)](http://badge.fury.io/rb/functional-ruby) [![Build Status](https://secure.travis-ci.org/jdantonio/functional-ruby.png)](https://travis-ci.org/jdantonio/functional-ruby?branch=master) [![Coverage Status](https://coveralls.io/repos/jdantonio/functional-ruby/badge.png)](https://coveralls.io/r/jdantonio/functional-ruby) [![Code Climate](https://codeclimate.com/github/jdantonio/functional-ruby.png)](https://codeclimate.com/github/jdantonio/functional-ruby) [![Inline docs](http://inch-ci.org/github/jdantonio/functional-ruby.png)](http://inch-ci.org/github/jdantonio/functional-ruby) [![Dependency Status](https://gemnasium.com/jdantonio/functional-ruby.png)](https://gemnasium.com/jdantonio/functional-ruby)
 
-A gem for adding Erlang, Clojure, and Go inspired functional programming tools to Ruby.
+A gem for adding functional programming tools to Ruby. Inspired by [Erlang](http://www.erlang.org/),
+[Clojure](http://clojure.org/), and [Functional Java](http://functionaljava.org/).
 
 ## Introduction
 
@@ -52,7 +53,7 @@ dreamed possible.
 
 ### Goals
 
-My goal is to implement various functional programming patterns in Ruby. Specifically:
+Our goal is to implement various functional programming patterns in Ruby. Specifically:
 
 * Be an 'unopinionated' toolbox that provides useful utilities without debating which is better or why
 * Remain free of external gem dependencies
@@ -66,10 +67,9 @@ My goal is to implement various functional programming patterns in Ruby. Specifi
 
 ## Features (and Documentation)
 
-Several features from Erlang, Go, and Clojure have been implemented thus far:
-
 * Interface specifications with Erlang-style [Behavior](https://github.com/jdantonio/functional-ruby/blob/master/md/behavior.md)
 * Function overloading with Erlang-style [Pattern Matching](https://github.com/jdantonio/functional-ruby/blob/master/md/pattern_matching.md)
+* `Either` and `Option` classes based on [Functional Java](http://functionaljava.org/)
 
 ### Supported Ruby Versions
 
@@ -94,64 +94,6 @@ Once you've installed the gem you must `require` it in your project:
 
 ```ruby
 require 'functional'
-```
-
-### Examples
-
-For complete examples, see the specific documentation linked above. Below are a
-few examples to whet your appetite.
-
-#### Pattern Matching (Erlang)
-
-Documentation: [Pattern Matching](https://github.com/jdantonio/functional-ruby/blob/master/md/pattern_matching.md)
-
-```ruby
-require 'functional/pattern_matching'
-
-class Foo
-  include PatternMatching
-
-  defn(:greet, :male) {
-    puts "Hello, sir!"
-  }
-
-  defn(:greet, :female) {
-    puts "Hello, ma'am!"
-  }
-end
-
-foo = Foo.new
-foo.greet(:male)   #=> "Hello, sir!"
-foo.greet(:female) #=> "Hello, ma'am!"
-```
-
-#### Behavior (Erlang)
-
-Documentation: [Behavior](https://github.com/jdantonio/functional-ruby/blob/master/md/behavior.md)
-
-```ruby
-require 'functional/behavior'
-
-behaviour_info(:gen_foo, foo: 0, self_bar: 1)
-
-class Foo
-  behavior(:gen_foo)
-
-  def foo
-    return 'foo/0'
-  end
-
-  def self.bar(one, &block)
-    return 'bar/1'
-  end
-end
-
-foo = Foo.new
-
-Foo.behaves_as? :gen_foo    #=> true
-foo.behaves_as?(:gen_foo)   #=> true
-foo.behaves_as?(:bogus)     #=> false
-'foo'.behaves_as? :gen_foo  #=> false
 ```
 
 ## Contributors
