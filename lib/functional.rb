@@ -1,7 +1,5 @@
 require 'functional/behavior'
-require 'functional/behaviour'
 require 'functional/behavior_check'
-require 'functional/behaviour_check'
 require 'functional/either'
 require 'functional/pattern_matching'
 require 'functional/type_check'

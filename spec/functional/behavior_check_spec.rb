@@ -11,12 +11,16 @@ Functional::BehaviorInfo :gen_foo do
   constant :baz_bar
 end
 
+behavior_info = Functional::BehaviorInfo(:gen_foo)
+
 class MyClass
   include Functional::BehaviorCheck
 
   def do_stuff(first, second)
-    BehaveAs? first, :gen_foo
+    BehaveAs? first, :foobar
     BehaveAs! second, :gen_foo
+    BehaviorDefined? :foobar
+    BehaviorDefined! :gen_foo
   end
 end
 
@@ -28,8 +32,11 @@ class ThisModule
   Functional::Behavior :gen_foo
 end
 
-Functional::BehaveAs? ThisClass, :gen_foo
+Functional::BehaveAs? ThisClass, :foobar
 Functional::BehaveAs! ThisModule, :gen_foo
+
+Functional::BehaviorDefined? :foobar
+Functional::BehaviorDefined! :gen_foo
 
 module Functional
 
@@ -45,7 +52,15 @@ module Functional
     pending
   end
 
-  describe 'BehavesAs' do
+  describe 'BehavesAs!' do
+    pending
+  end
+
+  describe 'BehaviorDefined?' do
+    pending
+  end
+
+  describe 'BehaviorDefined!' do
     pending
   end
 
@@ -60,6 +75,21 @@ module Functional
       BehaviorCheck.class_variable_set(:@@info, @behavior_info)
     end
 
-    pending
+
+    context 'BehaveAs?' do
+      pending
+    end
+
+    context 'BehavesAs!' do
+      pending
+    end
+
+    context 'BehaviorDefined?' do
+      pending
+    end
+
+    context 'BehaviorDefined!' do
+      pending
+    end
   end
 end
