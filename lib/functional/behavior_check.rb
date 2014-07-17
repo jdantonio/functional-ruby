@@ -50,15 +50,14 @@ module Functional
       end
       results.empty?
     end
-    alias_method :BehavesAs?, :BehaveAs?
     module_function :BehaveAs?
-    module_function :BehavesAs?
 
     def BehaveAs!(target, *behaviors)
+      BehaveAs?(target, *behaviors) or
+        BehaviorCheck.error(target, 'does not', behaviors)
+      target
     end
-    alias_method :BehavesAs!, :BehaveAs!
     module_function :BehaveAs!
-    module_function :BehavesAs!
 
     def BehaviorDefined?(*behaviors)
     end
@@ -92,6 +91,13 @@ module Functional
       end
 
       results.empty?
+    end
+
+    def self.error(target, message, behaviors)
+      target = target.class unless target.is_a?(Module)
+      raise BehaviorError,
+        "Value (#{target.class}) '#{target}' #{message} behave as all of: #{behaviors.join('; ')}."
+      target
     end
   end
 end

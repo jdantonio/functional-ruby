@@ -294,24 +294,71 @@ describe 'behavior specification' do
           Functional::BehaviorCheck::BehaveAs?('object', :foo, :bar)
         ).to be false
       end
+    end
 
-      it 'is aliased as BehavesAs?' do
+    context 'BehaveAs!' do
+
+      it 'returns the target on success' do
         Functional::BehaviorInfo(:foo) do
-          method(:bar, 0)
-          class_method(:baz, 0)
+          method(:foo)
+          method(:bar)
+          method(:baz)
+          class_method(:foo)
+          class_method(:bar)
+          class_method(:baz)
         end
 
         clazz = Class.new do
-          def bar(); nil; end
-          def self.baz(); nil; end
+          def foo(); nil; end
+          def bar(a, b, c); nil; end
+          def baz(a, b, *args); nil; end
+          def self.foo(); nil; end
+          def self.bar(a, b, c); nil; end
+          def self.baz(a, b, *args); nil; end
         end
 
-        expect(Functional::BehaviorCheck::BehavesAs?(clazz.new, :foo)).to be true
+        target = clazz.new
+        expect(Functional::BehaviorCheck::BehaveAs!(target, :foo)).to eq target
       end
-    end
 
-    context 'BehavesAs!' do
-      pending
+      it 'raises an exception if one or more instance methods do not match' do
+        Functional::BehaviorInfo(:foo) do
+          method(:bar, 0)
+        end
+
+        clazz = Class.new do
+          def bar(a, b, *args); nil; end
+        end
+
+        expect{
+          Functional::BehaviorCheck::BehaveAs!(clazz.new, :foo)
+        }.to raise_error(Functional::BehaviorError)
+      end
+
+      it 'raises an exception if one or more class methods do not match' do
+        Functional::BehaviorInfo(:foo) do
+          class_method(:bar, 0)
+        end
+
+        clazz = Class.new do
+          def bar(a, b, *args); nil; end
+        end
+
+        expect{
+          Functional::BehaviorCheck::BehaveAs!(clazz.new, :foo)
+        }.to raise_error(Functional::BehaviorError)
+      end
+
+      it 'raises an exception if one or more behaviors has not been defined' do
+        Functional::BehaviorInfo(:foo) do
+          method(:bar, 0)
+          class_method(:bar, 0)
+        end
+
+        expect{
+          Functional::BehaviorCheck::BehaveAs!('object', :foo)
+        }.to raise_error(Functional::BehaviorError)
+      end
     end
 
     context 'BehaviorDefined?' do
