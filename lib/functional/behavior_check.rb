@@ -3,18 +3,36 @@ module Functional
   BehaviorError = Class.new(StandardError)
 
   def BehaviorInfo(behavior, &block)
-    return unless block_given?
+    behavior = behavior.to_sym
+    behavior_info = BehaviorCheck.class_variable_get(:@@info)[behavior]
 
-    temp_proxy = Class.new do
-      def method(*args)
+    return behavior_info unless block_given?
+
+    if block_given? && ! behavior_info.nil?
+      raise BehaviorError.new(":#{behavior} has already been defined")
+    end
+
+    info = {
+      methods: {},
+      class_methods: {}
+    }
+
+    proxy = Class.new do
+      def initialize(info)
+        @info = info
       end
-      def class_method(*args)
+      def method(name, arity = Functional::BehaviorCheck::ANY_ARITY)
+        arity = arity.to_i unless arity == Functional::BehaviorCheck::ANY_ARITY
+        @info[:methods][name.to_sym] = arity
       end
-      def constant(*args)
+      def class_method(name, arity = Functional::BehaviorCheck::ANY_ARITY)
+        arity = arity.to_i unless arity == Functional::BehaviorCheck::ANY_ARITY
+        @info[:class_methods][name.to_sym] = arity
       end
     end
 
-    temp_proxy.new.instance_eval(&block)
+    proxy.new(info).instance_eval(&block)
+    BehaviorCheck.class_variable_get(:@@info)[behavior] = info
   end
   module_function :BehaviorInfo
 
@@ -43,6 +61,8 @@ module Functional
   module BehaviorCheck
 
     @@info = {}
+
+    ANY_ARITY = BasicObject.new
 
     def BehaveAs?(target, *behaviors)
     end
