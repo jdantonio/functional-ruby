@@ -69,9 +69,9 @@ module Functional
 
     private
 
-    def self.check_arity?(target, method, arity)
-      expected = target.method(method).arity
-      arity.nil? || arity == expected
+    def self.check_arity?(target, method, expected)
+      arity = target.method(method).arity
+      expected.nil? || arity == -1 || expected == arity
     rescue
       return false
     end

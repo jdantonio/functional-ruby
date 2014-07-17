@@ -246,6 +246,28 @@ describe 'behavior specification' do
         expect(Functional::BehaviorCheck::BehaveAs?(clazz.new, :foo)).to be true
       end
 
+      it 'always accepts methods with arity -1' do
+        Functional::BehaviorInfo(:foo) do
+          method(:foo, 0)
+          method(:bar, 2)
+          method(:baz, -2)
+          class_method(:foo, 0)
+          class_method(:bar, -2)
+          class_method(:baz, 2)
+        end
+
+        clazz = Class.new do
+          def foo(*args); nil; end
+          def bar(*args); nil; end
+          def baz(*args); nil; end
+          def self.foo(*args); nil; end
+          def self.bar(*args); nil; end
+          def self.baz(*args); nil; end
+        end
+
+        expect(Functional::BehaviorCheck::BehaveAs?(clazz.new, :foo)).to be true
+      end
+
       it 'accepts and checks multiple behaviors' do
         Functional::BehaviorInfo(:foo){ method(:foo) }
         Functional::BehaviorInfo(:bar){ method(:foo) }
