@@ -1,95 +1,3 @@
-
-
-
-Customer = Struct.new(:name, :address) do
-  def greeting
-    "Hello #{name}!"
-  end
-end
-
-Customer.class #=> Class
-Customer.ancestors #=> [Customer, Struct, Enumerable, Object, PP::ObjectMixin, Kernel, BasicObject]
-
-Customer.new #=> #<struct Customer name=nil, address=nil>
-
-dave = Customer.new('Dave', '123 Main')
-dave.name #=> "Dave"
-dave.greeting #=> "Hello Dave!"
-
-class AbstractUnion
-
-  @@formats = [].freeze
-
-  attr_reader :value
-
-  def each
-    return enum_for(:each) unless block_given?
-    formats.each do |format|
-      yield(format, self.send(format))
-    end
-  end
-
-  protected
-
-  def formats
-    @@formats
-  end
-
-  private
-
-  def initialize(format, value)
-    @format = format
-    @value = value
-  end
-end
-
-class TripleThreat < AbstractUnion
-
-  @@formats = [:foo, :bar, :baz].freeze
-
-  # factories
-
-  def self.foo(value)
-    new(:foo, value).freeze
-  end
-
-  def self.bar(value)
-    new(:bar, value).freeze
-  end
-
-  def self.baz(value)
-    new(:baz, value).freeze
-  end
-
-  # readers
-
-  def foo
-    foo? ? @value : nil
-  end
-
-  def bar
-    bar? ? @value : nil
-  end
-
-  def baz
-    baz? ? @value : nil
-  end
-
-  # predicates
-
-  def foo?
-    @format == :foo
-  end
-
-  def bar?
-    @format == :bar
-  end
-
-  def baz?
-    @format == :baz
-  end
-end
-
 module Functional
 
   class AbstractUnion
@@ -97,6 +5,11 @@ module Functional
     @@formats = [].freeze
 
     attr_reader :value
+    attr_reader :format
+
+    class << self
+      attr_reader :formats
+    end
 
     def each
       return enum_for(:each) unless block_given?
@@ -109,9 +22,26 @@ module Functional
       self.class.formats
     end
 
-    def self.formats
-      @@formats
+    def inspect
+      state = to_h.to_s.gsub(/^{/, '').gsub(/}$/, '')
+      "#<union #{self.class} #{state}>"
     end
+
+    def to_h
+      formats.reduce({}) do |memo, format|
+        memo[format] = send(format)
+        memo
+      end
+    end
+
+    protected
+
+    class << self
+      attr_writer :formats
+    end
+    self.formats = [].freeze
+
+    private_class_method :new
 
     private
 
@@ -123,12 +53,13 @@ module Functional
 
   # @see http://en.wikipedia.org/wiki/Union_type
   # @see http://www.ruby-doc.org/core-2.1.2/Struct.html
-  class Union
+  module Union
+    extend self
 
-    def self.new(*formats)
+    def new(*formats)
       raise ArgumentError.new('no formats provided') if formats.empty?
       formats = formats.collect{|format| format.to_sym }.freeze
-      
+
       union = Class.new(AbstractUnion) do
         formats.each do |format|
           # predicates
@@ -143,7 +74,7 @@ module Functional
       end
 
       # possible formats
-      union.class_variable_set(:@@formats, formats)
+      union.formats = formats
 
       # factories
       formats.each do |format|
@@ -154,7 +85,5 @@ module Functional
 
       union
     end
-
-    private :initialize
   end
 end
