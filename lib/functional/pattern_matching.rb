@@ -1,10 +1,7 @@
-require_relative 'type_check'
-
 module Functional
 
   # {include:file:doc/pattern_matching.md}
   module PatternMatching
-    extend TypeCheck
 
     UNBOUND = Object.new
     ALL = Object.new
@@ -32,8 +29,8 @@ module Functional
       pattern.each_with_index do |p, i|
         break if p == ALL && i+1 == pattern.length
         arg = args[i]
-        next if Type?(p, Class) && Type?(arg, p)
-        if Type?(p, Hash) && Type?(arg, Hash) && ! p.empty?
+        next if p.is_a?(Class) && arg.is_a?(p)
+        if p.is_a?(Hash) && arg.is_a?(Hash) && ! p.empty?
           p.each do |key, value|
             return false unless arg.has_key?(key)
             next if value == UNBOUND
@@ -51,11 +48,11 @@ module Functional
       match.first.each_with_index do |p, i|
         if p == ALL && i == match.first.length-1
           argv << args[(i..args.length)].reduce([]){|memo, arg| memo << arg }
-        elsif Type?(p, Hash) && p.values.include?(UNBOUND)
+        elsif p.is_a?(Hash) && p.values.include?(UNBOUND)
           p.each do |key, value|
             argv << args[i][key] if value == UNBOUND
           end
-        elsif Type?(p, Hash) || p == UNBOUND || Type?(p, Class)
+        elsif p.is_a?(Hash) || p == UNBOUND || p.is_a?(Class)
           argv << args[i] 
         end
       end
