@@ -2,7 +2,7 @@ module Functional
 
   BehaviorError = Class.new(StandardError)
 
-  def BehaviorInfo(behavior, &block)
+  def DefineBehavior(behavior, &block)
     behavior = behavior.to_sym
     behavior_info = BehaviorCheck.class_variable_get(:@@info)[behavior]
 
@@ -34,38 +34,30 @@ module Functional
     proxy.new(info).instance_eval(&block)
     BehaviorCheck.class_variable_get(:@@info)[behavior] = info
   end
-  module_function :BehaviorInfo
-
-  def Behavior(behavior)
-  end
-  module_function :Behavior
+  module_function :DefineBehavior
 
   module BehaviorCheck
 
     @@info = {}
 
-    def BehaveAs?(target, *behaviors)
+    def Behave?(target, *behaviors)
       results = behaviors.drop_while do |behavior|
-        behave_as?(target, behavior.to_sym)
+        BehaviorCheck.behave_as?(target, behavior.to_sym)
       end
       results.empty?
     end
-    module_function :BehaveAs?
 
-    def BehaveAs!(target, *behaviors)
-      BehaveAs?(target, *behaviors) or
+    def Behave!(target, *behaviors)
+      Behave?(target, *behaviors) or
         BehaviorCheck.error(target, 'does not', behaviors)
       target
     end
-    module_function :BehaveAs!
 
-    def BehaviorDefined?(*behaviors)
+    def Behavior?(*behaviors)
     end
-    module_function :BehaviorDefined?
 
-    def BehaviorDefined!(*behaviors)
+    def Behavior!(*behaviors)
     end
-    module_function :BehaviorDefined!
 
     private
 
