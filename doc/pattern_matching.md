@@ -37,13 +37,13 @@ In the Ruby class file where you want to use pattern matching, require the *func
 require 'functional'
 ```
 
-Then include `PatternMatching` in your class:
+Then include `Functional::PatternMatching` in your class:
 
 ```ruby
 require 'functional'
 
 class Foo
-  include PatternMatching
+  include Functional::PatternMatching
 
   ...
 
@@ -64,7 +64,7 @@ You can then call your new function just like any other:
 require 'functional/pattern_matching'
 
 class Foo
-  include PatternMatching
+  include Functional::PatternMatching
 
   defn(:hello) {
     puts "Hello, World!"
@@ -196,7 +196,7 @@ class Bar
 end
 
 class Foo < Bar
-  include PatternMatching
+  include Functional::PatternMatching
 
   defn(:greet, _) do |name|
     "Hello, #{name}!"
@@ -270,7 +270,7 @@ Ruby:
 require 'functional/pattern_matching'
 
 class Foo
-  include PatternMatching
+  include Functional::PatternMatching
 
   defn(:greet, _) do |name|
     "Hello, #{name}!"
@@ -312,7 +312,7 @@ Ruby:
 require 'functional/pattern_matching'
 
 class Foo
-  include PatternMatching
+  include Functional::PatternMatching
 
   defn(:greet, _) do |name|
     "Hello, #{name}!"
@@ -339,7 +339,7 @@ end
 require 'functional/pattern_matching'
 
 class Foo
-  include PatternMatching
+  include Functional::PatternMatching
 
   defn(:initialize) { @name = 'baz' }
   defn(:initialize, _) {|name| @name = name.to_s }
@@ -352,7 +352,7 @@ end
 require 'functional/pattern_matching'
 
 class Foo
-  include PatternMatching
+  include Functional::PatternMatching
 
   defn(:concat, Integer, Integer) { |first, second|
     first + second
@@ -375,7 +375,7 @@ end
 require 'functional/pattern_matching'
 
 class Foo
-  include PatternMatching
+  include Functional::PatternMatching
   
   defn(:hashable, {foo: :bar}) { |opts|
     # matches any hash with key :foo and value :bar
@@ -479,32 +479,3 @@ defn(:wrong_age, _) {
   true
 }
 ```
-
-## Copyright
-
-*Functional Ruby* is Copyright &copy; 2013 [Jerry D'Antonio](https://twitter.com/jerrydantonio).
-It is free software and may be redistributed under the terms specified in the LICENSE file.
-
-## License
-
-Released under the MIT license.
-
-http://www.opensource.org/licenses/mit-license.php  
-
-> Permission is hereby granted, free of charge, to any person obtaining a copy  
-> of this software and associated documentation files (the "Software"), to deal  
-> in the Software without restriction, including without limitation the rights  
-> to use, copy, modify, merge, publish, distribute, sublicense, and/or sell  
-> copies of the Software, and to permit persons to whom the Software is  
-> furnished to do so, subject to the following conditions:  
-> 
-> The above copyright notice and this permission notice shall be included in  
-> all copies or substantial portions of the Software.  
-> 
-> THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR  
-> IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,  
-> FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE  
-> AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER  
-> LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,  
-> OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN  
-> THE SOFTWARE.  

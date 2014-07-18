@@ -1,135 +1,135 @@
 require 'spec_helper'
 require 'ostruct'
 
-  class Bar
-    def greet
-      return 'Hello, World!'
-    end
+class Bar
+  def greet
+    return 'Hello, World!'
+  end
+end
+
+class Foo < Bar
+  include Functional::PatternMatching
+
+  attr_accessor :name
+
+  defn(:initialize) { @name = 'baz' }
+  defn(:initialize, _) {|name| @name = name.to_s }
+
+  defn(:greet, _) do |name|
+    "Hello, #{name}!"
   end
 
-  class Foo < Bar
-    include PatternMatching
+  defn(:greet, :male, _) { |name|
+    "Hello, Mr. #{name}!"
+  }
+  defn(:greet, :female, _) { |name|
+    "Hello, Ms. #{name}!"
+  }
+  defn(:greet, nil, _) { |name|
+    "Goodbye, #{name}!"
+  }
+  defn(:greet, _, _) { |_, name|
+    "Hello, #{name}!"
+  }
 
-    attr_accessor :name
+  defn(:hashable, _, {foo: :bar}, _) { |_, opts, _|
+    :foo_bar
+  }
+  defn(:hashable, _, {foo: _, bar: _}, _) { |_, f, b, _|
+    [f, b]
+  }
+  defn(:hashable, _, {foo: _}, _) { |_, f, _|
+    f
+  }
+  defn(:hashable, _, {}, _) {
+    :empty
+  }
+  defn(:hashable, _, _, _) { |_, _, _|
+    :unbound
+  }
 
-    defn(:initialize) { @name = 'baz' }
-    defn(:initialize, _) {|name| @name = name.to_s }
+  defn(:options, _) { |opts|
+    opts
+  }
 
-    defn(:greet, _) do |name|
-      "Hello, #{name}!"
-    end
+  defn(:recurse) {
+    'w00t!'
+  }
+  defn(:recurse, :match) {
+    recurse()
+  }
+  defn(:recurse, :super) {
+    greet()
+  }
+  defn(:recurse, :instance) {
+    @name
+  }
+  defn(:recurse, _) { |arg|
+    arg
+  }
 
-    defn(:greet, :male, _) { |name|
-      "Hello, Mr. #{name}!"
-    }
-    defn(:greet, :female, _) { |name|
-      "Hello, Ms. #{name}!"
-    }
-    defn(:greet, nil, _) { |name|
-      "Goodbye, #{name}!"
-    }
-    defn(:greet, _, _) { |_, name|
-      "Hello, #{name}!"
-    }
+  defn(:concat, Integer, Integer) { |first, second|
+    first + second
+  }
+  defn(:concat, Integer, String) { |first, second|
+    "#{first} #{second}"
+  }
+  defn(:concat, String, String) { |first, second|
+    first + second
+  }
+  defn(:concat, Integer, UNBOUND) { |first, second|
+    first + second.to_i
+  }
 
-    defn(:hashable, _, {foo: :bar}, _) { |_, opts, _|
-      :foo_bar
-    }
-    defn(:hashable, _, {foo: _, bar: _}, _) { |_, f, b, _|
-      [f, b]
-    }
-    defn(:hashable, _, {foo: _}, _) { |_, f, _|
-      f
-    }
-    defn(:hashable, _, {}, _) {
-      :empty
-    }
-    defn(:hashable, _, _, _) { |_, _, _|
-      :unbound
-    }
+  defn(:all, :one, ALL) { |args|
+    args
+  }
+  defn(:all, :one, Integer, ALL) { |int, args|
+    [int, args]
+  }
+  defn(:all, 1, _, ALL) { |var, args|
+    [var, args]
+  }
+  defn(:all, ALL) { | args|
+    args
+  }
 
-    defn(:options, _) { |opts|
-      opts
-    }
+  defn(:old_enough, _){ true }.when{|x| x >= 16 }
+  defn(:old_enough, _){ false }
 
-    defn(:recurse) {
-      'w00t!'
-    }
-    defn(:recurse, :match) {
-      recurse()
-    }
-    defn(:recurse, :super) {
-      greet()
-    }
-    defn(:recurse, :instance) {
-      @name
-    }
-    defn(:recurse, _) { |arg|
-      arg
-    }
+  defn(:right_age, _) {
+    true
+  }.when{|x| x >= 16 && x <= 104 }
 
-    defn(:concat, Integer, Integer) { |first, second|
-      first + second
-    }
-    defn(:concat, Integer, String) { |first, second|
-      "#{first} #{second}"
-    }
-    defn(:concat, String, String) { |first, second|
-      first + second
-    }
-    defn(:concat, Integer, UNBOUND) { |first, second|
-      first + second.to_i
-    }
+  defn(:right_age, _) {
+    false
+  }
 
-    defn(:all, :one, ALL) { |args|
-      args
-    }
-    defn(:all, :one, Integer, ALL) { |int, args|
-      [int, args]
-    }
-    defn(:all, 1, _, ALL) { |var, args|
-      [var, args]
-    }
-    defn(:all, ALL) { | args|
-      args
-    }
+  defn(:wrong_age, _) {
+    true
+  }.when{|x| x < 16 || x > 104 }
 
-    defn(:old_enough, _){ true }.when{|x| x >= 16 }
-    defn(:old_enough, _){ false }
-
-    defn(:right_age, _) {
-      true
-    }.when{|x| x >= 16 && x <= 104 }
-
-    defn(:right_age, _) {
-      false
-    }
-
-    defn(:wrong_age, _) {
-      true
-    }.when{|x| x < 16 || x > 104 }
-
-    defn(:wrong_age, _) {
-      false
-    }
+  defn(:wrong_age, _) {
+    false
+  }
   end
 
-  class Baz < Foo
-    def boom_boom_room
-      'zoom zoom zoom'
-    end
-    def who(first, last)
-      [first, last].join(' ')
-    end
+class Baz < Foo
+  def boom_boom_room
+    'zoom zoom zoom'
   end
+  def who(first, last)
+    [first, last].join(' ')
+  end
+end
 
-  class Fizzbuzz < Baz
-    include PatternMatching
-    defn(:who, Integer) { |count|
-      (1..count).each.reduce(:+)
-    }
-    defn(:who) { 0 }
-  end
+class Fizzbuzz < Baz
+  include Functional::PatternMatching
+  defn(:who, Integer) { |count|
+    (1..count).each.reduce(:+)
+  }
+  defn(:who) { 0 }
+end
 
 describe 'integration' do
 
