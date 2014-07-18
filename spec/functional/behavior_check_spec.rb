@@ -50,13 +50,6 @@ MyClass.new.do_stuff(:foo, ThisClass.new)
 
 ###############################################################################
 
-module Functional::BehaviorCheck
-  module_function :Behave?
-  module_function :Behave!
-  module_function :Behavior?
-  module_function :Behavior!
-end
-
 describe 'behavior specification' do
 
   before(:each) do
@@ -132,6 +125,12 @@ describe 'behavior specification' do
 
   describe Functional::BehaviorCheck do
 
+    let!(:checker) do
+      Class.new {
+        include Functional::BehaviorCheck
+      }.new
+    end
+
     context 'BehaviorCheck::Behave?' do
 
       it 'validates methods with no parameters' do
@@ -145,7 +144,7 @@ describe 'behavior specification' do
           def self.baz(); nil; end
         end
 
-        expect(Functional::BehaviorCheck::Behave?(clazz.new, :foo)).to be true
+        expect(checker.Behave?(clazz.new, :foo)).to be true
       end
 
       it 'validates methods with a fixed number of parameters' do
@@ -159,7 +158,7 @@ describe 'behavior specification' do
           def self.baz(a,b,c); nil; end
         end
 
-        expect(Functional::BehaviorCheck::Behave?(clazz.new, :foo)).to be true
+        expect(checker.Behave?(clazz.new, :foo)).to be true
       end
 
       it 'validates methods with optional parameters' do
@@ -173,7 +172,7 @@ describe 'behavior specification' do
           def self.baz(a, b=1, c=2); nil; end
         end
 
-        expect(Functional::BehaviorCheck::Behave?(clazz.new, :foo)).to be true
+        expect(checker.Behave?(clazz.new, :foo)).to be true
       end
 
       if RUBY_VERSION >= '2.0'
@@ -188,7 +187,7 @@ describe 'behavior specification' do
             def self.baz(a, b, foo: 'foo', baz: 'baz'); nil; end
           end
 
-          expect(Functional::BehaviorCheck::Behave?(clazz.new, :foo)).to be true
+          expect(checker.Behave?(clazz.new, :foo)).to be true
         end
       end
 
@@ -203,7 +202,7 @@ describe 'behavior specification' do
           def self.baz(a, b, *args); nil; end
         end
 
-        expect(Functional::BehaviorCheck::Behave?(clazz.new, :foo)).to be true
+        expect(checker.Behave?(clazz.new, :foo)).to be true
       end
 
       it 'validates methods with arity -1' do
@@ -217,7 +216,7 @@ describe 'behavior specification' do
           def self.baz(*args); nil; end
         end
 
-        expect(Functional::BehaviorCheck::Behave?(clazz.new, :foo)).to be true
+        expect(checker.Behave?(clazz.new, :foo)).to be true
       end
 
       it 'validates classes' do
@@ -229,7 +228,7 @@ describe 'behavior specification' do
           def self.baz(a, b, *args); nil; end
         end
 
-        expect(Functional::BehaviorCheck::Behave?(clazz, :foo)).to be true
+        expect(checker.Behave?(clazz, :foo)).to be true
       end
 
       it 'validates modules' do
@@ -242,7 +241,7 @@ describe 'behavior specification' do
           def self.baz(a, b, *args); nil; end
         end
 
-        expect(Functional::BehaviorCheck::Behave?(clazz, :foo)).to be true
+        expect(checker.Behave?(clazz, :foo)).to be true
       end
 
       it 'always accepts methods when arity not given' do
@@ -264,7 +263,7 @@ describe 'behavior specification' do
           def self.baz(a, b, *args); nil; end
         end
 
-        expect(Functional::BehaviorCheck::Behave?(clazz.new, :foo)).to be true
+        expect(checker.Behave?(clazz.new, :foo)).to be true
       end
 
       it 'always accepts methods with arity -1' do
@@ -286,7 +285,7 @@ describe 'behavior specification' do
           def self.baz(*args); nil; end
         end
 
-        expect(Functional::BehaviorCheck::Behave?(clazz.new, :foo)).to be true
+        expect(checker.Behave?(clazz.new, :foo)).to be true
       end
 
       it 'accepts and checks multiple behaviors' do
@@ -299,7 +298,7 @@ describe 'behavior specification' do
         end
 
         expect(
-          Functional::BehaviorCheck::Behave?(clazz.new, :foo, :bar, :baz)
+          checker.Behave?(clazz.new, :foo, :bar, :baz)
         ).to be true
       end
 
@@ -312,7 +311,7 @@ describe 'behavior specification' do
           def bar(a, b, *args); nil; end
         end
 
-        expect(Functional::BehaviorCheck::Behave?(clazz.new, :foo)).to be false
+        expect(checker.Behave?(clazz.new, :foo)).to be false
       end
 
       it 'returns false if one or more class methods do not match' do
@@ -324,7 +323,7 @@ describe 'behavior specification' do
           def bar(a, b, *args); nil; end
         end
 
-        expect(Functional::BehaviorCheck::Behave?(clazz.new, :foo)).to be false
+        expect(checker.Behave?(clazz.new, :foo)).to be false
       end
 
       it 'returns false if one or more behaviors has not been defined' do
@@ -334,7 +333,7 @@ describe 'behavior specification' do
         end
 
         expect(
-          Functional::BehaviorCheck::Behave?('object', :foo, :bar)
+          checker.Behave?('object', :foo, :bar)
         ).to be false
       end
     end
@@ -361,7 +360,7 @@ describe 'behavior specification' do
         end
 
         target = clazz.new
-        expect(Functional::BehaviorCheck::Behave!(target, :foo)).to eq target
+        expect(checker.Behave!(target, :foo)).to eq target
       end
 
       it 'raises an exception if one or more instance methods do not match' do
@@ -374,7 +373,7 @@ describe 'behavior specification' do
         end
 
         expect {
-          Functional::BehaviorCheck::Behave!(clazz.new, :foo)
+          checker.Behave!(clazz.new, :foo)
         }.to raise_error(Functional::BehaviorError)
       end
 
@@ -388,7 +387,7 @@ describe 'behavior specification' do
         end
 
         expect {
-          Functional::BehaviorCheck::Behave!(clazz.new, :foo)
+          checker.Behave!(clazz.new, :foo)
         }.to raise_error(Functional::BehaviorError)
       end
 
@@ -399,7 +398,7 @@ describe 'behavior specification' do
         end
 
         expect {
-          Functional::BehaviorCheck::Behave!('object', :foo)
+          checker.Behave!('object', :foo)
         }.to raise_error(Functional::BehaviorError)
       end
     end
