@@ -2,52 +2,66 @@ module Functional
 
   class AbstractUnion
 
-    @@formats = [].freeze
-
+    attr_reader :member
     attr_reader :value
-    attr_reader :format
+    attr_reader :values
 
     class << self
-      attr_reader :formats
+      attr_accessor :members
     end
+    self.members = [].freeze
+
+    private_class_method :members=
+    private_class_method :new
 
     def each
       return enum_for(:each) unless block_given?
-      formats.each do |format|
-        yield(format, self.send(format))
+      members.each do |member|
+        yield(self.send(member))
       end
     end
 
-    def formats
-      self.class.formats
+    def each_pair
+      return enum_for(:each_pair) unless block_given?
+      members.each do |member|
+        yield(member, self.send(member))
+      end
     end
+
+    def eql?(other)
+      self.class == other.class && self.to_h == other.to_h
+    end
+    alias_method :==, :eql?
 
     def inspect
       state = to_h.to_s.gsub(/^{/, '').gsub(/}$/, '')
       "#<union #{self.class} #{state}>"
     end
+    alias_method :to_s, :inspect
+
+    def length
+      members.length
+    end
+    alias_method :size, :length
+
+    def members
+      self.class.members
+    end
 
     def to_h
-      formats.reduce({}) do |memo, format|
-        memo[format] = send(format)
-        memo
-      end
+      each_pair.to_h
     end
 
-    protected
-
-    class << self
-      attr_writer :formats
+    def to_a
+      each.to_a
     end
-    self.formats = [].freeze
-
-    private_class_method :new
 
     private
 
-    def initialize(format, value)
-      @format = format
+    def initialize(member, value)
+      @member = member
       @value = value
+      @values = to_a.freeze
     end
   end
 
@@ -56,33 +70,47 @@ module Functional
   module Union
     extend self
 
-    def new(*formats)
-      raise ArgumentError.new('no formats provided') if formats.empty?
-      formats = formats.collect{|format| format.to_sym }.freeze
+    def new(*members)
+      raise ArgumentError.new('no members provided') if members.empty?
+      members = members.collect{|member| member.to_sym }.freeze
+      build(Class.new(AbstractUnion), members)
+    end
 
-      union = Class.new(AbstractUnion) do
-        formats.each do |format|
-          # predicates
-          define_method("#{format}?".to_sym) do
-            @format == format
-          end
-          # readers
-          define_method(format) do
-            send("#{format}?".to_sym) ? @value : nil
-          end
-        end
+    private
+
+    def build(union, members)
+      set_members(union, members)
+      members.each do |member|
+        define_reader(union, member)
+        define_predicate(union, member)
+        define_factory(union, member)
       end
+      union
+    end
 
-      # possible formats
-      union.formats = formats
+    def set_members(union, members)
+      union.send(:members=, members)
+      union
+    end
 
-      # factories
-      formats.each do |format|
-        union.class.send(:define_method, format) do |value|
-          new(format, value).freeze
-        end
+    def define_predicate(union, member)
+      union.send(:define_method, "#{member}?".to_sym) do
+        @member == member
       end
+      union
+    end
 
+    def define_reader(union, member)
+      union.send(:define_method, member) do
+        send("#{member}?".to_sym) ? @value : nil
+      end
+      union
+    end
+
+    def define_factory(union, member)
+      union.class.send(:define_method, member) do |value|
+        new(member, value).freeze
+      end
       union
     end
   end
