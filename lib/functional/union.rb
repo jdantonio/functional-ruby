@@ -92,14 +92,21 @@ module Functional
     #
     # @return [Array] collection of all values
     def to_a
-      each.to_a
+      # older rubies do not support Enumerable#to_a
+      #each.to_a
+      members.collect{|member| self.send(member) }
     end
 
     # Returns a Hash containing the names and values for the union’s members.
     #
     # @return [Hash] collection of all members and their associated values
     def to_h
-      each_pair.to_h
+      # older rubies do not support Enumerable#to_h
+      #each_pair.to_h
+      members.reduce({}) do |memo, member|
+        memo[member] = self.send(member)
+        memo
+      end
     end
 
     private
