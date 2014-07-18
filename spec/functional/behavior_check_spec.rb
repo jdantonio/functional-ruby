@@ -125,21 +125,20 @@ describe 'behavior specification' do
         expect(checker.Behave?(clazz.new, :foo)).to be true
       end
 
-      if RUBY_VERSION >= '2.0'
-        it 'validates methods with keyword parameters' do
-          Functional::DefineBehavior(:foo) do
-            method(:bar, -2)
-            class_method(:baz, -3)
-          end
+      ##NOTE: Syntax error on JRuby and Rbx
+      #it 'validates methods with keyword parameters' do
+        #Functional::DefineBehavior(:foo) do
+          #method(:bar, -2)
+          #class_method(:baz, -3)
+        #end
 
-          clazz = Class.new do
-            def bar(a, foo: 'foo', baz: 'baz'); nil; end
-            def self.baz(a, b, foo: 'foo', baz: 'baz'); nil; end
-          end
+        #clazz = Class.new do
+          #def bar(a, foo: 'foo', baz: 'baz'); nil; end
+          #def self.baz(a, b, foo: 'foo', baz: 'baz'); nil; end
+        #end
 
-          expect(checker.Behave?(clazz.new, :foo)).to be true
-        end
-      end
+        #expect(checker.Behave?(clazz.new, :foo)).to be true
+      #end
 
       it 'validates methods with variable length argument lists' do
         Functional::DefineBehavior(:foo) do
