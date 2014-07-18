@@ -1,6 +1,9 @@
 require 'coveralls'
 Coveralls.wear!
 
+require 'codeclimate-test-reporter'
+CodeClimate::TestReporter.start
+
 require 'functional'
 
 # import all the support files
