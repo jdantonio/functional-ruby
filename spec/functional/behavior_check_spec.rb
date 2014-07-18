@@ -1,55 +1,5 @@
 require 'spec_helper'
 
-###############################################################################
-
-Functional::DefineBehavior :gen_foo do
-  method :foo # any arity
-  method :bar, 2
-  method :baz, -2
-  class_method :foo # any arity
-  class_method :bar, 2
-  class_method :baz, -2
-end
-
-behavior_info = Functional::DefineBehavior(:gen_foo)
-
-class MyClass
-  include Functional::BehaviorCheck
-
-  def do_stuff(first, second)
-    Behave? first, :foobar
-    Behave! second, :gen_foo
-    Behavior? :foobar
-    Behavior! :gen_foo
-  end
-end
-
-class ThisClass
-  #Functional::Behavior :gen_foo
-
-  def foo() nil; end
-  def bar(x, y) nil; end
-  def baz(x=0, y=0) nil; end
-  def self.foo() nil; end
-  def self.bar(x, y) nil; end
-  def self.baz(x=0, y=0) nil; end
-end
-
-class ThisModule
-  #Functional::Behavior :gen_foo
-
-  def foo() nil; end
-  def bar(x, y) nil; end
-  def baz(x=0, y=0) nil; end
-  def self.foo() nil; end
-  def self.bar(x, y) nil; end
-  def self.baz(x=0, y=0) nil; end
-end
-
-MyClass.new.do_stuff(:foo, ThisClass.new)
-
-###############################################################################
-
 describe 'behavior specification' do
 
   before(:each) do
@@ -131,7 +81,7 @@ describe 'behavior specification' do
       }.new
     end
 
-    context 'BehaviorCheck::Behave?' do
+    context 'Behave?' do
 
       it 'validates methods with no parameters' do
         Functional::DefineBehavior(:foo) do
@@ -338,7 +288,7 @@ describe 'behavior specification' do
       end
     end
 
-    context 'BehaviorCheck::Behave!' do
+    context 'Behave!' do
 
       it 'returns the target on success' do
         Functional::DefineBehavior(:foo) do
@@ -403,12 +353,45 @@ describe 'behavior specification' do
       end
     end
 
-    context 'BehaviorCheck::Behavior?' do
-      pending
+    context 'Behavior?' do
+
+      it 'returns true when all behaviors have been defined' do
+        Functional::DefineBehavior(:foo){ nil }
+        Functional::DefineBehavior(:bar){ nil }
+        Functional::DefineBehavior(:baz){ nil }
+
+        expect(checker.Behavior?(:foo, :bar, :baz)).to be true
+      end
+
+      it 'returns false when one or more of the behaviors have not been defined' do
+        Functional::DefineBehavior(:foo){ nil }
+        Functional::DefineBehavior(:bar){ nil }
+
+        expect(checker.Behavior?(:foo, :bar, :baz)).to be false
+      end
     end
 
-    context 'BehaviorCheck::Behavior!' do
-      pending
+    context 'Behavior!' do
+
+      it 'returns true when all behaviors have been defined' do
+        Functional::DefineBehavior(:foo){ nil }
+        Functional::DefineBehavior(:bar){ nil }
+        Functional::DefineBehavior(:baz){ nil }
+
+        expect(checker.Behavior!(:foo, :bar, :baz)).to be true
+        expect {
+          checker.Behavior!(:foo, :bar, :baz)
+        }.to_not raise_error
+      end
+
+      it 'raises an exception when one or more of the behaviors have not been defined' do
+        Functional::DefineBehavior(:foo){ nil }
+        Functional::DefineBehavior(:bar){ nil }
+
+        expect {
+          checker.Behavior!(:foo, :bar, :baz)
+        }.to raise_error(Functional::BehaviorError)
+      end
     end
   end
 end

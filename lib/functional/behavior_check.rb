@@ -41,10 +41,9 @@ module Functional
     @@info = {}
 
     def Behave?(target, *behaviors)
-      results = behaviors.drop_while do |behavior|
+      behaviors.drop_while { |behavior|
         BehaviorCheck.behave_as?(target, behavior.to_sym)
-      end
-      results.empty?
+      }.empty?
     end
 
     def Behave!(target, *behaviors)
@@ -54,9 +53,12 @@ module Functional
     end
 
     def Behavior?(*behaviors)
+      BehaviorCheck.undefined(*behaviors).empty?
     end
 
     def Behavior!(*behaviors)
+      (undefined = BehaviorCheck.undefined(*behaviors)).empty? or
+        raise BehaviorError.new("The following behaviors are undefined: :#{undefined.join('; :')}.")
     end
 
     private
@@ -85,10 +87,16 @@ module Functional
       results.empty?
     end
 
+    def self.undefined(*behaviors)
+      behaviors.drop_while do |behavior|
+        @@info.has_key? behavior.to_sym
+      end
+    end
+
     def self.error(target, message, behaviors)
       target = target.class unless target.is_a?(Module)
       raise BehaviorError,
-        "Value (#{target.class}) '#{target}' #{message} behave as all of: #{behaviors.join('; ')}."
+        "Value (#{target.class}) '#{target}' #{message} behave as all of: :#{behaviors.join('; :')}."
       target
     end
   end
