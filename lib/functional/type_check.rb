@@ -8,39 +8,33 @@ module Functional
     def Type?(value, *types)
       types.any? { |t| value.is_a? t }
     end
-    module_function :Type?
 
     def Type!(value, *types)
       Type?(value, *types) or
         TypeCheck.error(value, 'is not', types)
       value
     end
-    module_function :Type!
 
     def Match?(value, *types)
       types.any? { |t| t === value }
     end
-    module_function :Match?
 
     def Match!(value, *types)
       Match?(value, *types) or
         TypeCheck.error(value, 'is not matching', types)
       value
     end
-    module_function :Match!
 
     def Child?(value, *types)
       Type?(value, Class) &&
         types.any? { |t| value <= t }
     end
-    module_function :Child?
 
     def Child!(value, *types)
       Child?(value, *types) or
         TypeCheck.error(value, 'is not child', types)
       value
     end
-    module_function :Child!
 
     private
 
