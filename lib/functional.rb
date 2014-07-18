@@ -2,6 +2,7 @@ require 'functional/behavior_check'
 require 'functional/either'
 require 'functional/pattern_matching'
 require 'functional/type_check'
+require 'functional/union'
 require 'functional/version'
 
 Infinity = 1/0.0 unless defined?(Infinity)
