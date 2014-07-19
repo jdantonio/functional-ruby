@@ -40,7 +40,7 @@ module Functional
         end
         set_data_hash(data)
         set_values_array(data.values)
-        #self.freeze
+        self.freeze
       end
       record
     end

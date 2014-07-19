@@ -76,52 +76,52 @@ module Functional
     AbstractStruct.set_datatype(self, :either)
     AbstractStruct.set_members(self, [:left, :right].freeze)
 
-    # Construct a left value of either.
-    #
-    # @param [Object] value The value underlying the either.
-    # @return [Either] A new either with the given left value.
-    def self.left(value)
-      new(value, true).freeze
-    end
-
-    # Construct a right value of either.
-    #
-    # @param [Object] value The value underlying the either.
-    # @return [Either] A new either with the given right value.
-    def self.right(value)
-      new(value, false).freeze
-    end
+    private_class_method :new
 
     class << self
+
+      # Construct a left value of either.
+      #
+      # @param [Object] value The value underlying the either.
+      # @return [Either] A new either with the given left value.
+      def left(value)
+        new(value, true).freeze
+      end
       alias_method :reason, :left
+
+      # Construct a right value of either.
+      #
+      # @param [Object] value The value underlying the either.
+      # @return [Either] A new either with the given right value.
+      def right(value)
+        new(value, false).freeze
+      end
       alias_method :value, :right
-    end
 
-    # Create an `Either` with the left value set to an `Exception` object
-    # complete with message and backtrace. This is a convenience method for
-    # supporting the reason/value convention with the reason always being
-    # an `Exception` object. When no exception class is given `StandardError`
-    # will be used. When no message is given the default message for the
-    # given error class will be used.
-    #
-    # @example
-    # 
-    #   either = Functional::Either.error("You're a bad monkey, Mojo Jojo")
-    #   either.fulfilled? #=> false
-    #   either.rejected?  #=> true
-    #   either.value      #=> nil
-    #   either.reason     #=> #<StandardError: You're a bad monkey, Mojo Jojo>
-    #
-    # @param [String] message The message for the new error object.
-    # @param [Exception] clazz The class for the new error object.
-    # @return [Either] A new either with an error object as the left value.
-    def self.error(message = nil, clazz = StandardError)
-      ex = clazz.new(message)
-      ex.set_backtrace(caller)
-      left(ex)
+      # Create an `Either` with the left value set to an `Exception` object
+      # complete with message and backtrace. This is a convenience method for
+      # supporting the reason/value convention with the reason always being
+      # an `Exception` object. When no exception class is given `StandardError`
+      # will be used. When no message is given the default message for the
+      # given error class will be used.
+      #
+      # @example
+      # 
+      #   either = Functional::Either.error("You're a bad monkey, Mojo Jojo")
+      #   either.fulfilled? #=> false
+      #   either.rejected?  #=> true
+      #   either.value      #=> nil
+      #   either.reason     #=> #<StandardError: You're a bad monkey, Mojo Jojo>
+      #
+      # @param [String] message The message for the new error object.
+      # @param [Exception] clazz The class for the new error object.
+      # @return [Either] A new either with an error object as the left value.
+      def error(message = nil, clazz = StandardError)
+        ex = clazz.new(message)
+        ex.set_backtrace(caller)
+        left(ex)
+      end
     end
-
-    private_class_method :new
 
     # Projects this either as a left.
     # 
@@ -191,13 +191,6 @@ module Functional
       raise ArgumentError.new('requires either a condition or a block, not both') if condition != NO_VALUE && block_given?
       condition = block_given? ? yield : !! condition
       condition ? left(lvalue) : right(rvalue)
-    end
-
-    # Takes an `Either` to its contained value within left or right.
-    #
-    # @return [Object] Either left or right, whichever is set.
-    def reduce
-      left? ? left : right
     end
 
     private

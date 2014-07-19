@@ -5,19 +5,19 @@ module Functional
 
   describe Either do
 
+    let!(:value){ 42 }
+    let!(:reason){ StandardError.new }
+
     let!(:expected_members){ [:left, :right] }
-    let!(:expected_values){ [42, nil] }
+    let!(:expected_values){ [value, nil] }
 
     let(:struct_class) { Either }
-    let(:struct_object) { Either.left(42) }
-
-    it_should_behave_like :abstract_struct
-
-    let!(:value){ :foo }
-    let!(:reason){ StandardError.new }
+    let(:struct_object) { Either.left(value) }
 
     let(:left_subject){ Either.left(reason) }
     let(:right_subject){ Either.right(value) }
+
+    it_should_behave_like :abstract_struct
 
     context 'initialization' do
 
@@ -227,17 +227,6 @@ module Functional
         expect {
           subject = Either.iff(:foo, :bar, true){ nil }
         }.to raise_error(ArgumentError)
-      end
-    end
-
-    context '#reduce' do
-
-      it 'returns the left value of a lefty' do
-        expect(Either.left(:foo).reduce).to eq (:foo)
-      end
-
-      it 'returns the right value of a righty' do
-        expect(Either.right(:bar).reduce).to eq (:bar)
       end
     end
   end

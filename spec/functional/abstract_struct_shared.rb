@@ -81,6 +81,10 @@ shared_examples :abstract_struct do
 
   context 'reflection' do
 
+    specify 'always creates frozen objects' do
+      expect(struct_object).to be_frozen
+    end
+
     specify 'asserts equality for two structs of the same class with equal values' do
       other = struct_object.dup
 
