@@ -16,15 +16,14 @@ module Functional
     def new(*members)
       raise ArgumentError.new('no members provided') if members.empty?
       members = members.collect{|member| member.to_sym }.freeze
-      build(Class.new(AbstractStruct), members)
+      build(Class.new{ include AbstractStruct }, members)
     end
 
     private
 
     def build(record, members)
-      record.send(:set_datatype, :record)
-      record.set_members(members)
-      record.public_class_method(:new)
+      AbstractStruct.set_datatype(record, :record)
+      AbstractStruct.set_members(record, members)
       define_initializer(record)
       members.each do |member|
         define_reader(record, member)
@@ -35,13 +34,14 @@ module Functional
     def define_initializer(record)
       record.send(:define_method, :initialize) do |data = {}|
         data = members.reduce({}) do |memo, member|
-        # may eventually support default arguments
-        memo[member] = data.fetch(member, nil)
-        memo
+          # may eventually support default arguments
+          memo[member] = data.fetch(member, nil)
+          memo
+        end
+        set_data_hash(data)
+        set_values_array(data.values)
       end
-      set_data_hash(data)
-      set_values_array(data.values)
-      end
+      record
     end
 
     def define_reader(record, member)

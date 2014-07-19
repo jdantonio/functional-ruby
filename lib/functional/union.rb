@@ -52,14 +52,15 @@ module Functional
     def new(*members)
       raise ArgumentError.new('no members provided') if members.empty?
       members = members.collect{|member| member.to_sym }.freeze
-      build(Class.new(AbstractStruct), members)
+      build(Class.new{ include AbstractStruct }, members)
     end
 
     private
 
     def build(union, members)
-      union.send(:set_datatype, :union)
-      union.set_members(members)
+      union.private_class_method(:new)
+      AbstractStruct.set_datatype(union, :union)
+      AbstractStruct.set_members(union, members)
       define_properties(union)
       define_initializer(union)
       members.each do |member|
@@ -73,6 +74,7 @@ module Functional
     def define_properties(union)
       union.send(:attr_reader, :member)
       union.send(:attr_reader, :value)
+      union
     end
 
     def define_predicate(union, member)
@@ -100,6 +102,7 @@ module Functional
         set_data_hash(data)
         set_values_array(data.values)
       end
+      union
     end
 
     def define_factory(union, member)

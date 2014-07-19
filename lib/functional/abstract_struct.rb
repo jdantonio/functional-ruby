@@ -1,7 +1,7 @@
 module Functional
 
   # An abstract base class for immutable struct classes.
-  class AbstractStruct
+  module AbstractStruct
 
     # A frozen Array of all record members in order
     MEMBERS = [].freeze
@@ -81,9 +81,6 @@ module Functional
       @data
     end
 
-    # @!visibility private
-    private_class_method :new
-
     protected
 
     def set_data_hash(data)
@@ -94,12 +91,12 @@ module Functional
       @values = values.freeze
     end
 
-    def self.set_members(members)
-      self.const_set('MEMBERS', members.freeze)
+    def self.set_members(clazz, members)
+      clazz.const_set('MEMBERS', members.freeze)
     end
 
-    def self.set_datatype(datatype)
-      self.const_set('DATATYPE', datatype.to_sym)
+    def self.set_datatype(clazz, datatype)
+      clazz.const_set('DATATYPE', datatype.to_sym)
     end
   end
 end
