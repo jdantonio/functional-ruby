@@ -5,11 +5,11 @@ module Functional
   # @see Functional::Union
   class AbstractUnion
 
-    # @return [Symbol] which union member is set
-    attr_reader :member
+    ## @return [Symbol] which union member is set
+    #attr_reader :member
 
-    # @return [Object] the value of the union member that has been set
-    attr_reader :value
+    ## @return [Object] the value of the union member that has been set
+    #attr_reader :value
 
     # @return [Array] the values of all union members in order, frozen
     attr_reader :values
@@ -102,14 +102,24 @@ module Functional
     # @param [Symbol] member the member in which to store the given value
     # @param [Object] value the value of the given member
     def initialize(member, value)
-      #NOTE: clean this up once Union is aligned with Record
       @member = member
       @value = value
-      @data = members.reduce({}) { |memo, member|
+      data = members.reduce({}) do |memo, member|
         memo[member] = ( member == @member ? @value : nil )
         memo
-      }.freeze
-      @values = @data.values.freeze
+      end
+      set_data_hash(data)
+      set_values_array(data.values)
+    end
+
+    protected
+
+    def set_data_hash(data)
+      @data = data.freeze
+    end
+
+    def set_values_array(values)
+      @values = values.freeze
     end
   end
 
@@ -170,6 +180,7 @@ module Functional
 
     def build(union, members)
       set_members(union, members)
+      define_properties(union)
       members.each do |member|
         define_reader(union, member)
         define_predicate(union, member)
@@ -181,6 +192,11 @@ module Functional
     def set_members(union, members)
       union.send(:members=, members)
       union
+    end
+
+    def define_properties(union)
+      union.send(:attr_reader, :member)
+      union.send(:attr_reader, :value)
     end
 
     def define_predicate(union, member)

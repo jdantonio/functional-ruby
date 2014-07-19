@@ -1,6 +1,7 @@
 require 'functional/either'
 require 'functional/pattern_matching'
 require 'functional/protocol'
+require 'functional/record'
 require 'functional/type_check'
 require 'functional/union'
 require 'functional/version'
