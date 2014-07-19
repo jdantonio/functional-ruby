@@ -15,4 +15,5 @@ matrix:
   allow_failures:
     - rvm: ruby-head
     - rvm: jruby-head
+    - rvm: rbx-2
 script: "CODECLIMATE_REPO_TOKEN=65d4787423f734f5cf6d2b3f9be88e481802e50af0879e8ed66971f972d70894 bundle exec rake"
