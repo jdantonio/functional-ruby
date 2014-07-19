@@ -28,47 +28,116 @@ describe 'protocol specification' do
     context 'with a block' do
 
       it 'raises an exception if the protocol has already been specified' do
-        Functional::DefineProtocol(:foo){ nil }
+        Functional::DefineProtocol(:Foo){ nil }
 
         expect {
-          Functional::DefineProtocol(:foo){ nil }
+          Functional::DefineProtocol(:Foo){ nil }
         }.to raise_error(Functional::ProtocolError)
       end
 
       it 'specifies an instance method with any arity' do
-        Functional::DefineProtocol :foo do
+        Functional::DefineProtocol :Foo do
           method :foo
         end
 
-        info = Functional::DefineProtocol(:foo)
+        info = Functional::DefineProtocol(:Foo)
         expect(info[:methods][:foo]).to be_nil
       end
 
       it 'specifies an instance method with a given arity' do
-        Functional::DefineProtocol :foo do
+        Functional::DefineProtocol :Foo do
           method :foo, 2
         end
 
-        info = Functional::DefineProtocol(:foo)
+        info = Functional::DefineProtocol(:Foo)
         expect(info[:methods][:foo]).to eq 2
       end
 
       it 'specifies a class method with any arity' do
-        Functional::DefineProtocol :foo do
+        Functional::DefineProtocol :Foo do
           class_method :foo
         end
 
-        info = Functional::DefineProtocol(:foo)
+        info = Functional::DefineProtocol(:Foo)
         expect(info[:class_methods][:foo]).to be_nil
       end
 
       it 'specifies a class method with a given arity' do
-        Functional::DefineProtocol :foo do
+        Functional::DefineProtocol :Foo do
           class_method :foo, 2
         end
 
-        info = Functional::DefineProtocol(:foo)
+        info = Functional::DefineProtocol(:Foo)
         expect(info[:class_methods][:foo]).to eq 2
+      end
+
+      it 'specifies an instance attribute reader' do
+        Functional::DefineProtocol :Foo do
+          attr_reader :foo
+        end
+
+        info = Functional::DefineProtocol(:Foo)
+        expect(info[:methods][:foo]).to eq 0
+      end
+
+      it 'specifies an instance attribute writer' do
+        Functional::DefineProtocol :Foo do
+          attr_writer :foo
+        end
+
+        info = Functional::DefineProtocol(:Foo)
+        expect(info[:methods][:foo=]).to eq 1
+      end
+
+      it 'specifies an instance attribute accessor' do
+        Functional::DefineProtocol :Foo do
+          attr_accessor :foo
+        end
+
+        info = Functional::DefineProtocol(:Foo)
+        expect(info[:methods][:foo]).to eq 0
+        expect(info[:methods][:foo=]).to eq 1
+      end
+
+      it 'specifies a class attribute reader' do
+        Functional::DefineProtocol :Foo do
+          class_attr_reader :foo
+        end
+
+        info = Functional::DefineProtocol(:Foo)
+        expect(info[:class_methods][:foo]).to eq 0
+      end
+
+      it 'specifies a class attribute writer' do
+        Functional::DefineProtocol :Foo do
+          class_attr_writer :foo
+        end
+
+        info = Functional::DefineProtocol(:Foo)
+        expect(info[:class_methods][:foo=]).to eq 1
+      end
+
+      it 'specifies a class attribute accessor' do
+        Functional::DefineProtocol :Foo do
+          class_attr_accessor :foo
+        end
+
+        info = Functional::DefineProtocol(:Foo)
+        expect(info[:class_methods][:foo]).to eq 0
+        expect(info[:class_methods][:foo=]).to eq 1
+      end
+
+      it 'specifies a constant' do
+        Functional::DefineProtocol :Foo do
+          constant :FOO
+        end
+
+        info = Functional::DefineProtocol(:Foo)
+        expect(info[:constants]).to include :FOO
+      end
+
+      it 'returns the specified protocol once defined' do
+        expect(Functional::DefineProtocol(:Foo){ nil }).to_not be_nil
       end
     end
   end
@@ -163,6 +232,56 @@ describe 'protocol specification' do
         clazz = Class.new do
           def bar(*args); nil; end
           def self.baz(*args); nil; end
+        end
+
+        expect(checker.Satisfy?(clazz.new, :foo)).to be true
+      end
+
+      it 'validates instance attribute accessors' do
+        Functional::DefineProtocol(:foo) do
+          attr_accessor :foo
+        end
+
+        accessor_clazz = Class.new do
+          attr_accessor :foo
+        end
+
+        manual_clazz = Class.new do
+          def foo() true; end
+          def foo=(value) true; end
+        end
+
+        expect(checker.Satisfy?(accessor_clazz.new, :foo)).to be true
+        expect(checker.Satisfy?(manual_clazz.new, :foo)).to be true
+      end
+
+      it 'validates class attribute accessors' do
+        Functional::DefineProtocol(:foo) do
+          class_attr_accessor :foo
+        end
+
+        accessor_clazz = Class.new do
+          class << self
+            attr_accessor :foo
+          end
+        end
+
+        manual_clazz = Class.new do
+          def self.foo() true; end
+          def self.foo=(value) true; end
+        end
+
+        expect(checker.Satisfy?(accessor_clazz.new, :foo)).to be true
+        expect(checker.Satisfy?(manual_clazz.new, :foo)).to be true
+      end
+
+      it 'validates constants' do
+        Functional::DefineProtocol :foo do
+          constant :FOO
+        end
+
+        clazz = Class.new do
+          FOO = 42
         end
 
         expect(checker.Satisfy?(clazz.new, :foo)).to be true
@@ -269,7 +388,57 @@ describe 'protocol specification' do
         end
 
         clazz = Class.new do
-          def bar(a, b, *args); nil; end
+          def self.bar(a, b, *args); nil; end
+        end
+
+        expect(checker.Satisfy?(clazz.new, :foo)).to be false
+      end
+
+      it 'returns false if one or more instance attributes does not match' do
+        Functional::DefineProtocol(:foo) do
+          attr_accessor :foo
+        end
+
+        reader_clazz = Class.new do
+          def foo() true; end
+          def foo=() false; end
+        end
+
+        writer_clazz = Class.new do
+          def foo(value) false; end
+          def foo=(value) true; end
+        end
+
+        expect(checker.Satisfy?(reader_clazz.new, :foo)).to be false
+        expect(checker.Satisfy?(writer_clazz.new, :foo)).to be false
+      end
+
+      it 'returns false if one or more class attributes does not match' do
+        Functional::DefineProtocol(:foo) do
+          class_attr_accessor :foo
+        end
+
+        reader_clazz = Class.new do
+          def self.foo() true; end
+          def self.foo=() false; end
+        end
+
+        writer_clazz = Class.new do
+          def self.foo(value) false; end
+          def self.foo=(value) true; end
+        end
+
+        expect(checker.Satisfy?(reader_clazz.new, :foo)).to be false
+        expect(checker.Satisfy?(writer_clazz.new, :foo)).to be false
+      end
+
+      it 'returns false if one or more constants has not been defined' do
+        Functional::DefineProtocol :foo do
+          constant :FOO
+        end
+
+        clazz = Class.new do
+          BAR = 42
         end
 
         expect(checker.Satisfy?(clazz.new, :foo)).to be false

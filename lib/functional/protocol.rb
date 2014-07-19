@@ -14,7 +14,8 @@ module Functional
 
     info = {
       methods: {},
-      class_methods: {}
+      class_methods: {},
+      constants: []
     }
 
     proxy = Class.new do
@@ -28,6 +29,29 @@ module Functional
       def class_method(name, arity = nil)
         arity = arity.to_i unless arity.nil?
         @info[:class_methods][name.to_sym] = arity
+      end
+      def attr_reader(name)
+        method(name, 0)
+      end
+      def attr_writer(name)
+        method("#{name}=".to_sym, 1)
+      end
+      def attr_accessor(name)
+        attr_reader(name)
+        attr_writer(name)
+      end
+      def class_attr_reader(name)
+        class_method(name, 0)
+      end
+      def class_attr_writer(name)
+        class_method("#{name}=".to_sym, 1)
+      end
+      def class_attr_accessor(name)
+        class_attr_reader(name)
+        class_attr_writer(name)
+      end
+      def constant(name)
+        @info[:constants] << name.to_sym
       end
     end
 
@@ -70,10 +94,21 @@ module Functional
       return false
     end
 
+    def self.check_constant?(target, constant)
+      target = target.class unless target.is_a?(Module)
+      target.class.const_defined?(constant)
+    end
+
     def self.satisfies?(target, protocol)
+      target.class # trigger lazy loading
       clazz = target.is_a?(Module) ? target : target.class
       info = @@info[protocol]
       return false if info.nil?
+
+      results = info[:constants].drop_while do |constant|
+        check_constant?(target, constant)
+      end
+      return false unless results.empty?
 
       results = info[:methods].drop_while do |method, arity|
         check_arity?(target, method, arity)
