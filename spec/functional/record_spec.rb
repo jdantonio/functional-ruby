@@ -1,24 +1,17 @@
 require 'spec_helper'
-
-Name = Functional::Record.new(:first, :middle, :last, :suffix)
-
-name = Name.new(first: "Gerald", middle: "Alfred", last: "D'Antonio")
-
-name.first
-name.middle
-name.last
-name.suffix
-
-name.members
-name.values
-
-name.to_h
+require_relative 'abstract_struct_shared'
 
 module Functional
 
   describe Record do
 
-    pending
+    let!(:expected_members){ [:a, :b, :c] }
+    let!(:expected_values){ [42, nil, nil] }
+
+    let(:struct_class) { Record.new(*expected_members) }
+    let(:struct_object) { struct_class.new(struct_class.members.first => 42) }
+
+    it_should_behave_like :abstract_struct
 
   end
 end

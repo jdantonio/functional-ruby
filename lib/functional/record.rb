@@ -1,6 +1,6 @@
 module Functional
 
-  class AbstractRecord
+  class AbstractStruct
 
     # @return [Array] the values of all record members in order, frozen
     attr_reader :values
@@ -118,7 +118,7 @@ module Functional
     def new(*members)
       raise ArgumentError.new('no members provided') if members.empty?
       members = members.collect{|member| member.to_sym }.freeze
-      build(Class.new(AbstractRecord), members)
+      build(Class.new(AbstractStruct), members)
     end
 
     private
