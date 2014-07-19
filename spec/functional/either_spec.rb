@@ -1,8 +1,17 @@
 require 'spec_helper'
+require_relative 'abstract_struct_shared'
 
 module Functional
 
   describe Either do
+
+    let!(:expected_members){ [:left, :right] }
+    let!(:expected_values){ [42, nil] }
+
+    let(:struct_class) { Either }
+    let(:struct_object) { Either.left(42) }
+
+    it_should_behave_like :abstract_struct
 
     let!(:value){ :foo }
     let!(:reason){ StandardError.new }

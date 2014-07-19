@@ -1,3 +1,5 @@
+require_relative 'abstract_struct'
+
 module Functional
 
   # The `Either` type represents a value of one of two possible types (a disjoint union).
@@ -66,11 +68,13 @@ module Functional
   # @see http://functionaljava.googlecode.com/svn/artifacts/3.0/javadoc/fj/data/Either.html Functional Java
   # @see http://ruby-concurrency.github.io/concurrent-ruby/Concurrent/Obligation.html Concurrent Ruby
   class Either
+    include AbstractStruct
 
     # @!visibility private 
     NO_VALUE = Object.new
 
-    ### class methods
+    AbstractStruct.set_datatype(self, :either)
+    AbstractStruct.set_members(self, [:left, :right].freeze)
 
     # Construct a left value of either.
     #
@@ -119,13 +123,11 @@ module Functional
 
     private_class_method :new
 
-    ### instance methods
-
     # Projects this either as a left.
     # 
     # @return [Object] The left value or `nil` when `right`.
     def left
-      @is_left ? @data : nil
+      left? ? to_h[:left] : nil
     end
     alias_method :reason, :left
 
@@ -133,7 +135,7 @@ module Functional
     # 
     # @return [Object] The right value or `nil` when `left`.
     def right
-      @is_left ? nil : @data
+      right? ? to_h[:right] : nil
     end
     alias_method :value, :right
 
@@ -159,7 +161,11 @@ module Functional
     #
     # @return [Either] The value of this either swapped to the opposing side.
     def swap
-      self.class.send(:new, @data, ! @is_left)
+      if left?
+        self.class.send(:new, left, false)
+      else
+        self.class.send(:new, right, true)
+      end
     end
 
     # The value of this either swapped to the opposing side.
@@ -197,9 +203,11 @@ module Functional
     private
 
     # @!visibility private 
-    def initialize(data, is_left)
-      @data = data
+    def initialize(value, is_left)
       @is_left = is_left
+      hsh = is_left ? {left: value, right: nil} : {left: nil, right: value}
+      set_data_hash(hsh)
+      set_values_array(hsh.values)
     end
   end
 end
