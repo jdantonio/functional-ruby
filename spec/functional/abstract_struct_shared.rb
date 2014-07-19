@@ -116,7 +116,7 @@ shared_examples :abstract_struct do
     end
 
     specify '#inspect result has lowercase class name as first element' do
-      struct = described_class.to_s.gsub('Functional::', '').downcase
+      struct = described_class.to_s.split('::').last.downcase
       expect(struct_object.inspect).to match(/^#<#{struct} /)
     end
 
