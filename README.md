@@ -63,11 +63,6 @@ Once you've installed the gem you must `require` it in your project:
 require 'functional'
 ```
 
-## Contributors
-
-* [Jerry D'Antonio](https://github.com/jdantonio)
-* [404](https://github.com/404pnf)
-
 ## Contributing
 
 1. Fork it
