@@ -2,38 +2,12 @@ require_relative 'abstract_struct'
 
 module Functional
 
-  # An abstract base class from which all `Functional::Union` classes derive.
-  #
-  # @see Functional::Union
-  class AbstractUnion < AbstractStruct
-
-    # @!visibility private
-    private_class_method :new
-
-    private
-
-    # Create a new union with the given member set to the given value.
-    #
-    # @param [Symbol] member the member in which to store the given value
-    # @param [Object] value the value of the given member
-    def initialize(member, value)
-      @member = member
-      @value = value
-      data = members.reduce({}) do |memo, member|
-        memo[member] = ( member == @member ? @value : nil )
-        memo
-      end
-      set_data_hash(data)
-      set_values_array(data.values)
-    end
-  end
-
   # An immutable data structure with multiple members, only one of which
   # can be set at any given time. A `Union` is a convenient way to bundle a
   # number of member attributes together, using accessor methods, without having
   # to write an explicit class.
   #
-  # The `Union` module generates new `AbstractUnion` subclasses that hold a set of
+  # The `Union` module generates new `AbstractStruct` subclasses that hold a set of
   # members with one and only one value associated with a single member. For each
   # member a reader method is created along with a predicate and a factory. The
   # predicate method indicates whether or not the give member is set. The reader
@@ -50,7 +24,7 @@ module Functional
   # @example
   # 
   #   LeftRightCenter = Functional::Union.new(:left, :right, :center) #=> LeftRightCenter
-  #   LeftRightCenter.ancestors #=> [LeftRightCenter, Functional::AbstractUnion... ]
+  #   LeftRightCenter.ancestors #=> [LeftRightCenter, Functional::AbstractStruct... ]
   #   LeftRightCenter.members   #=> [:left, :right, :center]
   #   
   #   prize = LeftRightCenter.right('One million dollars!') #=> #<union LeftRightCenter... >
@@ -65,7 +39,7 @@ module Functional
   #   prize.right   #=> "One million dollars!"
   #   prize.center  #=> nil
   #
-  # @see Functional::AbstractUnion
+  # @see Functional::AbstractStruct
   # @see http://www.ruby-doc.org/core-2.1.2/Struct.html Ruby `Struct` class
   # @see http://en.wikipedia.org/wiki/Union_type "Union type" on Wikipedia
   module Union
@@ -73,12 +47,12 @@ module Functional
 
     # Create a new union class with the given members.
     #
-    # @return [Functional::AbstractUnion] the new union subclass
+    # @return [Functional::AbstractStruct] the new union subclass
     # @raise [ArgumentError] no members specified
     def new(*members)
       raise ArgumentError.new('no members provided') if members.empty?
       members = members.collect{|member| member.to_sym }.freeze
-      build(Class.new(AbstractUnion), members)
+      build(Class.new(AbstractStruct), members)
     end
 
     private
@@ -87,6 +61,7 @@ module Functional
       union.send(:set_datatype, :union)
       set_members(union, members)
       define_properties(union)
+      define_initializer(union)
       members.each do |member|
         define_reader(union, member)
         define_predicate(union, member)
@@ -117,6 +92,19 @@ module Functional
         send("#{member}?".to_sym) ? @value : nil
       end
       union
+    end
+
+    def define_initializer(union)
+      union.send(:define_method, :initialize) do |member, value|
+        @member = member
+        @value = value
+        data = members.reduce({}) do |memo, member|
+          memo[member] = ( member == @member ? @value : nil )
+          memo
+        end
+        set_data_hash(data)
+        set_values_array(data.values)
+      end
     end
 
     def define_factory(union, member)

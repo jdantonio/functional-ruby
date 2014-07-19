@@ -9,17 +9,22 @@ module Functional
     class << self
 
       # @return [Array] all record members in order, frozen
-      attr_accessor :members
+      attr_reader :members
 
       # @return [Symbol] a symbol describing the object's datatype
-      attr_accessor :datatype
+      attr_reader :datatype
+
+      protected
+
+      # @!visibility private
+      attr_writer :members
+
+      # @!visibility private
+      attr_writer :datatype
     end
 
     self.members = [].freeze
-    self.datatype = 'struct'
-
-    # @!visibility private
-    private_class_method :members=
+    self.datatype = :struct
 
     # Yields the value of each record member in order.
     # If no block is given an enumerator is returned.
@@ -90,19 +95,8 @@ module Functional
       @data
     end
 
-    # Create a new record with the given member set to the given value.
-    #
-    # @param [Symbol] member the member in which to store the given value
-    # @param [Object] value the value of the given member
-    def initialize(data = {})
-      data = members.reduce({}) do |memo, member|
-        # may eventually support default arguments
-        memo[member] = data.fetch(member, nil)
-        memo
-      end
-      set_data_hash(data)
-      set_values_array(data.values)
-    end
+    # @!visibility private
+    private_class_method :new
 
     protected
 
