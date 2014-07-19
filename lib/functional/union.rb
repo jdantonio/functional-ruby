@@ -59,7 +59,7 @@ module Functional
 
     def build(union, members)
       union.send(:set_datatype, :union)
-      set_members(union, members)
+      union.set_members(members)
       define_properties(union)
       define_initializer(union)
       members.each do |member|
@@ -67,11 +67,6 @@ module Functional
         define_predicate(union, member)
         define_factory(union, member)
       end
-      union
-    end
-
-    def set_members(union, members)
-      union.send(:members=, members)
       union
     end
 

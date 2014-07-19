@@ -9,7 +9,7 @@ module Functional
     let!(:expected_values){ [42, nil, nil] }
 
     let(:struct_class) { Union.new(*expected_members) }
-    let(:struct_object) { struct_class.send(struct_class.members.first, 42) }
+    let(:struct_object) { struct_class.send(struct_class::MEMBERS.first, 42) }
 
     it_should_behave_like :abstract_struct
 

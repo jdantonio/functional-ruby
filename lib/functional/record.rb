@@ -23,17 +23,12 @@ module Functional
 
     def build(record, members)
       record.send(:set_datatype, :record)
+      record.set_members(members)
       record.public_class_method(:new)
-      set_members(record, members)
       define_initializer(record)
       members.each do |member|
         define_reader(record, member)
       end
-      record
-    end
-
-    def set_members(record, members)
-      record.send(:members=, members)
       record
     end
 

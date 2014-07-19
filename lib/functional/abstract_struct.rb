@@ -3,28 +3,14 @@ module Functional
   # An abstract base class for immutable struct classes.
   class AbstractStruct
 
+    # A frozen Array of all record members in order
+    MEMBERS = [].freeze
+
+    # A symbol describing the object's datatype
+    DATATYPE = :struct
+
     # @return [Array] the values of all record members in order, frozen
     attr_reader :values
-
-    class << self
-
-      # @return [Array] all record members in order, frozen
-      attr_reader :members
-
-      # @return [Symbol] a symbol describing the object's datatype
-      attr_reader :datatype
-
-      protected
-
-      # @!visibility private
-      attr_writer :members
-
-      # @!visibility private
-      attr_writer :datatype
-    end
-
-    self.members = [].freeze
-    self.datatype = :struct
 
     # Yields the value of each record member in order.
     # If no block is given an enumerator is returned.
@@ -69,7 +55,7 @@ module Functional
     # @return [String] the class and contents of this record
     def inspect
       state = to_h.to_s.gsub(/^{/, '').gsub(/}$/, '')
-      "#<#{self.class.datatype} #{self.class} #{state}>"
+      "#<#{self.class::DATATYPE} #{self.class} #{state}>"
     end
     alias_method :to_s, :inspect
 
@@ -85,7 +71,7 @@ module Functional
     #
     # @return [Array] all record members in order, frozen
     def members
-      self.class.members
+      self.class::MEMBERS
     end
 
     # Returns a Hash containing the names and values for the record’s members.
@@ -108,8 +94,12 @@ module Functional
       @values = values.freeze
     end
 
+    def self.set_members(members)
+      self.const_set('MEMBERS', members.freeze)
+    end
+
     def self.set_datatype(datatype)
-      self.datatype = datatype
+      self.const_set('DATATYPE', datatype.to_sym)
     end
   end
 end
