@@ -9,47 +9,10 @@ A gem for adding functional programming tools to Ruby. Inspired by [Erlang](http
 Two things I love are [Ruby](http://www.ruby-lang.org/en/) and
 [functional](https://en.wikipedia.org/wiki/Functional_programming)
 [programming](http://c2.com/cgi/wiki?FunctionalProgramming).
-Sadly, the former is generally not associated with the latter. Unfortunately,
-too many people are blinded by their belief that Ruby is an object-oriented
-language. I reject this assertion. Ruby is certainly object-based, since
-everything is an object, but entire large-scale programs can be built without ever
-defining a single class. But Ruby's features that support functional programming
-don't stop there.
-
-Ask ten different programmers to define the term "functional programming" and
-you will likely get ten different answers. One characteristic that will certainly
-be on all their lists is support for
-[higher](http://en.wikipedia.org/wiki/Higher-order_function)
-[order](http://learnyouahaskell.com/higher-order-functions)
-[functions](http://learnyousomeerlang.com/higher-order-functions). Put simply, a
-higher order function is any function that can take one or more functions as
-parameters and/or return a function as a result. Many functional languages,
-such as Erlang, Haskell, and Closure, support higher order functions. Higher order
-functions are a remarkable tool that can completely change the was software is
-designed. Most classicaly object-oriented languages do not support higher
-order functions. Unfortunately, Ruby does not directly support higher order
-functions. Thanksfully, Ruby *does* give us blocks, `proc`s, and `lambda`s.
-Though not strictly higher order functions, in most cases they are functionally
-equivalent.
-
 If you combine Ruby's ability to create functions sans-classes with the power
-of blocks/`proc`s/`lambda`s, Ruby code can follow just about every modern functional
-programming design paradigm. Hence, I consider Ruby to be a *multi-paradigm* language.
-Add to this Ruby's vast metaprogramming capabilities and Ruby is easily one of the
-most powerful languages in common use today.
-
-This gem is my small and humble attempt to help Ruby reach its full potential as
-a highly performant, functional programming language. Virtually every function in
-this library takes a block parameter. Some allow a block plus one or more `proc`
-arguments. Most operate *on* data structures rather than being buried *in* data
-structures. Finally, several of the tools in this library are Ruby implementations
-of some of my favorite features from other functional programming languages. Not
-every function is pure, but functions with side effects are easy to spot because
-they almost always have names that end in an exclamation point.
-
-My hope is that this gem will help Ruby programmers explore Ruby as a functional
-language and improve their code in ways our object oriented brethern never
-dreamed possible.
+of blocks, `proc`, and `lambda`, Ruby code can follow just about every modern functional
+programming design paradigm. Add to this Ruby's vast metaprogramming capabilities
+and Ruby is easily one of the most powerful languages in common use today.
 
 ### Goals
 
@@ -65,10 +28,14 @@ Our goal is to implement various functional programming patterns in Ruby. Specif
 * Keep everything small
 * Be as fast as reasonably possible
 
-## Features (and Documentation)
+## Features
 
-* Interface specifications with Erlang-style [Behavior](https://github.com/jdantonio/functional-ruby/blob/master/md/behavior.md)
+* Protocol specifications inspired by Clojure [protocol](http://clojure.org/protocols)
+  and Erlang [behavior](https://github.com/jdantonio/functional-ruby/blob/master/md/behavior.md)
 * Function overloading with Erlang-style [Pattern Matching](https://github.com/jdantonio/functional-ruby/blob/master/md/pattern_matching.md)
+* Simple, immutable data structures, such as *record* and *union*, inspired by
+  [Clojure](http://clojure.org/datatypes), [Erlang](http://www.erlang.org/doc/reference_manual/records.html),
+  and [others](http://en.wikipedia.org/wiki/Union_type)
 * `Either` and `Option` classes based on [Functional Java](http://functionaljava.org/)
 
 ### Supported Ruby Versions
