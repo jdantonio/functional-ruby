@@ -221,18 +221,6 @@ module Functional
         expect(baz.to_h).to eq(foo: nil, bar: nil, baz: "VHT")
       end
 
-      specify '#to_a retruns an Array with all values' do
-        clazz = Union.new(:foo, :bar, :baz)
-
-        foo = clazz.foo(10)
-        bar = clazz.bar(true)
-        baz = clazz.baz("VHT")
-
-        expect(foo.to_a).to eq [10, nil, nil]
-        expect(bar.to_a).to eq [nil, true, nil]
-        expect(baz.to_a).to eq [nil, nil, "VHT"]
-      end
-
       specify '#inspect begins with "#<union" and ends with ">"' do
         obj = Union.new(:foo, :bar, :baz).foo(10)
         expect(obj.inspect).to match(/^#<union /)

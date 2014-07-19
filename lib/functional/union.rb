@@ -88,25 +88,11 @@ module Functional
       self.class.members
     end
 
-    # Returns the values for this union as an Array.
-    #
-    # @return [Array] collection of all values
-    def to_a
-      # older rubies do not support Enumerable#to_a
-      #each.to_a
-      members.collect{|member| self.send(member) }
-    end
-
     # Returns a Hash containing the names and values for the union’s members.
     #
     # @return [Hash] collection of all members and their associated values
     def to_h
-      # older rubies do not support Enumerable#to_h
-      #each_pair.to_h
-      members.reduce({}) do |memo, member|
-        memo[member] = self.send(member)
-        memo
-      end
+      @data
     end
 
     private
@@ -116,9 +102,14 @@ module Functional
     # @param [Symbol] member the member in which to store the given value
     # @param [Object] value the value of the given member
     def initialize(member, value)
+      #NOTE: clean this up once Union is aligned with Record
       @member = member
       @value = value
-      @values = to_a.freeze
+      @data = members.reduce({}) { |memo, member|
+        memo[member] = ( member == @member ? @value : nil )
+        memo
+      }.freeze
+      @values = @data.values.freeze
     end
   end
 
