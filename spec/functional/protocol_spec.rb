@@ -16,12 +16,12 @@ describe 'protocol specification' do
     context 'without a block' do
 
       it 'returns the specified protocol when defined' do
-        Functional::DefineProtocol(:foo){ nil }
-        expect(Functional::DefineProtocol(:foo)).to_not be_nil
+        Functional::DefineProtocol(:Foo){ nil }
+        expect(Functional::DefineProtocol(:Foo)).to_not be_nil
       end
 
       it 'returns nil when not defined' do
-        expect(Functional::DefineProtocol(:foo)).to be_nil
+        expect(Functional::DefineProtocol(:Foo)).to be_nil
       end
     end
 
@@ -35,109 +35,8 @@ describe 'protocol specification' do
         }.to raise_error(Functional::ProtocolError)
       end
 
-      it 'specifies an instance method with any arity' do
-        Functional::DefineProtocol :Foo do
-          method :foo
-        end
-
-        info = Functional::DefineProtocol(:Foo)
-        expect(info[:methods][:foo]).to be_nil
-      end
-
-      it 'specifies an instance method with a given arity' do
-        Functional::DefineProtocol :Foo do
-          method :foo, 2
-        end
-
-        info = Functional::DefineProtocol(:Foo)
-        expect(info[:methods][:foo]).to eq 2
-      end
-
-      it 'specifies a class method with any arity' do
-        Functional::DefineProtocol :Foo do
-          class_method :foo
-        end
-
-        info = Functional::DefineProtocol(:Foo)
-        expect(info[:class_methods][:foo]).to be_nil
-      end
-
-      it 'specifies a class method with a given arity' do
-        Functional::DefineProtocol :Foo do
-          class_method :foo, 2
-        end
-
-        info = Functional::DefineProtocol(:Foo)
-        expect(info[:class_methods][:foo]).to eq 2
-      end
-
-      it 'specifies an instance attribute reader' do
-        Functional::DefineProtocol :Foo do
-          attr_reader :foo
-        end
-
-        info = Functional::DefineProtocol(:Foo)
-        expect(info[:methods][:foo]).to eq 0
-      end
-
-      it 'specifies an instance attribute writer' do
-        Functional::DefineProtocol :Foo do
-          attr_writer :foo
-        end
-
-        info = Functional::DefineProtocol(:Foo)
-        expect(info[:methods][:foo=]).to eq 1
-      end
-
-      it 'specifies an instance attribute accessor' do
-        Functional::DefineProtocol :Foo do
-          attr_accessor :foo
-        end
-
-        info = Functional::DefineProtocol(:Foo)
-        expect(info[:methods][:foo]).to eq 0
-        expect(info[:methods][:foo=]).to eq 1
-      end
-
-      it 'specifies a class attribute reader' do
-        Functional::DefineProtocol :Foo do
-          class_attr_reader :foo
-        end
-
-        info = Functional::DefineProtocol(:Foo)
-        expect(info[:class_methods][:foo]).to eq 0
-      end
-
-      it 'specifies a class attribute writer' do
-        Functional::DefineProtocol :Foo do
-          class_attr_writer :foo
-        end
-
-        info = Functional::DefineProtocol(:Foo)
-        expect(info[:class_methods][:foo=]).to eq 1
-      end
-
-      it 'specifies a class attribute accessor' do
-        Functional::DefineProtocol :Foo do
-          class_attr_accessor :foo
-        end
-
-        info = Functional::DefineProtocol(:Foo)
-        expect(info[:class_methods][:foo]).to eq 0
-        expect(info[:class_methods][:foo=]).to eq 1
-      end
-
-      it 'specifies a constant' do
-        Functional::DefineProtocol :Foo do
-          constant :FOO
-        end
-
-        info = Functional::DefineProtocol(:Foo)
-        expect(info[:constants]).to include :FOO
-      end
-
       it 'returns the specified protocol once defined' do
-        expect(Functional::DefineProtocol(:Foo){ nil }).to_not be_nil
+        expect(Functional::DefineProtocol(:Foo){ nil }).to be_a Functional::ProtocolInfo
       end
     end
   end
