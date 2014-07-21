@@ -1,4 +1,23 @@
 require_relative 'abstract_struct'
+require_relative 'protocol'
+
+Functional::DefineProtocol(:Either) do
+  class_method :left, 1
+  class_method :right, 1
+  instance_method :left, 0
+  instance_method :left?, 0
+  instance_method :right, 0
+  instance_method :right?, 0
+end
+
+Functional::DefineProtocol(:Obligation) do
+  class_method :value, 1
+  class_method :reason, 1
+  instance_method :value, 0
+  instance_method :value?, 0
+  instance_method :reason, 0
+  instance_method :reason?, 0
+end
 
 module Functional
 
@@ -71,7 +90,7 @@ module Functional
     include AbstractStruct
 
     # @!visibility private 
-    NO_VALUE = Object.new
+    NO_VALUE = Object.new.freeze
 
     AbstractStruct.set_datatype(self, :either)
     AbstractStruct.set_members(self, [:left, :right].freeze)
@@ -168,7 +187,7 @@ module Functional
       end
     end
 
-    # The value of this either swapped to the opposing side.
+    # The catamorphism for either. Folds over this either breaking into left or right.
     #
     # @param [Proc] lproc The function to call if this is left.
     # @param [Proc] rproc The function to call if this is right.

@@ -19,6 +19,9 @@ module Functional
 
     it_should_behave_like :abstract_struct
 
+    specify{ Functional::ProtocolCheck::Satisfy! left_subject, :Either }
+    specify{ Functional::ProtocolCheck::Satisfy! left_subject, :Obligation }
+
     context 'initialization' do
 
       it 'cannot be constructed directly' do
