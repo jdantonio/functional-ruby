@@ -19,8 +19,8 @@ module Functional
 
     it_should_behave_like :abstract_struct
 
-    specify{ Functional::ProtocolCheck::Satisfy! left_subject, :Either }
-    specify{ Functional::ProtocolCheck::Satisfy! left_subject, :Obligation }
+    specify{ Functional::ProtocolCheck::Satisfy! Either, :Either }
+    specify{ Functional::ProtocolCheck::Satisfy! Either, :Obligation }
 
     context 'initialization' do
 

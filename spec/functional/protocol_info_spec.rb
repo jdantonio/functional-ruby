@@ -4,6 +4,20 @@ module Functional
 
   describe ProtocolInfo do
 
+    let!(:kitchen_sink) do
+      ProtocolInfo.new(:Everything) do
+        instance_method     :instance_method
+        class_method        :class_method
+        attr_accessor       :attr_accessor
+        attr_reader         :attr_reader
+        attr_writer         :attr_writer
+        class_attr_accessor :class_attr_accessor
+        class_attr_reader   :class_attr_reader
+        class_attr_writer   :class_attr_writer
+        constant            :CONSTANT
+      end
+    end
+
     context '#initialize' do
 
       it 'raises an exception when no block is given' do
@@ -252,31 +266,6 @@ module Functional
         expect(info.satisfies?(clazz.new)).to be false
       end
 
-      it 'validates classes' do
-        info = ProtocolInfo.new(:Foo) do
-          class_method(:baz, -3)
-        end
-
-        clazz = Class.new do
-          def self.baz(a, b, *args); nil; end
-        end
-
-        expect(info.satisfies?(clazz)).to be true
-      end
-
-      it 'validates modules' do
-        info = ProtocolInfo.new(:Foo) do
-          class_method(:baz, -3)
-        end
-
-        clazz = Module.new do
-          def bar(a, *args); nil; end
-          def self.baz(a, b, *args); nil; end
-        end
-
-        expect(info.satisfies?(clazz)).to be true
-      end
-
       it 'always accepts methods when arity not given' do
         info = ProtocolInfo.new(:Foo) do
           instance_method(:foo)
@@ -393,6 +382,48 @@ module Functional
         end
 
         expect(info.satisfies?(clazz.new)).to be false
+      end
+
+      it 'supports all specifiable characteristics on classes' do
+        clazz = Class.new do
+          attr_accessor :attr_accessor
+          attr_reader   :attr_reader
+          attr_writer   :attr_writer
+          def instance_method() 42; end
+
+          class << self
+            attr_accessor :class_attr_accessor
+            attr_reader   :class_attr_reader
+            attr_writer   :class_attr_writer
+            def class_method() 42; end
+          end
+        end
+        clazz.const_set(:CONSTANT, 42)
+
+        expect(
+          kitchen_sink.satisfies?(clazz)
+        ).to be true
+      end
+
+      it 'supports all specifiable characteristics on modules' do
+        mod = Module.new do
+          attr_accessor :attr_accessor
+          attr_reader   :attr_reader
+          attr_writer   :attr_writer
+          def instance_method() 42; end
+
+          class << self
+            attr_accessor :class_attr_accessor
+            attr_reader   :class_attr_reader
+            attr_writer   :class_attr_writer
+            def class_method() 42; end
+          end
+        end
+        mod.const_set(:CONSTANT, 42)
+
+        expect(
+          kitchen_sink.satisfies?(mod)
+        ).to be true
       end
     end
   end

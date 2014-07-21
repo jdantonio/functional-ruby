@@ -99,6 +99,38 @@ describe 'protocol specification' do
           Functional::ProtocolCheck.Satisfy?('object', :foo)
         ).to be false
       end
+
+      it 'validates classes' do
+        Functional::DefineProtocol(:foo) do
+          instance_method(:foo)
+          class_method(:bar)
+        end
+
+        clazz = Class.new do
+          def foo(); nil; end
+          def self.bar(); nil; end
+        end
+
+        expect(
+          Functional::ProtocolCheck.Satisfy?(clazz, :foo)
+        ).to be true
+      end
+
+      it 'validates modules' do
+        Functional::DefineProtocol(:foo) do
+          instance_method(:foo)
+          class_method(:bar)
+        end
+
+        mod = Module.new do
+          def foo(); nil; end
+          def self.bar(); nil; end
+        end
+
+        expect(
+          Functional::ProtocolCheck.Satisfy?(mod, :foo)
+        ).to be true
+      end
     end
 
     context 'Satisfy!' do
@@ -151,6 +183,38 @@ describe 'protocol specification' do
         expect{
           Functional::ProtocolCheck.Satisfy!('object', :foo)
         }.to raise_error(Functional::ProtocolError)
+      end
+
+      it 'validates classes' do
+        Functional::DefineProtocol(:foo) do
+          instance_method(:foo)
+          class_method(:bar)
+        end
+
+        clazz = Class.new do
+          def foo(); nil; end
+          def self.bar(); nil; end
+        end
+
+        expect{
+          Functional::ProtocolCheck.Satisfy!(clazz, :foo)
+        }.to_not raise_exception
+      end
+
+      it 'validates modules' do
+        Functional::DefineProtocol(:foo) do
+          instance_method(:foo)
+          class_method(:bar)
+        end
+
+        mod = Module.new do
+          def foo(); nil; end
+          def self.bar(); nil; end
+        end
+
+        expect{
+          Functional::ProtocolCheck.Satisfy!(mod, :foo)
+        }.to_not raise_exception
       end
     end
 

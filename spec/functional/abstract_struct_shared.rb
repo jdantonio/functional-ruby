@@ -1,6 +1,6 @@
 shared_examples :abstract_struct do
 
-  specify { Functional::ProtocolCheck::Satisfy! struct_object, :Struct }
+  specify { Functional::ProtocolCheck::Satisfy! struct_class, :Struct }
 
   context 'member collection' do
 
