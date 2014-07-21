@@ -43,12 +43,6 @@ describe 'protocol specification' do
 
   describe Functional::ProtocolCheck do
 
-    let!(:checker) do
-      Class.new {
-        include Functional::ProtocolCheck
-      }.new
-    end
-
     context 'Satisfy?' do
 
       it 'accepts and checks multiple protocols' do
@@ -61,7 +55,7 @@ describe 'protocol specification' do
         end
 
         expect(
-          checker.Satisfy?(clazz.new, :foo, :bar, :baz)
+          Functional::ProtocolCheck.Satisfy?(clazz.new, :foo, :bar, :baz)
         ).to be true
       end
 
@@ -69,7 +63,7 @@ describe 'protocol specification' do
         Functional::DefineProtocol(:foo){ instance_method(:foo) }
 
         expect(
-          checker.Satisfy?('object', :foo, :bar)
+          Functional::ProtocolCheck.Satisfy?('object', :foo, :bar)
         ).to be false
       end
 
@@ -81,7 +75,7 @@ describe 'protocol specification' do
         end
 
         expect(
-          checker.Satisfy?(clazz.new, :foo)
+          Functional::ProtocolCheck.Satisfy?(clazz.new, :foo)
         ).to be true
       end
 
@@ -96,7 +90,7 @@ describe 'protocol specification' do
         end
 
         expect(
-          checker.Satisfy?('object', :foo)
+          Functional::ProtocolCheck.Satisfy?('object', :foo)
         ).to be false
       end
     end
@@ -114,7 +108,7 @@ describe 'protocol specification' do
 
         target = clazz.new
         expect(
-          checker.Satisfy!(target, :foo, :bar, :baz)
+          Functional::ProtocolCheck.Satisfy!(target, :foo, :bar, :baz)
         ).to eq target
       end
 
@@ -122,7 +116,7 @@ describe 'protocol specification' do
         Functional::DefineProtocol(:foo){ instance_method(:foo) }
 
         expect{
-          checker.Satisfy!('object', :foo, :bar)
+          Functional::ProtocolCheck.Satisfy!('object', :foo, :bar)
         }.to raise_error(Functional::ProtocolError)
       end
 
@@ -135,7 +129,7 @@ describe 'protocol specification' do
 
         target = clazz.new
         expect(
-          checker.Satisfy!(target, :foo)
+          Functional::ProtocolCheck.Satisfy!(target, :foo)
         ).to eq target
       end
 
@@ -143,7 +137,7 @@ describe 'protocol specification' do
         Functional::DefineProtocol(:foo){ instance_method(:foo) }
 
         expect{
-          checker.Satisfy!('object', :foo)
+          Functional::ProtocolCheck.Satisfy!('object', :foo)
         }.to raise_error(Functional::ProtocolError)
       end
     end
@@ -155,14 +149,14 @@ describe 'protocol specification' do
         Functional::DefineProtocol(:bar){ nil }
         Functional::DefineProtocol(:baz){ nil }
 
-        expect(checker.Protocol?(:foo, :bar, :baz)).to be true
+        expect(Functional::ProtocolCheck.Protocol?(:foo, :bar, :baz)).to be true
       end
 
       it 'returns false when one or more of the protocols have not been defined' do
         Functional::DefineProtocol(:foo){ nil }
         Functional::DefineProtocol(:bar){ nil }
 
-        expect(checker.Protocol?(:foo, :bar, :baz)).to be false
+        expect(Functional::ProtocolCheck.Protocol?(:foo, :bar, :baz)).to be false
       end
     end
 
@@ -173,9 +167,9 @@ describe 'protocol specification' do
         Functional::DefineProtocol(:bar){ nil }
         Functional::DefineProtocol(:baz){ nil }
 
-        expect(checker.Protocol!(:foo, :bar, :baz)).to be true
+        expect(Functional::ProtocolCheck.Protocol!(:foo, :bar, :baz)).to be true
         expect {
-          checker.Protocol!(:foo, :bar, :baz)
+          Functional::ProtocolCheck.Protocol!(:foo, :bar, :baz)
         }.to_not raise_error
       end
 
@@ -184,7 +178,7 @@ describe 'protocol specification' do
         Functional::DefineProtocol(:bar){ nil }
 
         expect {
-          checker.Protocol!(:foo, :bar, :baz)
+          Functional::ProtocolCheck.Protocol!(:foo, :bar, :baz)
         }.to raise_error(Functional::ProtocolError)
       end
     end

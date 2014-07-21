@@ -131,7 +131,7 @@ class Fizzbuzz < Baz
   defn(:who) { 0 }
 end
 
-describe 'integration' do
+describe 'complex pattern matching' do
 
   let(:name) { 'Pattern Matcher' }
   subject { Foo.new(name) }

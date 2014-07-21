@@ -1,5 +1,7 @@
 shared_examples :abstract_struct do
 
+  specify { Functional::ProtocolCheck::Satisfy! :Struct }
+
   context 'member collection' do
 
     it 'contains all possible members' do

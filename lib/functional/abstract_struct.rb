@@ -1,3 +1,13 @@
+require_relative 'protocol'
+
+Functional::DefineProtocol(:Struct) do
+  instance_method :members
+  instance_method :values
+  instance_method :length
+  instance_method :each
+  instance_method :each_pair
+end
+
 module Functional
 
   # An abstract base class for immutable struct classes.

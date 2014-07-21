@@ -28,21 +28,25 @@ module Functional
         ProtocolCheck.satisfies?(target, protocol.to_sym)
       }.empty?
     end
+    module_function :Satisfy?
 
     def Satisfy!(target, *protocols)
-      Satisfy?(target, *protocols) or
+      ProtocolCheck::Satisfy?(target, *protocols) or
         ProtocolCheck.error(target, 'does not', protocols)
       target
     end
+    module_function :Satisfy!
 
     def Protocol?(*protocols)
       ProtocolCheck.undefined(*protocols).empty?
     end
+    module_function :Protocol?
 
     def Protocol!(*protocols)
       (undefined = ProtocolCheck.undefined(*protocols)).empty? or
         raise ProtocolError.new("The following protocols are undefined: :#{undefined.join('; :')}.")
     end
+    module_function :Protocol!
 
     private
 
