@@ -65,7 +65,7 @@ module Functional
       args = args.first
 
       matchers = clazz.__function_pattern_matches__[func]
-      return [:nodef, nil] if matchers.nil?
+      return Either.reason(:nodef) if matchers.nil?
 
       match = matchers.detect do |matcher|
         if PatternMatching.__match_pattern__(args, matcher.first)
@@ -77,10 +77,8 @@ module Functional
         end
       end
 
-      return (match ? [:ok, match] : [:nomatch, nil])
+      return (match ? Either.value(match) : Either.reason(:nomatch))
     end
-
-    protected
 
     def self.included(base)
       base.extend ClassMethods
@@ -103,11 +101,11 @@ module Functional
         unless self.instance_methods(false).include?(func)
 
           define_method(func) do |*args, &block|
-            result, match = PatternMatching.__pattern_match__(self.method(func).owner, func, args, block)
-            if result == :ok
+            match = PatternMatching.__pattern_match__(self.method(func).owner, func, args, block)
+            if match.value?
               # if a match is found call the block
-              argv = PatternMatching.__unbound_args__(match, args)
-              return self.instance_exec(*argv, &match[1])
+              argv = PatternMatching.__unbound_args__(match.value, args)
+              return self.instance_exec(*argv, &match.value[1])
             else # if result == :nodef || result == :nomatch
               begin
                 super(*args, &block)
@@ -120,8 +118,6 @@ module Functional
 
         return GUARD_CLAUSE.new(func, self, pattern)
       end
-
-      public
 
       def __function_pattern_matches__ # :nodoc:
         @__function_pattern_matches__ ||= Hash.new
