@@ -5,18 +5,25 @@ module Functional
   # {include:file:doc/pattern_matching.md}
   module PatternMatching
 
+    # A parameter that is required but that can take any value.
+    # @!visibility private
     UNBOUND = Object.new.freeze
+
+    # A match for one or more parameters in the last position of the match.
+    # @!visibility private
     ALL = Object.new.freeze
 
     private
 
+    # A guard clause on a pattern match.
+    # @!visibility private
     GUARD_CLAUSE = Class.new do # :nodoc:
-      def initialize(func, clazz, matcher) # :nodoc:
+      def initialize(func, clazz, matcher)
         @func = func
         @clazz = clazz
         @matcher = matcher
       end
-      def when(&block) # :nodoc:
+      def when(&block)
         unless block_given?
           raise ArgumentError.new("block missing for `when` guard on function `#{@func}` of class #{@clazz}")
         end
@@ -25,6 +32,7 @@ module Functional
       end
     end
 
+    # @!visibility private
     def self.match_pattern(args, pattern) # :nodoc:
       return unless valid_pattern?(args, pattern)
       pattern.each_with_index do |p, i|
@@ -44,11 +52,13 @@ module Functional
       return true
     end
 
-    def self.valid_pattern?(args, pattern)
+    # @!visibility private
+    def self.valid_pattern?(args, pattern) # :nodoc:
       (pattern.last == ALL && args.length >= pattern.length) \
         || (args.length == pattern.length)
     end
 
+    # @!visibility private
     def self.unbound_args(match, args) # :nodoc:
       argv = []
       match.first.each_with_index do |p, i|
@@ -65,6 +75,7 @@ module Functional
       return argv
     end
 
+    # @!visibility private
     def self.pattern_match(clazz, func, *args, &block) # :nodoc:
       args = args.first
 
@@ -89,13 +100,17 @@ module Functional
       super base
     end
 
+    # Class methods added to a class that includes {Functional::PatternMatching}
+    # @!visibility private
     module ClassMethods
 
+      # @!visibility private
       def _() # :nodoc:
         return UNBOUND
       end
 
-      def defn(func, *args, &block)
+      # @!visibility private
+      def defn(func, *args, &block) # :nodoc:
         unless block_given?
           raise ArgumentError.new("block missing for definition of function `#{func}` on class #{self}")
         end
@@ -109,7 +124,8 @@ module Functional
         return GUARD_CLAUSE.new(func, self, pattern)
       end
 
-      def define_method_with_matching(func)
+      # @!visibility private
+      def define_method_with_matching(func) # :nodoc:
         define_method(func) do |*args, &block|
           match = PatternMatching.pattern_match(self.method(func).owner, func, args, block)
           if match.value?
@@ -126,10 +142,12 @@ module Functional
         end
       end
 
+      # @!visibility private
       def function_pattern_matches # :nodoc:
         @function_pattern_matches ||= Hash.new
       end
 
+      # @!visibility private
       def add_pattern_for(func, *args, &block) # :nodoc:
         block = Proc.new{} unless block_given?
         matchers = self.function_pattern_matches

@@ -7,18 +7,24 @@ require 'functional/type_check'
 require 'functional/union'
 require 'functional/version'
 
+# Infinity
 Infinity = 1/0.0 unless defined?(Infinity)
+
+# Not a number
 NaN = 0/0.0 unless defined?(NaN)
 
 module Functional
 
+  # A gem-level configuration class.
   class Configuration
   end
 
   # create the default configuration on load
   @configuration = Configuration.new
 
-  # @return [Configuration]
+  # The current gem configutation.
+  #
+  # @return [Functional::Configuration]
   def self.configuration
     @configuration
   end
@@ -26,7 +32,7 @@ module Functional
   # Perform gem-level configuration.
   #
   # @yield the configuration commands
-  # @yieldparam [Configuration] the current configuration object
+  # @yieldparam [Functional::Configuration] the current configuration object
   def self.configure
     yield(configuration)
   end
