@@ -2,11 +2,12 @@ require_relative 'protocol_info'
 
 module Functional
 
+  # An exception indicating a problem during protocol processing.
   ProtocolError = Class.new(StandardError)
 
-  def DefineProtocol(name, &block)
+  def SpecifyProtocol(name, &block)
     name = name.to_sym
-    protocol_info = ProtocolCheck.class_variable_get(:@@info)[name]
+    protocol_info = Protocol.class_variable_get(:@@info)[name]
 
     return protocol_info unless block_given?
 
@@ -15,39 +16,44 @@ module Functional
     end
 
     info = ProtocolInfo.new(name, &block)
-    ProtocolCheck.class_variable_get(:@@info)[name] = info
+    Protocol.class_variable_get(:@@info)[name] = info
   end
-  module_function :DefineProtocol
+  module_function :SpecifyProtocol
 
-  module ProtocolCheck
+  # {include:file:doc/protocol.md}
+  module Protocol
 
     @@info = {}
 
+    # Does the given module/class/object fully satisfy the given protocol(s)?
+    #
+    # @param [Object] target the method/class/object to interrogate
+    # @param [Symbol] protocols
     def Satisfy?(target, *protocols)
       raise ArgumentError.new('no protocols given') if protocols.empty?
       protocols.drop_while { |protocol|
-        ProtocolCheck.satisfies?(target, protocol.to_sym)
+        Protocol.satisfies?(target, protocol.to_sym)
       }.empty?
     end
     module_function :Satisfy?
 
     def Satisfy!(target, *protocols)
-      ProtocolCheck::Satisfy?(target, *protocols) or
-        ProtocolCheck.error(target, 'does not', protocols)
+      Protocol::Satisfy?(target, *protocols) or
+        Protocol.error(target, 'does not', protocols)
       target
     end
     module_function :Satisfy!
 
-    def Protocol?(*protocols)
-      ProtocolCheck.undefined(*protocols).empty?
+    def Specified?(*protocols)
+      Protocol.undefined(*protocols).empty?
     end
-    module_function :Protocol?
+    module_function :Specified?
 
-    def Protocol!(*protocols)
-      (undefined = ProtocolCheck.undefined(*protocols)).empty? or
+    def Specified!(*protocols)
+      (undefined = Protocol.undefined(*protocols)).empty? or
         raise ProtocolError.new("The following protocols are undefined: :#{undefined.join('; :')}.")
     end
-    module_function :Protocol!
+    module_function :Specified!
 
     private
 

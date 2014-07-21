@@ -7,7 +7,6 @@ cranked to 11. So one day I was musing on Twitter that I'd like to see
 Erlang-stype pattern matching in Ruby and one of my friends responded
 "Build it!" So I did. And here it is.
 
-
 ## Features
 
 * Pattern matching for instance methods.

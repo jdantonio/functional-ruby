@@ -38,7 +38,7 @@ module Functional
         }.to raise_error(ArgumentError)
       end
 
-      it 'specifies an instance method with any arity' do
+      it 'specifies an instance method with no arity given' do
         info = ProtocolInfo.new(:Foo) do
           instance_method :foo
         end
@@ -130,6 +130,20 @@ module Functional
     end
 
     context '#satisfies?' do
+
+      it 'validates methods with no arity given' do
+        info = ProtocolInfo.new(:Foo) do
+          instance_method(:bar)
+          class_method(:baz)
+        end
+
+        clazz = Class.new do
+          def bar(a, b, c=1, d=2, *args); nil; end
+          def self.baz(); nil; end
+        end
+
+        expect(info.satisfies?(clazz.new)).to be true
+      end
 
       it 'validates methods with no parameters' do
         info = ProtocolInfo.new(:Foo) do

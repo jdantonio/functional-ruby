@@ -1,6 +1,6 @@
 require_relative 'protocol'
 
-Functional::DefineProtocol(:Struct) do
+Functional::SpecifyProtocol(:Struct) do
   instance_method :members
   instance_method :values
   instance_method :length

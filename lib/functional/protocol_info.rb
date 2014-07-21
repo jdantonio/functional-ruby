@@ -46,21 +46,22 @@ module Functional
 
     def satisfies_instance_methods?(target)
       @info.instance_methods.drop_while { |method, arity|
-        method = target.is_a?(Module) ? target.instance_method(method) : target.method(method)
-        check_arity?(method, arity)
+        if target.is_a? Module
+          target.method_defined?(method) && check_arity?(target.instance_method(method), arity)
+        else
+          target.respond_to?(method) && check_arity?(target.method(method), arity)
+        end
       }.empty?
-    rescue NameError
-      false
     end
+
 
     def satisfies_class_methods?(target)
       clazz = target.is_a?(Module) ? target : target.class
       @info.class_methods.drop_while { |method, arity|
+        break false unless clazz.respond_to? method
         method = clazz.method(method)
         check_arity?(method, arity)
       }.empty?
-    rescue NameError
-      false
     end
 
     def check_arity?(method, expected)
