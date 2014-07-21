@@ -2,6 +2,17 @@ require_relative 'abstract_struct'
 
 module Functional
 
+  # An immutable data structure with multiple data members. A `Record` is a
+  # convenient way to bundle a number of member attributes together,
+  # using accessor methods, without having to write an explicit class.
+  # The `Record` module generates new `AbstractStruct` subclasses that hold a
+  # set of members with a reader method for each member.
+  #
+  # A `Record` is very similar to a Ruby `Struct` and shares many of its behaviors
+  # and attributes. Unlike a # Ruby `Struct`, a `Record` is immutable: its values
+  # are set at construction and can never be changed. Divergence between the two
+  # classes derive from this core difference.
+  #
   # @see http://clojure.org/datatypes
   # @see http://clojure.github.io/clojure/clojure.core-api.html#clojure.core/defrecord
   # @see http://www.erlang.org/doc/reference_manual/records.html
@@ -21,6 +32,12 @@ module Functional
 
     private
 
+    # Use the given `AbstractStruct` class and build the methods necessary
+    # to support the given data members.
+    #
+    # @param [Functional::AbstractStruct] record the new record class
+    # @param [Array] members the list of symbolic names for all data members
+    # @return [Functional::AbstractStruct] the record class
     def build(record, members)
       AbstractStruct.set_datatype(record, :record)
       AbstractStruct.set_members(record, members)
@@ -31,6 +48,10 @@ module Functional
       record
     end
 
+    # Define an initializer method on the given record class.
+    #
+    # @param [Functional::AbstractStruct] record the new record class
+    # @return [Functional::AbstractStruct] the record class
     def define_initializer(record)
       record.send(:define_method, :initialize) do |data = {}|
         data = members.reduce({}) do |memo, member|
@@ -45,6 +66,11 @@ module Functional
       record
     end
 
+    # Define a reader method on the given record class for the given data member.
+    #
+    # @param [Functional::AbstractStruct] record the new record class
+    # @param [Symbol] member symbolic name of the current data member
+    # @return [Functional::AbstractStruct] the record class
     def define_reader(record, member)
       record.send(:define_method, member) do
         to_h[member]

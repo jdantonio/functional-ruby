@@ -57,6 +57,12 @@ module Functional
 
     private
 
+    # Use the given `AbstractStruct` class and build the methods necessary
+    # to support the given data members.
+    #
+    # @param [Functional::AbstractStruct] union the new union class
+    # @param [Array] members the list of symbolic names for all data members
+    # @return [Functional::AbstractStruct] the union class
     def build(union, members)
       union.private_class_method(:new)
       AbstractStruct.set_datatype(union, :union)
@@ -71,12 +77,21 @@ module Functional
       union
     end
 
+    # Define the `member` and `value` attribute readers on the given union class.
+    #
+    # @param [Functional::AbstractStruct] union the new union class
+    # @return [Functional::AbstractStruct] the union class
     def define_properties(union)
       union.send(:attr_reader, :member)
       union.send(:attr_reader, :value)
       union
     end
 
+    # Define a predicate method on the given union class for the given data member.
+    #
+    # @param [Functional::AbstractStruct] union the new union class
+    # @param [Symbol] member symbolic name of the current data member
+    # @return [Functional::AbstractStruct] the union class
     def define_predicate(union, member)
       union.send(:define_method, "#{member}?".to_sym) do
         @member == member
@@ -84,6 +99,11 @@ module Functional
       union
     end
 
+    # Define a reader method on the given union class for the given data member.
+    #
+    # @param [Functional::AbstractStruct] union the new union class
+    # @param [Symbol] member symbolic name of the current data member
+    # @return [Functional::AbstractStruct] the union class
     def define_reader(union, member)
       union.send(:define_method, member) do
         send("#{member}?".to_sym) ? @value : nil
@@ -91,6 +111,10 @@ module Functional
       union
     end
 
+    # Define an initializer method on the given union class.
+    #
+    # @param [Functional::AbstractStruct] union the new union class
+    # @return [Functional::AbstractStruct] the union class
     def define_initializer(union)
       union.send(:define_method, :initialize) do |member, value|
         @member = member
@@ -105,6 +129,11 @@ module Functional
       union
     end
 
+    # Define a factory method on the given union class for the given data member.
+    #
+    # @param [Functional::AbstractStruct] union the new union class
+    # @param [Symbol] member symbolic name of the current data member
+    # @return [Functional::AbstractStruct] the union class
     def define_factory(union, member)
       union.class.send(:define_method, member) do |value|
         new(member, value).freeze
