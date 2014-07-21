@@ -93,19 +93,29 @@ module Functional
 
     protected
 
+    # Set the internal data hash to a copy of the given hash and freeze it.
+    # @param [Hash] data the data hash
     def set_data_hash(data)
-      @data = data.freeze
+      @data = data.dup.freeze
     end
 
+    # Set the internal values array to a copy of the given array and freeze it.
+    # @param [Array] values the values array
     def set_values_array(values)
-      @values = values.freeze
+      @values = values.dup.freeze
     end
 
-    def self.set_members(clazz, members)
-      clazz.const_set('MEMBERS', members.freeze)
+    # Set the class `MEMBERS` constant to a copy of the given array and freeze it.
+    # @param [Class] clazz the new struct class
+    # @param [Array] members the array of data members
+    def self.set_members_constant(clazz, members)
+      clazz.const_set('MEMBERS', members.dup.freeze)
     end
 
-    def self.set_datatype(clazz, datatype)
+    # Set the class `DATATYPE` constant to the given value (symbolized)
+    # @param [Class] clazz the new struct class
+    # @param [Symbol] datatype the datatype name of the new struct class
+    def self.set_datatype_constant(clazz, datatype)
       clazz.const_set('DATATYPE', datatype.to_sym)
     end
   end

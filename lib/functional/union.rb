@@ -65,8 +65,8 @@ module Functional
     # @return [Functional::AbstractStruct] the union class
     def build(union, members)
       union.private_class_method(:new)
-      AbstractStruct.set_datatype(union, :union)
-      AbstractStruct.set_members(union, members)
+      AbstractStruct.set_datatype_constant(union, :union)
+      AbstractStruct.set_members_constant(union, members)
       define_properties(union)
       define_initializer(union)
       members.each do |member|

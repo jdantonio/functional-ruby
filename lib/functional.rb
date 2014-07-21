@@ -7,13 +7,14 @@ require 'functional/type_check'
 require 'functional/union'
 require 'functional/version'
 
-# Infinity
-Infinity = 1/0.0 unless defined?(Infinity)
-
-# Not a number
-NaN = 0/0.0 unless defined?(NaN)
-
+# Erlang, Clojure, and Go inspired functional programming tools to Ruby.
 module Functional
+
+  # Infinity
+  Infinity = 1/0.0
+
+  # Not a number
+  NaN = 0/0.0
 
   # A gem-level configuration class.
   class Configuration

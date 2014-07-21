@@ -94,8 +94,8 @@ module Functional
     # @!visibility private 
     NO_VALUE = Object.new.freeze
 
-    AbstractStruct.set_datatype(self, :either)
-    AbstractStruct.set_members(self, [:left, :right].freeze)
+    AbstractStruct.set_datatype_constant(self, :either)
+    AbstractStruct.set_members_constant(self, [:left, :right].freeze)
 
     private_class_method :new
 

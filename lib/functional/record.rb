@@ -39,8 +39,8 @@ module Functional
     # @param [Array] members the list of symbolic names for all data members
     # @return [Functional::AbstractStruct] the record class
     def build(record, members)
-      AbstractStruct.set_datatype(record, :record)
-      AbstractStruct.set_members(record, members)
+      AbstractStruct.set_datatype_constant(record, :record)
+      AbstractStruct.set_members_constant(record, members)
       define_initializer(record)
       members.each do |member|
         define_reader(record, member)
