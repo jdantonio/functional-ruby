@@ -20,7 +20,7 @@ module Functional
     it_should_behave_like :abstract_struct
 
     specify{ Functional::ProtocolCheck::Satisfy! Either, :Either }
-    specify{ Functional::ProtocolCheck::Satisfy! Either, :Obligation }
+    specify{ Functional::ProtocolCheck::Satisfy! Either, :Disposition }
 
     context 'initialization' do
 

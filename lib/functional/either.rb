@@ -10,13 +10,15 @@ Functional::DefineProtocol(:Either) do
   instance_method :right?, 0
 end
 
-Functional::DefineProtocol(:Obligation) do
+Functional::DefineProtocol(:Disposition) do
   class_method :value, 1
   class_method :reason, 1
   instance_method :value, 0
   instance_method :value?, 0
   instance_method :reason, 0
   instance_method :reason?, 0
+  instance_method :fulfilled?, 0
+  instance_method :rejected?, 0
 end
 
 module Functional
