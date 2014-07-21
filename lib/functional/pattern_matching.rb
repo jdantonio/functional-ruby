@@ -1,10 +1,12 @@
+require_relative 'either'
+
 module Functional
 
   # {include:file:doc/pattern_matching.md}
   module PatternMatching
 
-    UNBOUND = Object.new
-    ALL = Object.new
+    UNBOUND = Object.new.freeze
+    ALL = Object.new.freeze
 
     private
 
@@ -81,56 +83,56 @@ module Functional
     protected
 
     def self.included(base)
+      base.extend ClassMethods
+      super base
+    end
 
-      class << base
+    module ClassMethods
 
-        public
+      def _() # :nodoc:
+        return UNBOUND
+      end
 
-        def _() # :nodoc:
-          return UNBOUND
+      def defn(func, *args, &block)
+        unless block_given?
+          raise ArgumentError.new("block missing for definition of function `#{func}` on class #{self}")
         end
 
-        def defn(func, *args, &block)
-          unless block_given?
-            raise ArgumentError.new("block missing for definition of function `#{func}` on class #{self}")
-          end
+        pattern = __add_pattern_for__(func, *args, &block)
 
-          pattern = __add_pattern_for__(func, *args, &block)
+        unless self.instance_methods(false).include?(func)
 
-          unless self.instance_methods(false).include?(func)
-
-            define_method(func) do |*args, &block|
-              result, match = PatternMatching.__pattern_match__(self.method(func).owner, func, args, block)
-              if result == :ok
-                # if a match is found call the block
-                argv = PatternMatching.__unbound_args__(match, args)
-                return self.instance_exec(*argv, &match[1])
-              else # if result == :nodef || result == :nomatch
-                begin
-                  super(*args, &block)
-                rescue NoMethodError, ArgumentError
-                  raise NoMethodError.new("no method `#{func}` matching #{args} found for class #{self.class}")
-                end
+          define_method(func) do |*args, &block|
+            result, match = PatternMatching.__pattern_match__(self.method(func).owner, func, args, block)
+            if result == :ok
+              # if a match is found call the block
+              argv = PatternMatching.__unbound_args__(match, args)
+              return self.instance_exec(*argv, &match[1])
+            else # if result == :nodef || result == :nomatch
+              begin
+                super(*args, &block)
+              rescue NoMethodError, ArgumentError
+                raise NoMethodError.new("no method `#{func}` matching #{args} found for class #{self.class}")
               end
             end
           end
-
-          return GUARD_CLAUSE.new(func, self, pattern)
         end
 
-        public
+        return GUARD_CLAUSE.new(func, self, pattern)
+      end
 
-        def __function_pattern_matches__ # :nodoc:
-          @__function_pattern_matches__ ||= Hash.new
-        end
+      public
 
-        def __add_pattern_for__(func, *args, &block) # :nodoc:
-          block = Proc.new{} unless block_given?
-          matchers = self.__function_pattern_matches__
-          matchers[func] = [] unless matchers.has_key?(func)
-          matchers[func] << [args, block, nil]
-          return matchers[func].last
-        end
+      def __function_pattern_matches__ # :nodoc:
+        @__function_pattern_matches__ ||= Hash.new
+      end
+
+      def __add_pattern_for__(func, *args, &block) # :nodoc:
+        block = Proc.new{} unless block_given?
+        matchers = self.__function_pattern_matches__
+        matchers[func] = [] unless matchers.has_key?(func)
+        matchers[func] << [args, block, nil]
+        return matchers[func].last
       end
     end
   end
