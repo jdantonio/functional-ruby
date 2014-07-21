@@ -5,10 +5,8 @@
 --markup markdown
 --title=Functional Ruby
 --template default
---template-path ./yard-template
 
 ./lib/**/*.rb
-./ext/concurrent_ruby_ext/**/*.c
 -
 README.md
 LICENSE
