@@ -234,9 +234,15 @@ describe 'protocol specification' do
 
         expect(Functional::Protocol.Specified?(:foo, :bar, :baz)).to be false
       end
+
+      it 'raises an exception when no protocols are given' do
+        expect {
+          Functional::Protocol.Specified?
+        }.to raise_error(ArgumentError)
+      end
     end
 
-    context 'Protocol!' do
+    context 'Specified!' do
 
       it 'returns true when all protocols have been defined' do
         Functional::SpecifyProtocol(:foo){ nil }
@@ -256,6 +262,12 @@ describe 'protocol specification' do
         expect {
           Functional::Protocol.Specified!(:foo, :bar, :baz)
         }.to raise_error(Functional::ProtocolError)
+      end
+
+      it 'raises an exception when no protocols are given' do
+        expect {
+          Functional::Protocol.Specified!
+        }.to raise_error(ArgumentError)
       end
     end
   end
