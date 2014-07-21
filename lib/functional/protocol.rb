@@ -53,6 +53,7 @@ module Functional
   # {include:file:doc/protocol.md}
   module Protocol
 
+    # The global registry of specified protocols.
     @@info = {}
 
     # Does the given module/class/object fully satisfy the given protocol(s)?
