@@ -1,5 +1,17 @@
+#require 'coveralls'
+#Coveralls.wear!
+require 'simplecov'
 require 'coveralls'
-Coveralls.wear!
+
+SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
+  SimpleCov::Formatter::HTMLFormatter,
+  Coveralls::SimpleCov::Formatter
+]
+
+SimpleCov.start do
+  project_name 'Functional Ruby'
+  add_filter '/spec/'
+end
 
 require 'codeclimate-test-reporter'
 CodeClimate::TestReporter.start

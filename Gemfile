@@ -8,6 +8,7 @@ end
 
 group :testing do
   gem 'rspec', '~> 3.0.0'
+  gem 'simplecov', '~> 0.9.0', platforms: :mri, require: false
   gem 'coveralls', '~> 0.7.0', require: false
   gem 'codeclimate-test-reporter', group: :test, require: nil
 end
