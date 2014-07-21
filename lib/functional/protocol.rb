@@ -140,7 +140,7 @@ module Functional
     #
     # @param [Object] target the object that was being interrogated
     # @param [String] message the message fragment to inject into the error
-    # @param [Symbol] protocols list protocols that were being checked against the target
+    # @param [Symbol] protocols list of protocols that were being checked against the target
     #
     # @raise [Functional::ProtocolError] the formatted exception object
     def self.error(target, message, *protocols)
