@@ -24,6 +24,7 @@ module Functional
     @@info = {}
 
     def Satisfy?(target, *protocols)
+      raise ArgumentError.new('no protocols given') if protocols.empty?
       protocols.drop_while { |protocol|
         ProtocolCheck.satisfies?(target, protocol.to_sym)
       }.empty?

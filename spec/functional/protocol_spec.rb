@@ -67,6 +67,12 @@ describe 'protocol specification' do
         ).to be false
       end
 
+      it 'raises an exception if no protocols are listed' do
+        expect {
+          Functional::ProtocolCheck::Satisfy?('object')
+        }.to raise_error(ArgumentError)
+      end
+
       it 'returns true on success' do
         Functional::DefineProtocol(:foo){ instance_method(:foo) }
 
@@ -118,6 +124,12 @@ describe 'protocol specification' do
         expect{
           Functional::ProtocolCheck.Satisfy!('object', :foo, :bar)
         }.to raise_error(Functional::ProtocolError)
+      end
+
+      it 'raises an exception if no protocols are listed' do
+        expect {
+          Functional::ProtocolCheck::Satisfy!('object')
+        }.to raise_error(ArgumentError)
       end
 
       it 'returns the target on success' do
