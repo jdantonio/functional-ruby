@@ -4,20 +4,19 @@ module Functional
 
     attr_reader :name
 
-    Info = Struct.new(:methods, :class_methods, :constants)
-
     def initialize(name, &definition)
       raise ArgumentError.new('no block given') unless block_given?
       raise ArgumentError.new('no name given') if name.nil? || name.empty?
       @name = name.to_sym
       @info = Info.new({}, {}, [])
       self.instance_eval(&definition)
+      @info.each_pair{|col, _| col.freeze}
       @info.freeze
       self.freeze
     end
 
-    def methods
-      @info.methods
+    def instance_methods
+      @info.instance_methods
     end
 
     def class_methods
@@ -37,7 +36,7 @@ module Functional
       end
       return false unless results.empty?
 
-      results = @info.methods.drop_while do |method, arity|
+      results = @info.instance_methods.drop_while do |method, arity|
         check_arity?(target, method, arity)
       end
       return false unless results.empty?
@@ -51,10 +50,12 @@ module Functional
 
     private
 
+    Info = Struct.new(:instance_methods, :class_methods, :constants)
+
     # @!visibility private
-    def method(name, arity = nil)
+    def instance_method(name, arity = nil)
       arity = arity.to_i unless arity.nil?
-      @info.methods[name.to_sym] = arity
+      @info.instance_methods[name.to_sym] = arity
     end
 
     # @!visibility private
@@ -65,12 +66,12 @@ module Functional
 
     # @!visibility private
     def attr_reader(name)
-      method(name, 0)
+      instance_method(name, 0)
     end
 
     # @!visibility private
     def attr_writer(name)
-      method("#{name}=".to_sym, 1)
+      instance_method("#{name}=".to_sym, 1)
     end
 
     # @!visibility private

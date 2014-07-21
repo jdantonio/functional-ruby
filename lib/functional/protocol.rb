@@ -36,11 +36,11 @@ module Functional
     end
 
     def Protocol?(*protocols)
-      ProtocolCheck.undefined?(*protocols).empty?
+      ProtocolCheck.undefined(*protocols).empty?
     end
 
     def Protocol!(*protocols)
-      (undefined = ProtocolCheck.undefined?(*protocols)).empty? or
+      (undefined = ProtocolCheck.undefined(*protocols)).empty? or
         raise ProtocolError.new("The following protocols are undefined: :#{undefined.join('; :')}.")
     end
 
@@ -48,10 +48,10 @@ module Functional
 
     def self.satisfies?(target, protocol)
       info = @@info[protocol]
-      return ! info.nil? && info.satisfies?(protocol)
+      return ! info.nil? && info.satisfies?(target)
     end
 
-    def self.undefined?(*protocols)
+    def self.undefined(*protocols)
       protocols.drop_while do |protocol|
         @@info.has_key? protocol.to_sym
       end
