@@ -13,8 +13,8 @@ SimpleCov.start do
   add_filter '/spec/'
 end
 
-require 'codeclimate-test-reporter'
-CodeClimate::TestReporter.start
+#require 'codeclimate-test-reporter'
+#CodeClimate::TestReporter.start
 
 require 'functional'
 
