@@ -32,13 +32,22 @@ module Functional
     def some?
       ! none?
     end
+    alias_method :value?, :some?
+    alias_method :fulfilled?, :some?
 
     def none?
       @none
     end
+    alias_method :reason?, :none?
+    alias_method :rejected?, :none?
 
     def some
       to_h[:some]
+    end
+    alias_method :value, :some
+
+    def reason
+      some? ? nil : :none
     end
 
     def length

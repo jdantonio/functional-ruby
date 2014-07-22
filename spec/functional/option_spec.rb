@@ -19,6 +19,7 @@ module Functional
     it_should_behave_like :abstract_struct
 
     specify{ Functional::Protocol::Satisfy! Option, :Option }
+    specify{ Functional::Protocol::Satisfy! Option, :Disposition }
 
     context 'initialization' do
 
@@ -66,6 +67,39 @@ module Functional
 
       specify '#some returns nil when none is set' do
         expect(none_subject.some).to be_nil
+      end
+
+      it 'aliases #some? as #fulfilled?' do
+        expect(some_subject).to be_fulfilled
+        expect(none_subject).to_not be_fulfilled
+      end
+
+      it 'aliases #some? as #value?' do
+        expect(some_subject).to be_value
+        expect(none_subject).to_not be_value
+      end
+
+      it 'aliases #none? as #rejected?' do
+        expect(some_subject).to_not be_rejected
+        expect(none_subject).to be_rejected
+      end
+
+      it 'aliases #none? as #reason?' do
+        expect(some_subject).to_not be_reason
+        expect(none_subject).to be_reason
+      end
+
+      it 'aliases #some as #value' do
+        expect(some_subject.value).to eq value
+        expect(none_subject.value).to be_nil
+      end
+
+      specify '#reason returns nil when some' do
+        expect(some_subject.reason).to be_nil
+      end
+
+      specify '#reason returns a truthy value when none' do
+        expect(none_subject.reason).to be_truthy
       end
     end
 
