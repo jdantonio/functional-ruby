@@ -21,7 +21,7 @@ module Functional
   # it can never be changed. Divergence between the two classes derive from these
   # two core differences.
   #
-  # @example
+  # @example Creating a New Class
   # 
   #   LeftRightCenter = Functional::Union.new(:left, :right, :center) #=> LeftRightCenter
   #   LeftRightCenter.ancestors #=> [LeftRightCenter, Functional::AbstractStruct... ]
@@ -38,6 +38,14 @@ module Functional
   #   prize.left    #=> nil
   #   prize.right   #=> "One million dollars!"
   #   prize.center  #=> nil
+  #
+  # @example Registering a New Class with Union
+  #
+  #   Functional::Union.new('Suit', :clubs, :diamonds, :hearts, :spades)
+  #    #=> Functional::Union::Suit
+  #
+  #   Functional::Union::Suit.hearts('Queen')
+  #    #=> #<union Functional::Union::Suit :clubs=>nil, :diamonds=>nil, :hearts=>"Queen", :spades=>nil>
   #
   # @see Functional::AbstractStruct
   # @see Functional::Record
