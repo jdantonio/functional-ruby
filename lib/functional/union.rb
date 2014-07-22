@@ -64,7 +64,7 @@ module Functional
     # @return [Functional::AbstractStruct] the union class
     def build(members)
       members = members.collect{|member| member.to_sym }.freeze
-      uniion = Class.new{ include AbstractStruct }
+      union = Class.new{ include AbstractStruct }
       union.private_class_method(:new)
       union.send(:datatype=, :union)
       union.send(:members=, members)

@@ -31,6 +31,28 @@ module Functional
 
     private
 
+    class RestrictionsProcessor
+      attr_reader :required
+      attr_reader :defaults
+
+      def mandatory(*members)
+        @required.concat(members.collect{|member| member.to_sym})
+      end
+
+      def default(member, value)
+        @defaults[member] = value
+      end
+
+      def initialize(&block)
+        @required = []
+        @defaults = {}
+        instance_eval(&block) if block_given?
+        @required.freeze
+        @defaults.freeze
+        self.freeze
+      end
+    end
+
     # Use the given `AbstractStruct` class and build the methods necessary
     # to support the given data members.
     #
@@ -39,12 +61,10 @@ module Functional
     # @return [Functional::AbstractStruct] the record class
     def build(members, &block)
       members = members.collect{|member| member.to_sym }.freeze
-      record = Class.new do
-        include AbstractStruct
-        @@defaults = block
-      end
+      record = Class.new{ include AbstractStruct }
       record.send(:datatype=, :record)
       record.send(:members=, members)
+      record.class_variable_set(:@@restrictions, RestrictionsProcessor.new(&block))
       define_initializer(record)
       members.each do |member|
         define_reader(record, member)
@@ -58,11 +78,13 @@ module Functional
     # @return [Functional::AbstractStruct] the record class
     def define_initializer(record)
       record.send(:define_method, :initialize) do |data = {}|
-        defaults = Struct.new(*members).new
-        defaults.instance_eval(&@@defaults) unless @@defaults.nil?
+        restrictions = self.class.class_variable_get(:@@restrictions)
         data = members.reduce({}) do |memo, member|
-          memo[member] = data.fetch(member, defaults.send(member))
+          memo[member] = data.fetch(member, restrictions.defaults[member])
           memo
+        end
+        if data.any?{|k,v| restrictions.required.include?(k) && v.nil? }
+          raise ArgumentError.new('mandatory members must not be nil')
         end
         set_data_hash(data)
         set_values_array(data.values)
