@@ -2,11 +2,11 @@ require_relative 'abstract_struct'
 
 module Functional
 
-  # An immutable data structure with multiple data members. A `Record` is a
-  # convenient way to bundle a number of member attributes together,
+  # An immutable data structure with multiple data fields. A `Record` is a
+  # convenient way to bundle a number of field attributes together,
   # using accessor methods, without having to write an explicit class.
   # The `Record` module generates new `AbstractStruct` subclasses that hold a
-  # set of members with a reader method for each member.
+  # set of fields with a reader method for each field.
   #
   # A `Record` is very similar to a Ruby `Struct` and shares many of its behaviors
   # and attributes. Unlike a # Ruby `Struct`, a `Record` is immutable: its values
@@ -20,13 +20,13 @@ module Functional
   module Record
     extend self
 
-    # Create a new record class with the given members.
+    # Create a new record class with the given fields.
     #
     # @return [Functional::AbstractStruct] the new record subclass
-    # @raise [ArgumentError] no members specified
-    def new(*members, &block)
-      raise ArgumentError.new('no members provided') if members.empty?
-      build(members, &block)
+    # @raise [ArgumentError] no fields specified
+    def new(*fields, &block)
+      raise ArgumentError.new('no fields provided') if fields.empty?
+      build(fields, &block)
     end
 
     private
@@ -35,12 +35,12 @@ module Functional
       attr_reader :required
       attr_reader :defaults
 
-      def mandatory(*members)
-        @required.concat(members.collect{|member| member.to_sym})
+      def mandatory(*fields)
+        @required.concat(fields.collect{|field| field.to_sym})
       end
 
-      def default(member, value)
-        @defaults[member] = value
+      def default(field, value)
+        @defaults[field] = value
       end
 
       def initialize(&block)
@@ -54,20 +54,19 @@ module Functional
     end
 
     # Use the given `AbstractStruct` class and build the methods necessary
-    # to support the given data members.
+    # to support the given data fields.
     #
-    # @param [Functional::AbstractStruct] record the new record class
-    # @param [Array] members the list of symbolic names for all data members
+    # @param [Array] fields the list of symbolic names for all data fields
     # @return [Functional::AbstractStruct] the record class
-    def build(members, &block)
-      members = members.collect{|member| member.to_sym }.freeze
+    def build(fields, &block)
+      fields = fields.collect{|field| field.to_sym }.freeze
       record = Class.new{ include AbstractStruct }
       record.send(:datatype=, :record)
-      record.send(:members=, members)
+      record.send(:fields=, fields)
       record.class_variable_set(:@@restrictions, RestrictionsProcessor.new(&block))
       define_initializer(record)
-      members.each do |member|
-        define_reader(record, member)
+      fields.each do |field|
+        define_reader(record, field)
       end
       record
     end
@@ -79,12 +78,12 @@ module Functional
     def define_initializer(record)
       record.send(:define_method, :initialize) do |data = {}|
         restrictions = self.class.class_variable_get(:@@restrictions)
-        data = members.reduce({}) do |memo, member|
-          memo[member] = data.fetch(member, restrictions.defaults[member])
+        data = fields.reduce({}) do |memo, field|
+          memo[field] = data.fetch(field, restrictions.defaults[field])
           memo
         end
         if data.any?{|k,v| restrictions.required.include?(k) && v.nil? }
-          raise ArgumentError.new('mandatory members must not be nil')
+          raise ArgumentError.new('mandatory fields must not be nil')
         end
         set_data_hash(data)
         set_values_array(data.values)
@@ -93,14 +92,14 @@ module Functional
       record
     end
 
-    # Define a reader method on the given record class for the given data member.
+    # Define a reader method on the given record class for the given data field.
     #
     # @param [Functional::AbstractStruct] record the new record class
-    # @param [Symbol] member symbolic name of the current data member
+    # @param [Symbol] field symbolic name of the current data field
     # @return [Functional::AbstractStruct] the record class
-    def define_reader(record, member)
-      record.send(:define_method, member) do
-        to_h[member]
+    def define_reader(record, field)
+      record.send(:define_method, field) do
+        to_h[field]
       end
       record
     end

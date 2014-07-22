@@ -5,24 +5,24 @@ module Functional
 
   describe Record do
 
-    let!(:expected_members){ [:a, :b, :c] }
+    let!(:expected_fields){ [:a, :b, :c] }
     let!(:expected_values){ [42, nil, nil] }
 
-    let(:struct_class) { Record.new(*expected_members) }
-    let(:struct_object) { struct_class.new(struct_class.members.first => 42) }
+    let(:struct_class) { Record.new(*expected_fields) }
+    let(:struct_object) { struct_class.new(struct_class.fields.first => 42) }
 
     it_should_behave_like :abstract_struct
 
     context 'definition' do
 
-      it 'default all members values to nil' do
-        members = [:foo, :bar, :baz]
-        clazz = Record.new(*members)
+      it 'default all fields values to nil' do
+        fields = [:foo, :bar, :baz]
+        clazz = Record.new(*fields)
         
         record = clazz.new
 
-        members.each do |member|
-          expect(record.send(member)).to be_nil
+        fields.each do |field|
+          expect(record.send(field)).to be_nil
         end
       end
 
@@ -35,7 +35,7 @@ module Functional
         expect(record.baz).to eq 3
       end
 
-      it 'defaults members to values given during class creation' do
+      it 'defaults fields to values given during class creation' do
         clazz = Record.new(:foo, :bar, :baz) do
           default :foo, 42
           default :bar, 'w00t!'

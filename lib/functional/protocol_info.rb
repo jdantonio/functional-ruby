@@ -46,7 +46,7 @@ module Functional
 
     # The constants expected by this protocol.
     #
-    # @rerurn [Array] a frozen list of the constants expected by this protocol
+    # @return [Array] a frozen list of the constants expected by this protocol
     def constants
       @info.constants
     end

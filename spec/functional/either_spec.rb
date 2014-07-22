@@ -8,7 +8,7 @@ module Functional
     let!(:value){ 42 }
     let!(:reason){ StandardError.new }
 
-    let!(:expected_members){ [:left, :right] }
+    let!(:expected_fields){ [:left, :right] }
     let!(:expected_values){ [value, nil] }
 
     let(:struct_class) { Either }

@@ -1,7 +1,7 @@
 require_relative 'protocol'
 
 Functional::SpecifyProtocol(:Struct) do
-  instance_method :members
+  instance_method :fields
   instance_method :values
   instance_method :length
   instance_method :each
@@ -13,38 +13,38 @@ module Functional
   # An abstract base class for immutable struct classes.
   module AbstractStruct
 
-    # @return [Array] the values of all record members in order, frozen
+    # @return [Array] the values of all record fields in order, frozen
     attr_reader :values
 
-    # Yields the value of each record member in order.
+    # Yields the value of each record field in order.
     # If no block is given an enumerator is returned.
     #
-    # @yieldparam [Object] value the value of the given member
+    # @yieldparam [Object] value the value of the given field
     #
     # @return [Enumerable] when no block is given
     def each
       return enum_for(:each) unless block_given?
-      members.each do |member|
-        yield(self.send(member))
+      fields.each do |field|
+        yield(self.send(field))
       end
     end
 
-    # Yields the name and value of each record member in order.
+    # Yields the name and value of each record field in order.
     # If no block is given an enumerator is returned.
     #
-    # @yieldparam [Symbol] member the record member for the current iteration
-    # @yieldparam [Object] value the value of the current member
+    # @yieldparam [Symbol] field the record field for the current iteration
+    # @yieldparam [Object] value the value of the current field
     #
     # @return [Enumerable] when no block is given
     def each_pair
       return enum_for(:each_pair) unless block_given?
-      members.each do |member|
-        yield(member, self.send(member))
+      fields.each do |field|
+        yield(field, self.send(field))
       end
     end
 
     # Equality--Returns `true` if `other` has the same record subclass and has equal
-    # member values (according to `Object#==`).
+    # field values (according to `Object#==`).
     #
     # @param [Object] other the other record to compare for equality
     # @return [Booleab] true when equal else false
@@ -54,7 +54,7 @@ module Functional
     alias_method :==, :eql?
 
     # Describe the contents of this record in a string. Will include the name of the
-    # record class, all members, and all values.
+    # record class, all fields, and all values.
     #
     # @return [String] the class and contents of this record
     def inspect
@@ -63,24 +63,24 @@ module Functional
     end
     alias_method :to_s, :inspect
 
-    # Returns the number of record members.
+    # Returns the number of record fields.
     #
-    # @return [Fixnum] the number of record members
+    # @return [Fixnum] the number of record fields
     def length
-      members.length
+      fields.length
     end
     alias_method :size, :length
 
-    # A frozen array of all record members.
+    # A frozen array of all record fields.
     #
-    # @return [Array] all record members in order, frozen
-    def members
-      self.class.members
+    # @return [Array] all record fields in order, frozen
+    def fields
+      self.class.fields
     end
 
-    # Returns a Hash containing the names and values for the record’s members.
+    # Returns a Hash containing the names and values for the record’s fields.
     #
-    # @return [Hash] collection of all members and their associated values
+    # @return [Hash] collection of all fields and their associated values
     def to_h
       @data
     end
@@ -110,21 +110,21 @@ module Functional
     # @!visibility private
     module ClassMethods
 
-      # A frozen Array of all record members in order
-      attr_reader :members
+      # A frozen Array of all record fields in order
+      attr_reader :fields
 
       # A symbol describing the object's datatype
       attr_reader :datatype
 
       private
 
-      # A frozen Array of all record members in order
-      attr_writer :members
+      # A frozen Array of all record fields in order
+      attr_writer :fields
 
       # A symbol describing the object's datatype
       attr_writer :datatype
 
-      members = [].freeze
+      fields = [].freeze
       datatype = :struct 
     end
   end

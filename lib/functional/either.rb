@@ -92,7 +92,7 @@ module Functional
     include AbstractStruct
 
     self.datatype = :either
-    self.members = [:left, :right].freeze
+    self.fields = [:left, :right].freeze
 
     # @!visibility private 
     NO_VALUE = Object.new.freeze

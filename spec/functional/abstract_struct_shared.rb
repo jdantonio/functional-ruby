@@ -5,29 +5,29 @@ shared_examples :abstract_struct do
   let(:other_struct) do
     Class.new do
       include Functional::AbstractStruct
-      self.members = [:foo, :bar, :baz].freeze
+      self.fields = [:foo, :bar, :baz].freeze
       self.datatype = :other_struct
     end
   end
 
-  context 'member collection' do
+  context 'field collection' do
 
-    it 'contains all possible members' do
-      expected_members.each do |member|
-        expect(struct_class.members).to include(member)
+    it 'contains all possible fields' do
+      expected_fields.each do |field|
+        expect(struct_class.fields).to include(field)
       end
     end
 
     it 'is frozen' do
-      expect(struct_class.members).to be_frozen
+      expect(struct_class.fields).to be_frozen
     end
 
-    it 'does not overwrite members for other structs' do
-      expect(struct_class.members).to_not eq other_struct.members
+    it 'does not overwrite fields for other structs' do
+      expect(struct_class.fields).to_not eq other_struct.fields
     end
 
     it 'is the same when called on the class and on an object' do
-      expect(struct_class.members).to eq struct_object.members
+      expect(struct_class.fields).to eq struct_object.fields
     end
   end
 
@@ -41,32 +41,32 @@ shared_examples :abstract_struct do
       expect(struct_object.values).to be_frozen
     end
 
-    specify 'exist for each member' do
-      expected_members.each do |member|
-        expect(struct_object).to respond_to(member)
-        expect(struct_object.method(member).arity).to eq 0
+    specify 'exist for each field' do
+      expected_fields.each do |field|
+        expect(struct_object).to respond_to(field)
+        expect(struct_object.method(field).arity).to eq 0
       end
     end
 
-    specify 'return the appropriate value all members' do
-      expected_members.each_with_index do |member, i|
-        expect(struct_object.send(member)).to eq expected_values[i]
+    specify 'return the appropriate value all fields' do
+      expected_fields.each_with_index do |field, i|
+        expect(struct_object.send(field)).to eq expected_values[i]
       end
     end
   end
 
   context 'enumeration' do
 
-    specify '#each_pair with a block iterates over all members and values' do
-      members = []
+    specify '#each_pair with a block iterates over all fields and values' do
+      fields = []
       values = []
 
-      struct_object.each_pair do |member, value|
-        members << member
+      struct_object.each_pair do |field, value|
+        fields << field
         values << value
       end
 
-      expect(members).to eq struct_object.members
+      expect(fields).to eq struct_object.fields
       expect(values).to eq struct_object.values
     end
 
@@ -103,7 +103,7 @@ shared_examples :abstract_struct do
     end
 
     specify 'rejects equality for two structs of different classes' do
-      other = Struct.new(*expected_members).new(*expected_values)
+      other = Struct.new(*expected_fields).new(*expected_values)
 
       expect(struct_object).to_not eq other
       expect(struct_object).to_not eql other
@@ -117,10 +117,10 @@ shared_examples :abstract_struct do
       expect(struct_object).to_not eql other
     end
 
-    specify '#to_h returns a Hash with all member/value pairs' do
+    specify '#to_h returns a Hash with all field/value pairs' do
       hsh = struct_object.to_h
 
-      expect(hsh.keys).to eq struct_object.members
+      expect(hsh.keys).to eq struct_object.fields
       expect(hsh.values).to eq struct_object.values
     end
 
@@ -134,10 +134,10 @@ shared_examples :abstract_struct do
       expect(struct_object.inspect).to match(/^#<#{struct} /)
     end
 
-    specify '#inspect includes all member/value pairs' do
-      struct_object.members.each_with_index do |member, i|
+    specify '#inspect includes all field/value pairs' do
+      struct_object.fields.each_with_index do |field, i|
         value_regex = "\"?#{struct_object.values[i]}\"?"
-        expect(struct_object.inspect).to match(/:#{member}=>#{value_regex}/)
+        expect(struct_object.inspect).to match(/:#{field}=>#{value_regex}/)
       end
     end
 
@@ -145,9 +145,9 @@ shared_examples :abstract_struct do
       expect(struct_object.inspect).to eq struct_object.to_s
     end
 
-    specify '#length returns the number of members' do
-      expect(struct_object.length).to eq struct_class.members.length
-      expect(struct_object.length).to eq expected_members.length
+    specify '#length returns the number of fields' do
+      expect(struct_object.length).to eq struct_class.fields.length
+      expect(struct_object.length).to eq expected_fields.length
     end
 
     specify 'aliases #length as #size' do
