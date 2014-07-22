@@ -13,12 +13,6 @@ module Functional
   # An abstract base class for immutable struct classes.
   module AbstractStruct
 
-    # A frozen Array of all record members in order
-    MEMBERS = [].freeze
-
-    # A symbol describing the object's datatype
-    DATATYPE = :struct
-
     # @return [Array] the values of all record members in order, frozen
     attr_reader :values
 
@@ -65,7 +59,7 @@ module Functional
     # @return [String] the class and contents of this record
     def inspect
       state = to_h.to_s.gsub(/^{/, '').gsub(/}$/, '')
-      "#<#{self.class::DATATYPE} #{self.class} #{state}>"
+      "#<#{self.class.datatype} #{self.class} #{state}>"
     end
     alias_method :to_s, :inspect
 
@@ -81,7 +75,7 @@ module Functional
     #
     # @return [Array] all record members in order, frozen
     def members
-      self.class::MEMBERS
+      self.class.members
     end
 
     # Returns a Hash containing the names and values for the record’s members.
@@ -105,18 +99,33 @@ module Functional
       @values = values.dup.freeze
     end
 
-    # Set the class `MEMBERS` constant to a copy of the given array and freeze it.
-    # @param [Class] clazz the new struct class
-    # @param [Array] members the array of data members
-    def self.set_members_constant(clazz, members)
-      clazz.const_set('MEMBERS', members.dup.freeze)
+    private
+
+    def self.included(base)
+      base.extend(ClassMethods)
+      super(base)
     end
 
-    # Set the class `DATATYPE` constant to the given value (symbolized)
-    # @param [Class] clazz the new struct class
-    # @param [Symbol] datatype the datatype name of the new struct class
-    def self.set_datatype_constant(clazz, datatype)
-      clazz.const_set('DATATYPE', datatype.to_sym)
+    # Class methods added to a class that includes {Functional::PatternMatching}
+    # @!visibility private
+    module ClassMethods
+
+      # A frozen Array of all record members in order
+      attr_reader :members
+
+      # A symbol describing the object's datatype
+      attr_reader :datatype
+
+      private
+
+      # A frozen Array of all record members in order
+      attr_writer :members
+
+      # A symbol describing the object's datatype
+      attr_writer :datatype
+
+      members = [].freeze
+      datatype = :struct 
     end
   end
 end

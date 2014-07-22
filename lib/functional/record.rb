@@ -39,8 +39,8 @@ module Functional
     # @param [Array] members the list of symbolic names for all data members
     # @return [Functional::AbstractStruct] the record class
     def build(record, members)
-      AbstractStruct.set_datatype_constant(record, :record)
-      AbstractStruct.set_members_constant(record, members)
+      record.send(:datatype=, :record)
+      record.send(:members=, members)
       define_initializer(record)
       members.each do |member|
         define_reader(record, member)
@@ -55,13 +55,13 @@ module Functional
     def define_initializer(record)
       record.send(:define_method, :initialize) do |data = {}|
         data = members.reduce({}) do |memo, member|
-          # may eventually support default arguments
-          memo[member] = data.fetch(member, nil)
-          memo
-        end
-        set_data_hash(data)
-        set_values_array(data.values)
-        self.freeze
+        # may eventually support default arguments
+        memo[member] = data.fetch(member, nil)
+        memo
+      end
+      set_data_hash(data)
+      set_values_array(data.values)
+      self.freeze
       end
       record
     end

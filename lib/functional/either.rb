@@ -91,11 +91,11 @@ module Functional
   class Either
     include AbstractStruct
 
+    self.datatype = :either
+    self.members = [:left, :right].freeze
+
     # @!visibility private 
     NO_VALUE = Object.new.freeze
-
-    AbstractStruct.set_datatype_constant(self, :either)
-    AbstractStruct.set_members_constant(self, [:left, :right].freeze)
 
     private_class_method :new
 

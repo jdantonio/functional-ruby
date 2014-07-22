@@ -2,24 +2,32 @@ shared_examples :abstract_struct do
 
   specify { Functional::Protocol::Satisfy! struct_class, :Struct }
 
+  let(:other_struct) do
+    Class.new do
+      include Functional::AbstractStruct
+      self.members = [:foo, :bar, :baz].freeze
+      self.datatype = :other_struct
+    end
+  end
+
   context 'member collection' do
 
     it 'contains all possible members' do
       expected_members.each do |member|
-        expect(struct_class::MEMBERS).to include(member)
+        expect(struct_class.members).to include(member)
       end
     end
 
     it 'is frozen' do
-      expect(struct_class::MEMBERS).to be_frozen
+      expect(struct_class.members).to be_frozen
     end
 
     it 'does not overwrite members for other structs' do
-      expect(struct_class::MEMBERS).to_not eq Functional::AbstractStruct::MEMBERS
+      expect(struct_class.members).to_not eq other_struct.members
     end
 
     it 'is the same when called on the class and on an object' do
-      expect(struct_class::MEMBERS).to eq struct_object.members
+      expect(struct_class.members).to eq struct_object.members
     end
   end
 
@@ -138,7 +146,7 @@ shared_examples :abstract_struct do
     end
 
     specify '#length returns the number of members' do
-      expect(struct_object.length).to eq struct_class::MEMBERS.length
+      expect(struct_object.length).to eq struct_class.members.length
       expect(struct_object.length).to eq expected_members.length
     end
 

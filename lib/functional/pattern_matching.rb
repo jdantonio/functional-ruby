@@ -96,8 +96,8 @@ module Functional
     end
 
     def self.included(base)
-      base.extend ClassMethods
-      super base
+      base.extend(ClassMethods)
+      super(base)
     end
 
     # Class methods added to a class that includes {Functional::PatternMatching}
