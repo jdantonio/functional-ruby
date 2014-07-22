@@ -50,7 +50,7 @@ module Functional
   end
   module_function :SpecifyProtocol
 
-  # {include:file:doc/protocol.md}
+  # {include:file:./doc/protocol.md}
   module Protocol
 
     # The global registry of specified protocols.

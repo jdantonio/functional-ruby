@@ -3,7 +3,7 @@ require_relative 'type_check'
 
 module Functional
 
-  # {include:file:doc/record.md}
+  # {include:file:./doc/record.md}
   #
   # @see Functional::AbstractStruct
   # @see Functional::Union

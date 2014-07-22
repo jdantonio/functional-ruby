@@ -2,7 +2,7 @@ require_relative 'either'
 
 module Functional
 
-  # {include:file:doc/pattern_matching.md}
+  # {include:file:./doc/pattern_matching.md}
   module PatternMatching
 
     # A parameter that is required but that can take any value.
