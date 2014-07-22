@@ -23,19 +23,13 @@ module Functional
     private
 
     # @!visibility private
-    class RestrictionsProcessor
+    #
+    # A set of restrictions governing the creation of a new record.
+    class Restrictions
       include TypeCheck
-      attr_reader :required
-      attr_reader :defaults
 
-      def mandatory(*fields)
-        @required.concat(fields.collect{|field| field.to_sym})
-      end
-
-      def default(field, value)
-        @defaults[field] = value
-      end
-
+      # Create a new restrictions object by processing the given
+      # block. The block should be the DSL for defining a record class.
       def initialize(&block)
         @required = []
         @defaults = {}
@@ -45,6 +39,27 @@ module Functional
         self.freeze
       end
 
+      # DSL method for declaring one or more fields to be mandatory.
+      #
+      # @param [Symbol] fields zero or more mandatory fields
+      def mandatory(*fields)
+        @required.concat(fields.collect{|field| field.to_sym})
+      end
+
+      # DSL method for declaring a default value for a field
+      #
+      # @param [Symbol] field the field to be given a default value
+      # @param [Object] value the default value of the field
+      def default(field, value)
+        @defaults[field] = value
+      end
+
+      # Clone a default value if it is cloneable. Else just return
+      # the value.
+      #
+      # @param [Symbol] field the name of the field from which the
+      #   default value is to be cloned.
+      # @return [Object] a clone of the value or the value if uncloneable
       def clone_default(field)
         value = @defaults[field]
         value = value.clone unless uncloneable?(value)
@@ -54,8 +69,23 @@ module Functional
         return value
       end
 
+      # Check the given data hash to see if it contains non-nil values for
+      # all mandatory fields.
+      #
+      # @param [Hash] data the data hash
+      # @raise [ArgumentError] if any mandatory fields are missing
+      def check_mandatory!(data)
+        if data.any?{|k,v| @required.include?(k) && v.nil? }
+          raise ArgumentError.new('mandatory fields must not be nil')
+        end
+      end
+
       private
 
+      # Is the given object uncloneable?
+      #
+      # @param [Object] object the object to check
+      # @return [Boolean] true if the object cannot be cloned else false
       def uncloneable?(object)
         Type? object, NilClass, TrueClass, FalseClass, Fixnum, Bignum, Float
       end
@@ -67,20 +97,30 @@ module Functional
     # @param [Array] fields the list of symbolic names for all data fields
     # @return [Functional::AbstractStruct] the record class
     def build(fields, &block)
+      record, fields = define_class(fields)
+      record.send(:datatype=, :record)
+      record.send(:fields=, fields)
+      record.class_variable_set(:@@restrictions, Restrictions.new(&block))
+      define_initializer(record)
+      fields.each do |field|
+        define_reader(record, field)
+      end
+      record
+    end
+
+    # Define the new record class and, if necessary, register it with `Record`
+    #
+    # @param [Array] fields the list of symbolic names for all data fields
+    # @return [Functional::AbstractStruct, Arrat] the new class and the
+    #   (possibly) updated fields array
+    def define_class(fields)
       record = Class.new{ include AbstractStruct }
       if fields.first.is_a? String
         self.const_set(fields.first, record)
         fields = fields[1, fields.length-1]
       end
       fields = fields.collect{|field| field.to_sym }.freeze
-      record.send(:datatype=, :record)
-      record.send(:fields=, fields)
-      record.class_variable_set(:@@restrictions, RestrictionsProcessor.new(&block))
-      define_initializer(record)
-      fields.each do |field|
-        define_reader(record, field)
-      end
-      record
+      [record, fields]
     end
 
     # Define an initializer method on the given record class.
@@ -94,9 +134,7 @@ module Functional
           memo[field] = data.fetch(field, restrictions.clone_default(field))
           memo
         end
-        if data.any?{|k,v| restrictions.required.include?(k) && v.nil? }
-          raise ArgumentError.new('mandatory fields must not be nil')
-        end
+        restrictions.check_mandatory!(data)
         set_data_hash(data)
         set_values_array(data.values)
         self.freeze
