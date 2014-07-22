@@ -24,10 +24,9 @@ module Functional
     #
     # @return [Functional::AbstractStruct] the new record subclass
     # @raise [ArgumentError] no members specified
-    def new(*members)
+    def new(*members, &block)
       raise ArgumentError.new('no members provided') if members.empty?
-      members = members.collect{|member| member.to_sym }.freeze
-      build(Class.new{ include AbstractStruct }, members)
+      build(members, &block)
     end
 
     private
@@ -38,7 +37,12 @@ module Functional
     # @param [Functional::AbstractStruct] record the new record class
     # @param [Array] members the list of symbolic names for all data members
     # @return [Functional::AbstractStruct] the record class
-    def build(record, members)
+    def build(members, &block)
+      members = members.collect{|member| member.to_sym }.freeze
+      record = Class.new do
+        include AbstractStruct
+        @@defaults = block
+      end
       record.send(:datatype=, :record)
       record.send(:members=, members)
       define_initializer(record)
@@ -54,14 +58,15 @@ module Functional
     # @return [Functional::AbstractStruct] the record class
     def define_initializer(record)
       record.send(:define_method, :initialize) do |data = {}|
+        defaults = Struct.new(*members).new
+        defaults.instance_eval(&@@defaults) unless @@defaults.nil?
         data = members.reduce({}) do |memo, member|
-        # may eventually support default arguments
-        memo[member] = data.fetch(member, nil)
-        memo
-      end
-      set_data_hash(data)
-      set_values_array(data.values)
-      self.freeze
+          memo[member] = data.fetch(member, defaults.send(member))
+          memo
+        end
+        set_data_hash(data)
+        set_values_array(data.values)
+        self.freeze
       end
       record
     end

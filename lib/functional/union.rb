@@ -51,8 +51,7 @@ module Functional
     # @raise [ArgumentError] no members specified
     def new(*members)
       raise ArgumentError.new('no members provided') if members.empty?
-      members = members.collect{|member| member.to_sym }.freeze
-      build(Class.new{ include AbstractStruct }, members)
+      build(members)
     end
 
     private
@@ -63,7 +62,9 @@ module Functional
     # @param [Functional::AbstractStruct] union the new union class
     # @param [Array] members the list of symbolic names for all data members
     # @return [Functional::AbstractStruct] the union class
-    def build(union, members)
+    def build(members)
+      members = members.collect{|member| member.to_sym }.freeze
+      uniion = Class.new{ include AbstractStruct }
       union.private_class_method(:new)
       union.send(:datatype=, :union)
       union.send(:members=, members)
