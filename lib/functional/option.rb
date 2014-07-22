@@ -59,6 +59,19 @@ module Functional
       end
     end
 
+    def or(other = NO_OPTION)
+      raise ArgumentError.new('cannot give both an option and a block') if other != NO_OPTION && block_given?
+      return true if some?
+
+      if block_given?
+        !! yield
+      elsif Protocol::Satisfy? other, :Option
+        other.some?
+      else
+        !! other
+      end
+    end
+
     private
 
     # @!visibility private 

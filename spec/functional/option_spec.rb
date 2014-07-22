@@ -135,21 +135,43 @@ module Functional
 
     context '#or' do
 
-      it 'returns true when some'
+      it 'returns true when some' do
+        expect(Option.some(42).or(nil)).to be true
+      end
 
-      it 'returns true when none and other is a some Option'
+      it 'returns true when none and other is a some Option' do
+        other = Option.some(42)
+        expect(Option.none.or(other)).to be true
+      end
 
-      it 'returns false when none and other is a none Option'
+      it 'returns false when none and other is a none Option' do
+        other = Option.none
+        expect(Option.none.or(other)).to be false
+      end
 
-      it 'returns true when none and the block returns a truthy value'
+      it 'returns true when none and the block returns a truthy value' do
+        other = ->{ 42 }
+        expect(Option.none.or(&other)).to be true
+      end
 
-      it 'returns false when none and the block returns a falsey value'
+      it 'returns false when none and the block returns a falsey value' do
+        other = ->{ false }
+        expect(Option.none.or(&other)).to be false
+      end
 
-      it 'returns true when none and given a truthy value'
+      it 'returns true when none and given a truthy value' do
+        expect(Option.none.or('truthy')).to be true
+      end
 
-      it 'returns false when none and given a falsey value'
+      it 'returns false when none and given a falsey value' do
+        expect(Option.none.or(nil)).to be false
+      end
 
-      it 'raises an exception when given both a value and a block'
+      it 'raises an exception when given both a value and a block' do
+        expect {
+          Option.none.and(:foo){ :bar  }
+        }.to raise_error(ArgumentError)
+      end
     end
 
     context 'else' do
