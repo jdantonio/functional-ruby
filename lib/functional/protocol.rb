@@ -65,9 +65,7 @@ module Functional
     # @raise [ArgumentError] when no protocols given
     def Satisfy?(target, *protocols)
       raise ArgumentError.new('no protocols given') if protocols.empty?
-      protocols.drop_while { |protocol|
-        Protocol.satisfies?(target, protocol.to_sym)
-      }.empty?
+      protocols.all?{|protocol| Protocol.satisfies?(target, protocol.to_sym) }
     end
     module_function :Satisfy?
 

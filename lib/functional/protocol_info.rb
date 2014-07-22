@@ -71,9 +71,7 @@ module Functional
     # @return [Boolean] true when satisfied else false
     def satisfies_constants?(target)
       clazz = target.is_a?(Module) ? target : target.class
-      @info.constants.drop_while { |constant|
-        clazz.const_defined?(constant)
-      }.empty?
+      @info.constants.all?{|constant| clazz.const_defined?(constant) }
     end
 
     # Does the target satisfy the instance methods expected by this protocol?
@@ -81,13 +79,13 @@ module Functional
     # @param [target] target the module/class/object to interrogate
     # @return [Boolean] true when satisfied else false
     def satisfies_instance_methods?(target)
-      @info.instance_methods.drop_while { |method, arity|
+      @info.instance_methods.all? do |method, arity|
         if target.is_a? Module
           target.method_defined?(method) && check_arity?(target.instance_method(method), arity)
         else
           target.respond_to?(method) && check_arity?(target.method(method), arity)
         end
-      }.empty?
+      end
     end
 
 
@@ -97,11 +95,11 @@ module Functional
     # @return [Boolean] true when satisfied else false
     def satisfies_class_methods?(target)
       clazz = target.is_a?(Module) ? target : target.class
-      @info.class_methods.drop_while { |method, arity|
+      @info.class_methods.all? do |method, arity|
         break false unless clazz.respond_to? method
         method = clazz.method(method)
         check_arity?(method, arity)
-      }.empty?
+      end
     end
 
     # Does the given method have the expected arity? Returns true
