@@ -71,32 +71,66 @@ module Functional
 
     context 'length' do
 
-      it 'returns 1 when some'
+      it 'returns 1 when some' do
+        expect(Option.some(:foo).length).to eq 1
+      end
 
-      it 'returns 0 when none'
+      it 'returns 0 when none' do
+        expect(Option.none.length).to eq 0
+      end
 
-      it 'as aliased as #size'
+      it 'as aliased as #size' do
+        expect(Option.some(:foo).size).to eq 1
+        expect(Option.none.size).to eq 0
+      end
     end
 
     context '#and' do
 
-      it 'returns false when none'
+      it 'returns false when none' do
+        expect(Option.none.and(true)).to be false
+      end
 
-      it 'returns true when some and other is a some Option'
+      it 'returns true when some and other is a some Option' do
+        other = Option.some(42)
+        expect(Option.some(:foo).and(other)).to be true
+      end
 
-      it 'returns false when some and other is a none Option'
+      it 'returns false when some and other is a none Option' do
+        other = Option.none
+        expect(Option.some(:foo).and(other)).to be false
+      end
 
-      it 'passes the value to the given block when some'
+      it 'passes the value to the given block when some' do
+        expected = false
+        other = ->(some){ expected = some }
+        Option.some(42).and(&other)
+        expect(expected).to eq 42
+      end
 
-      it 'returns true when some and the block returns a truthy value'
+      it 'returns true when some and the block returns a truthy value' do
+        other = ->(some){ 'truthy' }
+        expect(Option.some(42).and(&other)).to be true
+      end
 
-      it 'returns false when some and the block returns a falsey value'
+      it 'returns false when some and the block returns a falsey value' do
+        other = ->(some){ nil }
+        expect(Option.some(42).and(&other)).to be false
+      end
 
-      it 'returns true when some and given a truthy value'
+      it 'returns true when some and given a truthy value' do
+        expect(Option.some(42).and('truthy')).to be true
+      end
 
-      it 'returns false when some and given a falsey value'
+      it 'returns false when some and given a falsey value' do
+        expect(Option.some(42).and(nil)).to be false
+      end
 
-      it 'raises an exception when given both a value and a block'
+      it 'raises an exception when given both a value and a block' do
+        expect {
+          Option.some(42).and(:foo){|some| :bar  }
+        }.to raise_error(ArgumentError)
+      end
     end
 
     context '#or' do

@@ -5,13 +5,13 @@ Functional::SpecifyProtocol(:Option) do
   instance_method :some?, 0
   instance_method :none?, 0
   instance_method :some, 0
-  class_method :some, 1
-  class_method :none, 0
 end
 
 module Functional
   class Option
     include AbstractStruct
+
+    NO_OPTION = Object.new.freeze
 
     self.datatype = :option
     self.fields = [:some].freeze
@@ -39,6 +39,24 @@ module Functional
 
     def some
       to_h[:some]
+    end
+
+    def length
+      none? ? 0 : 1
+    end
+    alias_method :size, :length
+
+    def and(other = NO_OPTION)
+      raise ArgumentError.new('cannot give both an option and a block') if other != NO_OPTION && block_given?
+      return false if none?
+
+      if block_given?
+        !! yield(some)
+      elsif Protocol::Satisfy? other, :Option
+        other.some?
+      else
+        !! other
+      end
     end
 
     private
