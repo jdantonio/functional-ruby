@@ -81,6 +81,24 @@ module Functional
       end
     end
 
+    def else(other = NO_OPTION)
+      raise ArgumentError.new('cannot give both an option and a block') if other != NO_OPTION && block_given?
+      return some if some?
+
+      if block_given?
+        yield
+      elsif Protocol::Satisfy? other, :Option
+        other.some
+      else
+        other
+      end
+    end
+
+    def inspect
+      super.gsub(/ :some/, " (#{some? ? 'some' : 'none'}) :some")
+    end
+    alias_method :to_s, :inspect
+
     private
 
     # @!visibility private 

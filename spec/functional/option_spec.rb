@@ -1,5 +1,6 @@
 require 'spec_helper'
 require_relative 'abstract_struct_shared'
+require 'securerandom'
 
 module Functional
 
@@ -20,6 +21,9 @@ module Functional
 
     specify{ Functional::Protocol::Satisfy! Option, :Option }
     specify{ Functional::Protocol::Satisfy! Option, :Disposition }
+
+    let(:some_value){ SecureRandom.uuid }
+    let(:other_value){ SecureRandom.uuid }
 
     context 'initialization' do
 
@@ -208,19 +212,36 @@ module Functional
       end
     end
 
-    context 'else' do
+    context '#else' do
 
-      it 'returns the value when some'
+      it 'returns the value when some' do
+        expect(Option.some(some_value).else(other_value)).to eq some_value
+      end
 
-      it 'returns the given value when none'
+      it 'returns the given value when none' do
+        expect(Option.none.else(other_value)).to eq other_value
+      end
 
-      it 'returns the other value when none and given a some Option'
+      it 'returns the other value when none and given a some Option' do
+        other = Option.some(other_value)
+        expect(Option.none.else(other)).to eq other_value
+      end
 
-      it 'returns nil when none and given a none Option'
+      it 'returns nil when none and given a none Option' do
+        other = Option.none
+        expect(Option.none.else(other)).to be_nil
+      end
 
-      it 'returns the result of the given block when none'
+      it 'returns the result of the given block when none' do
+        other = ->{ other_value }
+        expect(Option.none.else(&other)).to eq other_value
+      end
 
-      it 'raises an exception when given both a value and a block'
+      it 'raises an exception when given both a value and a block' do
+        expect {
+          Option.none.else(:foo){ :bar  }
+        }.to raise_error(ArgumentError)
+      end
     end
   end
 end
