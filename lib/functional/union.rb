@@ -40,6 +40,7 @@ module Functional
   #   prize.center  #=> nil
   #
   # @see Functional::AbstractStruct
+  # @see Functional::Record
   # @see http://www.ruby-doc.org/core-2.1.2/Struct.html Ruby `Struct` class
   # @see http://en.wikipedia.org/wiki/Union_type "Union type" on Wikipedia
   module Union
@@ -62,8 +63,12 @@ module Functional
     # @param [Array] fields the list of symbolic names for all data fields
     # @return [Functional::AbstractStruct] the union class
     def build(fields)
-      fields = fields.collect{|field| field.to_sym }.freeze
       union = Class.new{ include AbstractStruct }
+      if fields.first.is_a? String
+        self.const_set(fields.first, union)
+        fields = fields[1, fields.length-1]
+      end
+      fields = fields.collect{|field| field.to_sym }.freeze
       union.private_class_method(:new)
       union.send(:datatype=, :union)
       union.send(:fields=, fields)

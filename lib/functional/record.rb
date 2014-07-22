@@ -1,22 +1,13 @@
 require_relative 'abstract_struct'
+require_relative 'type_check'
 
 module Functional
 
-  # An immutable data structure with multiple data fields. A `Record` is a
-  # convenient way to bundle a number of field attributes together,
-  # using accessor methods, without having to write an explicit class.
-  # The `Record` module generates new `AbstractStruct` subclasses that hold a
-  # set of fields with a reader method for each field.
+  # {include:file:doc/record.md}
   #
-  # A `Record` is very similar to a Ruby `Struct` and shares many of its behaviors
-  # and attributes. Unlike a # Ruby `Struct`, a `Record` is immutable: its values
-  # are set at construction and can never be changed. Divergence between the two
-  # classes derive from this core difference.
-  #
-  # @see http://clojure.org/datatypes
-  # @see http://clojure.github.io/clojure/clojure.core-api.html#clojure.core/defrecord
-  # @see http://www.erlang.org/doc/reference_manual/records.html
-  # @see http://www.erlang.org/doc/programming_examples/records.html
+  # @see Functional::AbstractStruct
+  # @see Functional::Union
+  # @see http://www.ruby-doc.org/core-2.1.2/Struct.html Ruby `Struct` class
   module Record
     extend self
 
@@ -31,7 +22,9 @@ module Functional
 
     private
 
+    # @!visibility private
     class RestrictionsProcessor
+      include TypeCheck
       attr_reader :required
       attr_reader :defaults
 
@@ -51,6 +44,21 @@ module Functional
         @defaults.freeze
         self.freeze
       end
+
+      def clone_default(field)
+        value = @defaults[field]
+        value = value.clone unless uncloneable?(value)
+      rescue TypeError
+        # can't be cloned
+      ensure
+        return value
+      end
+
+      private
+
+      def uncloneable?(object)
+        Type? object, NilClass, TrueClass, FalseClass, Fixnum, Bignum, Float
+      end
     end
 
     # Use the given `AbstractStruct` class and build the methods necessary
@@ -59,8 +67,12 @@ module Functional
     # @param [Array] fields the list of symbolic names for all data fields
     # @return [Functional::AbstractStruct] the record class
     def build(fields, &block)
-      fields = fields.collect{|field| field.to_sym }.freeze
       record = Class.new{ include AbstractStruct }
+      if fields.first.is_a? String
+        self.const_set(fields.first, record)
+        fields = fields[1, fields.length-1]
+      end
+      fields = fields.collect{|field| field.to_sym }.freeze
       record.send(:datatype=, :record)
       record.send(:fields=, fields)
       record.class_variable_set(:@@restrictions, RestrictionsProcessor.new(&block))
@@ -79,7 +91,7 @@ module Functional
       record.send(:define_method, :initialize) do |data = {}|
         restrictions = self.class.class_variable_get(:@@restrictions)
         data = fields.reduce({}) do |memo, field|
-          memo[field] = data.fetch(field, restrictions.defaults[field])
+          memo[field] = data.fetch(field, restrictions.clone_default(field))
           memo
         end
         if data.any?{|k,v| restrictions.required.include?(k) && v.nil? }

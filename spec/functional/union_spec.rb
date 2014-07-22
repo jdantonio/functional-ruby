@@ -13,6 +13,14 @@ module Functional
 
     it_should_behave_like :abstract_struct
 
+    context 'definition' do
+
+      it 'registers the new class with Record when given a string name' do
+        Union.new('Foo', :foo, :bar, :baz)
+        expect(defined?(Union::Foo)).to eq 'constant'
+      end
+    end
+
     context 'factories' do
 
       specify 'exist for each field' do

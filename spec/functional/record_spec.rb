@@ -15,6 +15,11 @@ module Functional
 
     context 'definition' do
 
+      it 'registers the new class with Record when given a string name' do
+        Record.new('Foo', :foo, :bar, :baz)
+        expect(defined?(Record::Foo)).to eq 'constant'
+      end
+
       it 'default all fields values to nil' do
         fields = [:foo, :bar, :baz]
         clazz = Record.new(*fields)
@@ -59,6 +64,17 @@ module Functional
         expect(record.foo).to eq 1
         expect(record.bar).to eq 2
         expect(record.baz).to eq :bogus
+      end
+
+      it 'duplicates default values when assigning to a new object' do
+        original = 'Foo'
+        clazz = Record.new(:foo, :bar, :baz) do
+          default :foo, original
+        end
+
+        record = clazz.new
+        expect(record.foo).to eq original
+        expect(record.foo.object_id).to_not eql original.object_id
       end
 
       it 'does not conflate defaults across record classes' do
