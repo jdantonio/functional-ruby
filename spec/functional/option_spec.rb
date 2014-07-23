@@ -248,5 +248,63 @@ module Functional
         }.to raise_error(ArgumentError)
       end
     end
+
+    context '#to_either' do
+
+      it 'creates a right either when some' do
+        either = Option.some(some_value).to_either(other_value)
+        expect(either).to be_a Either
+        expect(either.right).to eq some_value
+      end
+
+      it 'creates a left either when none and given a some option' do
+        other = Option.some(other_value)
+        either = Option.none.to_either(other)
+        expect(either).to be_a Either
+        expect(either.left).to eq other_value
+      end
+
+      it 'creates a left either with nil when none and given a none option' do
+        other = Option.none
+        either = Option.none.to_either(other)
+        expect(either).to be_a Either
+        expect(either).to be_left
+        expect(either.left).to be_nil
+      end
+
+      it 'creates a left either when none and given a right either' do
+        other = Either.right(other_value)
+        either = Option.none.to_either(other)
+        expect(either).to be_a Either
+        expect(either.left).to eq other_value
+      end
+
+      it 'creates a left either with nil when none and given a left either' do
+        other = Either.left(other_value)
+        either = Option.none.to_either(other)
+        expect(either).to be_a Either
+        expect(either).to be_left
+        expect(either.left).to be_nil
+      end
+
+      it 'creates a left either when none and given an object' do
+        either = Option.none.to_either(other_value)
+        expect(either).to be_a Either
+        expect(either.left).to eq other_value
+      end
+
+      it 'creates a left either when none and given a block' do
+        other = ->{ other_value }
+        either = Option.none.to_either(&other)
+        expect(either).to be_a Either
+        expect(either.left).to eq other_value
+      end
+
+      it 'raises an exception when given both a value and a block' do
+        expect {
+          either = Option.none.to_either(other_value){ nil }
+        }.to raise_error(ArgumentError)
+      end
+    end
   end
 end

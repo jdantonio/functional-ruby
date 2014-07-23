@@ -1,4 +1,5 @@
 require_relative 'abstract_struct'
+require_relative 'either'
 require_relative 'protocol'
 
 Functional::SpecifyProtocol(:Option) do
@@ -99,6 +100,7 @@ module Functional
     # @param [Object] other the value to be evaluated against this option
     # @yieldparam [Object] value the value of this option when some
     # @return [Boolean] true when the union succeeds else false
+    # @raise [ArgumentError] when given both other and a block
     def and(other = NO_OPTION)
       raise ArgumentError.new('cannot give both an option and a block') if other != NO_OPTION && block_given?
       return false if none?
@@ -126,6 +128,7 @@ module Functional
     #
     # @param [Object] other the value to be evaluated against this option
     # @return [Boolean] true when the intersection succeeds else false
+    # @raise [ArgumentError] when given both other and a block
     def or(other = NO_OPTION)
       raise ArgumentError.new('cannot give both an option and a block') if other != NO_OPTION && block_given?
       return true if some?
@@ -149,6 +152,7 @@ module Functional
     #
     # @param [Object] other the value to be evaluated when this is none
     # @return [Object] this value when some else the value of other
+    # @raise [ArgumentError] when given both other and a block
     def else(other = NO_OPTION)
       raise ArgumentError.new('cannot give both an option and a block') if other != NO_OPTION && block_given?
       return some if some?
@@ -159,6 +163,43 @@ module Functional
         other.some
       else
         other
+      end
+    end
+
+    # Returns an either projection of this optional value;
+    # the given argument in `left` if none, or the value in `right`.
+    #
+    # * If other is a some Option its value is projected into left
+    # * If other is a right Either its value is projected into left
+    # * If other is an object it is projected into left
+    # * If a block is given the result of block processing is projected into left
+    #
+    # An exception will be raised if an other value and a block are
+    # both provided.
+    #
+    # @param [Object] other the value to be evaluated when this is none
+    # @return [Either] an either projection of this option
+    # @raise [ArgumentError] when given both other and a block
+    def to_either(other = NO_OPTION)
+      raise ArgumentError.new('cannot give both an option and a block') if other != NO_OPTION && block_given?
+      if some
+        Either.right(some)
+      elsif block_given?
+        Either.left(yield)
+      elsif Protocol::Satisfy? other, :Option
+        if other.some?
+          Either.left(other.some)
+        else
+          Either.left(nil)
+        end
+      elsif Protocol::Satisfy? other, :Either
+        if other.right?
+          Either.left(other.right)
+        else
+          Either.left(nil)
+        end
+      else
+        Either.left(other)
       end
     end
 
