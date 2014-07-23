@@ -41,6 +41,7 @@ module Functional
       # Create a new restrictions object by processing the given
       # block. The block should be the DSL for defining a record class.
       #
+      # @param [Proc] block A DSL definition of a new record.
       # @yield A DSL definition of a new record.
       def initialize(&block)
         @required = []
