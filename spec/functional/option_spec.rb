@@ -41,6 +41,15 @@ module Functional
         expect(Option.none.some).to be_nil
       end
 
+      it 'sets the reason to nil when constructed by #none' do
+        expect(Option.none.reason).to be_nil
+      end
+
+      it 'sets the optional reason when constructed by #none' do
+        reason = 'foobar'
+        expect(Option.none(reason).reason).to eq reason
+      end
+
       it 'freezes the new object' do
         expect(Option.some(:foo)).to be_frozen
         expect(Option.none).to be_frozen
@@ -100,10 +109,6 @@ module Functional
 
       specify '#reason returns nil when some' do
         expect(some_subject.reason).to be_nil
-      end
-
-      specify '#reason returns a truthy value when none' do
-        expect(none_subject.reason).to be_truthy
       end
     end
 

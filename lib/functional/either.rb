@@ -212,6 +212,11 @@ module Functional
 
     private
 
+    # Create a new Either wil the given value and disposition.
+    #
+    # @param [Object] value the value of this either
+    # @param [Boolean] is_left is this a left either or right?
+    #
     # @!visibility private 
     def initialize(value, is_left)
       @is_left = is_left

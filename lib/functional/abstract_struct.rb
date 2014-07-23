@@ -53,10 +53,12 @@ module Functional
     end
     alias_method :==, :eql?
 
-    # Describe the contents of this record in a string. Will include the name of the
-    # record class, all fields, and all values.
+    # @!macro [attach] inspect_method
     #
-    # @return [String] the class and contents of this record
+    #   Describe the contents of this record in a string. Will include the name of the
+    #   record class, all fields, and all values.
+    #
+    #   @return [String] the class and contents of this record
     def inspect
       state = to_h.to_s.gsub(/^{/, '').gsub(/}$/, '')
       "#<#{self.class.datatype} #{self.class} #{state}>"
@@ -89,12 +91,16 @@ module Functional
 
     # Set the internal data hash to a copy of the given hash and freeze it.
     # @param [Hash] data the data hash
+    #
+    # @!visibility private 
     def set_data_hash(data)
       @data = data.dup.freeze
     end
 
     # Set the internal values array to a copy of the given array and freeze it.
     # @param [Array] values the values array
+    #
+    # @!visibility private 
     def set_values_array(values)
       @values = values.dup.freeze
     end
@@ -107,6 +113,7 @@ module Functional
     end
 
     # Class methods added to a class that includes {Functional::PatternMatching}
+    #
     # @!visibility private
     module ClassMethods
 
