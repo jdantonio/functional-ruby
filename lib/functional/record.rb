@@ -3,6 +3,17 @@ require_relative 'type_check'
 
 module Functional
 
+  # An immutable data structure with multiple data fields. A `Record` is a
+  # convenient way to bundle a number of field attributes together,
+  # using accessor methods, without having to write an explicit class.
+  # The `Record` module generates new `AbstractStruct` subclasses that hold a
+  # set of fields with a reader method for each field.
+  #   
+  # A `Record` is very similar to a Ruby `Struct` and shares many of its behaviors
+  # and attributes. Unlike a # Ruby `Struct`, a `Record` is immutable: its values
+  # are set at construction and can never be changed. Divergence between the two
+  # classes derive from this core difference.
+  #   
   # @!macro record
   #
   # @see Functional::AbstractStruct
@@ -29,6 +40,8 @@ module Functional
 
       # Create a new restrictions object by processing the given
       # block. The block should be the DSL for defining a record class.
+      #
+      # @yield A DSL definition of a new record.
       def initialize(&block)
         @required = []
         @defaults = {}
