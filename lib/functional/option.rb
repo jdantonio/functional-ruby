@@ -166,43 +166,6 @@ module Functional
       end
     end
 
-    # Returns an either projection of this optional value;
-    # the given argument in `left` if none, or the value in `right`.
-    #
-    # * If other is a some Option its value is projected into left
-    # * If other is a right Either its value is projected into left
-    # * If other is an object it is projected into left
-    # * If a block is given the result of block processing is projected into left
-    #
-    # An exception will be raised if an other value and a block are
-    # both provided.
-    #
-    # @param [Object] other the value to be evaluated when this is none
-    # @return [Either] an either projection of this option
-    # @raise [ArgumentError] when given both other and a block
-    def to_either(other = NO_OPTION)
-      raise ArgumentError.new('cannot give both an option and a block') if other != NO_OPTION && block_given?
-      if some
-        Either.right(some)
-      elsif block_given?
-        Either.left(yield)
-      elsif Protocol::Satisfy? other, :Option
-        if other.some?
-          Either.left(other.some)
-        else
-          Either.left(nil)
-        end
-      elsif Protocol::Satisfy? other, :Either
-        if other.right?
-          Either.left(other.right)
-        else
-          Either.left(nil)
-        end
-      else
-        Either.left(other)
-      end
-    end
-
     # @!macro inspect_method
     def inspect
       super.gsub(/ :some/, " (#{some? ? 'some' : 'none'}) :some")
