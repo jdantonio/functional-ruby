@@ -11,6 +11,7 @@ module Functional
   class Option
     include AbstractStruct
 
+    # @!visibility private 
     NO_OPTION = Object.new.freeze
 
     self.datatype = :option
@@ -20,21 +21,34 @@ module Functional
 
     class << self
 
+      # Construct an `Option` with no value.
+      #
+      # @return [Option] the new option
       def none
         new(nil, true).freeze
       end
 
+      # Construct an `Option` with the given value.
+      #
+      # @param [Object] value the value of the option
+      # @return [Option] the new option
       def some(value)
         new(value, false).freeze
       end
     end
 
+    # Does the option have a value?
+    #
+    # @return [Boolean] true if some else false
     def some?
       ! none?
     end
     alias_method :value?, :some?
     alias_method :fulfilled?, :some?
 
+    # Is the option absent a value?
+    #
+    # @return [Boolean] true if none else false
     def none?
       @none
     end
