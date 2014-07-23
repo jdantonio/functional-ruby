@@ -384,7 +384,7 @@ module Functional
         }.when{|x| x > 16 }
 
         expect(subject.new.old_enough(20)).to be true
-        end
+      end
 
       it 'does not match when the guard clause returns false' do
 
@@ -395,7 +395,7 @@ module Functional
         expect {
           subject.new.old_enough(10)
         }.to raise_error(NoMethodError)
-        end
+      end
 
       it 'continues pattern matching when the guard clause returns false' do
 
@@ -406,14 +406,14 @@ module Functional
         subject.defn(:old_enough, PatternMatching::UNBOUND) { false }
 
         expect(subject.new.old_enough(10)).to be false
-        end
+      end
 
       it 'raises an exception when the guard clause does not have a block' do
 
         expect {
-          subject.defn(:foo).when
+          subject.defn(:initialize, PatternMatching::UNBOUND) { 'one arg' }.when
         }.to raise_error(ArgumentError)
-          end
+      end
     end
   end
 end

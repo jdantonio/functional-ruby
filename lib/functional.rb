@@ -18,15 +18,19 @@ module Functional
   NaN = 0/0.0
 
   # A gem-level configuration class.
+  # @!visibility private
   class Configuration
   end
 
   # create the default configuration on load
+  # @!visibility private
   @configuration = Configuration.new
 
   # The current gem configutation.
   #
   # @return [Functional::Configuration]
+  #
+  # @!visibility private
   def self.configuration
     @configuration
   end

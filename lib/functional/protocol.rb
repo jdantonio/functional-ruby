@@ -146,7 +146,6 @@ module Functional
       target = target.class unless target.is_a?(Module)
       raise ProtocolError,
         "Value (#{target.class}) '#{target}' #{message} behave as all of: :#{protocols.join('; :')}."
-      target
     end
   end
 end
