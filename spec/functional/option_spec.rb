@@ -13,6 +13,7 @@ module Functional
 
     let(:struct_class) { Option }
     let(:struct_object) { Option.some(value) }
+    let(:other_object) { Option.some(Object.new) }
 
     let(:some_subject){ Option.some(value) }
     let(:none_subject){ Option.none }

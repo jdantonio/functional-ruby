@@ -10,6 +10,7 @@ module Functional
 
     let(:struct_class) { Record.new(*expected_fields) }
     let(:struct_object) { struct_class.new(struct_class.fields.first => 42) }
+    let(:other_object) { struct_class.new(struct_class.fields.first => Object.new) }
 
     it_should_behave_like :abstract_struct
 

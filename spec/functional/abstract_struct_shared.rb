@@ -110,11 +110,8 @@ shared_examples :abstract_struct do
     end
 
     specify 'rejects equality for two structs of the same class with different values' do
-      pending
-      other = struct_object.dup
-
-      expect(struct_object).to_not eq other
-      expect(struct_object).to_not eql other
+      expect(struct_object).to_not eq other_object
+      expect(struct_object).to_not eql other_struct
     end
 
     specify '#to_h returns a Hash with all field/value pairs' do

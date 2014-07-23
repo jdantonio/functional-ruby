@@ -13,6 +13,7 @@ module Functional
 
     let(:struct_class) { Either }
     let(:struct_object) { Either.left(value) }
+    let(:other_object) { Either.left(Object.new) }
 
     let(:left_subject){ Either.left(reason) }
     let(:right_subject){ Either.right(value) }

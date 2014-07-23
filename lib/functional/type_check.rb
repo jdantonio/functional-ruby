@@ -33,8 +33,10 @@ module Functional
     end
     module_function :Type!
 
-    # Is the given value module or class an exact match for one or more
-    # of the modules and/or classes in the given list?
+    # Is the given value object is an instance of or descendant of
+    # one of the classes/modules in the given list?
+    #
+    # Performs the check using the `===` operator.
     #
     # @param [Object] value the object to interrogate
     # @param [Module] types zero or more modules and/or classes to check
@@ -45,9 +47,11 @@ module Functional
     end
     module_function :Match?
 
-    # Is the given value module or class an exact match for one or more
-    # of the modules and/or classes in the given list? Raises an exception
+    # Is the given value object is an instance of or descendant of
+    # one of the classes/modules in the given list?  Raises an exception
     # on failure.
+    #
+    # Performs the check using the `===` operator.
     #
     # @param [Object] value the object to interrogate
     # @param [Module] types zero or more modules and/or classes to check
@@ -62,11 +66,11 @@ module Functional
     end
     module_function :Match!
 
-    # Is the given module/class match or subclass of one or more of the
-    # modules and/or classes in the given list?
+    # Is the given class a subclass or exact match of one or more
+    # of the modules and/or classes in the given list?
     #
-    # @param [Object] value the object to interrogate
-    # @param [Module] types zero or more modules and/or classes to check
+    # @param [Class] value the class to interrogate
+    # @param [Class] types zero or more classes to check the value against
     #   the value against
     # @return [Boolean] true on success
     def Child?(value, *types)
@@ -75,13 +79,12 @@ module Functional
     end
     module_function :Child?
 
-    # Is the given module/class match or subclass of one or more of the
-    # modules and/or classes in the given list? Raises an exception on failure.
+    # Is the given class a subclass or exact match of one or more
+    # of the modules and/or classes in the given list?
     #
-    # @param [Object] value the object to interrogate
-    # @param [Module] types zero or more modules and/or classes to check
-    #   the value against
-    # @return [Object] the value object
+    # @param [Class] value the class to interrogate
+    # @param [Class] types zero or more classes to check the value against
+    # @return [Class] the value class
     #
     # @raise [Functional::TypeError] when the check fails
     def Child!(value, *types)
