@@ -201,7 +201,7 @@ module Functional
     # @param [Boolean] condition The condition to test (when no block given).
     # @yield The condition to test (when no condition given).
     #
-    # @return A constructed either based on the given condition.
+    # @return [Either] A constructed either based on the given condition.
     #
     # @raise [ArgumentError] When both a condition and a block are given.
     def self.iff(lvalue, rvalue, condition = NO_VALUE)

@@ -249,5 +249,44 @@ module Functional
         }.to raise_error(ArgumentError)
       end
     end
+
+    context '#iff' do
+
+      it 'returns a some option with the given value when the boolean is true' do
+        subject = Option.iff(:foo, true)
+        expect(subject).to be_some
+        expect(subject.some).to eq :foo
+      end
+
+      it 'returns a none option when the boolean is false' do
+        subject = Option.iff(:foo, false)
+        expect(subject).to be_none
+        expect(subject.some).to be_nil
+      end
+
+      it 'returns a some option with the given value when the block is truthy' do
+        subject = Option.iff(:foo){ :baz }
+        expect(subject).to be_some
+        expect(subject.some).to eq :foo
+      end
+
+      it 'returns a none option when the block is false' do
+        subject = Option.iff(:foo){ false }
+        expect(subject).to be_none
+        expect(subject.some).to be_nil
+      end
+
+      it 'returns a none option when the block is nil' do
+        subject = Option.iff(:foo){ nil }
+        expect(subject).to be_none
+        expect(subject.some).to be_nil
+      end
+
+      it 'raises an exception when both a boolean and a block are given' do
+        expect {
+          subject = Option.iff(:foo, true){ nil }
+        }.to raise_error(ArgumentError)
+      end
+    end
   end
 end

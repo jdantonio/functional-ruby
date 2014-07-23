@@ -166,6 +166,21 @@ module Functional
       end
     end
 
+    # If the condition satisfies, return the given A in some, otherwise, none.
+    #
+    # @param [Object] value The some value to use if the condition satisfies.
+    # @param [Boolean] condition The condition to test (when no block given).
+    # @yield The condition to test (when no condition given).
+    #
+    # @return [Option] A constructed option based on the given condition.
+    #
+    # @raise [ArgumentError] When both a condition and a block are given.
+    def self.iff(value, condition = NO_OPTION)
+      raise ArgumentError.new('requires either a condition or a block, not both') if condition != NO_OPTION && block_given?
+      condition = block_given? ? yield : !! condition
+      condition ? some(value) : none
+    end
+
     # @!macro inspect_method
     def inspect
       super.gsub(/ :some/, " (#{some? ? 'some' : 'none'}) :some")

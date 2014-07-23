@@ -195,7 +195,7 @@ module Functional
       end
     end
 
-    context '#iif' do
+    context '#iff' do
 
       it 'returns a lefty with the given left value when the boolean is true' do
         subject = Either.iff(:foo, :bar, true)
