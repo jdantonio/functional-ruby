@@ -105,6 +105,29 @@ module Functional
       @values = values.dup.freeze
     end
 
+    # Define a new struct class and, if necessary, register it with
+    # the calling class/module. Will also set the datatype and fields
+    # class attributes on the new struct class.
+    #
+    # @param [Module] parent the class/module that is defining the new struct
+    # @param [Symbol] datatype the datatype value for the new struct class
+    # @param [Array] fields the list of symbolic names for all data fields
+    # @return [Functional::AbstractStruct, Array] the new class and the
+    #   (possibly) updated fields array
+    #
+    # @!visibility private 
+    def self.define_class(parent, datatype, fields)
+      struct = Class.new{ include AbstractStruct }
+      if fields.first.is_a? String
+        parent.const_set(fields.first, struct)
+        fields = fields[1, fields.length-1]
+      end
+      fields = fields.collect{|field| field.to_sym }.freeze
+      struct.send(:datatype=, datatype.to_sym)
+      struct.send(:fields=, fields)
+      [struct, fields]
+    end
+
     private
 
     def self.included(base)

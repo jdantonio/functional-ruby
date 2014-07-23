@@ -71,10 +71,8 @@ module Functional
     # @param [Array] fields the list of symbolic names for all data fields
     # @return [Functional::AbstractStruct] the union class
     def build(fields)
-      union, fields = define_class(fields)
+      union, fields = AbstractStruct.define_class(self, :union, fields)
       union.private_class_method(:new)
-      union.send(:datatype=, :union)
-      union.send(:fields=, fields)
       define_properties(union)
       define_initializer(union)
       fields.each do |field|
@@ -83,21 +81,6 @@ module Functional
         define_factory(union, field)
       end
       union
-    end
-
-    # Define the new union class and, if necessary, register it with `Union`
-    #
-    # @param [Array] fields the list of symbolic names for all data fields
-    # @return [Functional::AbstractStruct, Arrat] the new class and the
-    #   (possibly) updated fields array
-    def define_class(fields)
-      union = Class.new{ include AbstractStruct }
-      if fields.first.is_a? String
-        self.const_set(fields.first, union)
-        fields = fields[1, fields.length-1]
-      end
-      fields = fields.collect{|field| field.to_sym }.freeze
-      [union, fields]
     end
 
     # Define the `field` and `value` attribute readers on the given union class.

@@ -96,30 +96,13 @@ module Functional
     # @param [Array] fields the list of symbolic names for all data fields
     # @return [Functional::AbstractStruct] the record class
     def build(fields, &block)
-      record, fields = define_class(fields)
-      record.send(:datatype=, :record)
-      record.send(:fields=, fields)
+      record, fields = AbstractStruct.define_class(self, :record, fields)
       record.class_variable_set(:@@restrictions, Restrictions.new(&block))
       define_initializer(record)
       fields.each do |field|
         define_reader(record, field)
       end
       record
-    end
-
-    # Define the new record class and, if necessary, register it with `Record`
-    #
-    # @param [Array] fields the list of symbolic names for all data fields
-    # @return [Functional::AbstractStruct, Arrat] the new class and the
-    #   (possibly) updated fields array
-    def define_class(fields)
-      record = Class.new{ include AbstractStruct }
-      if fields.first.is_a? String
-        self.const_set(fields.first, record)
-        fields = fields[1, fields.length-1]
-      end
-      fields = fields.collect{|field| field.to_sym }.freeze
-      [record, fields]
     end
 
     # Define an initializer method on the given record class.
