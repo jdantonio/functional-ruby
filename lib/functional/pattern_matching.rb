@@ -41,7 +41,7 @@ module Functional
       end
     end
 
-
+    # @!visibility private
     class SignatureMatcher
 
       def initialize(pattern, args)
@@ -49,14 +49,14 @@ module Functional
         @args = args
       end
 
-      def match?(args, pattern)
-        return false unless valid_pattern?(args, pattern)
+      def match?
+        return false unless valid_pattern?(@args, @pattern)
 
-        pattern.length.times.all? do |index|
-          param = pattern[index]
-          arg = args[index]
+        @pattern.length.times.all? do |index|
+          param = @pattern[index]
+          arg = @args[index]
 
-          all_param_and_last_arg?(pattern, param, index) ||
+          all_param_and_last_arg?(@pattern, param, index) ||
             arg_is_type_of_param?(param, arg) ||
             hash_param_with_matching_arg?(param, arg) ||
             param_matches_arg?(param, arg)
@@ -117,7 +117,6 @@ module Functional
       return Either.reason(:nodef) if matchers.nil?
 
       match = matchers.detect do |matcher|
-        #if __match_pattern__(args, matcher.first)
         if SignatureMatcher.new(matcher.first, args).match?
           if matcher.last.nil?
             true # no guard clause
