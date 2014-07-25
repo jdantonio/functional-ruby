@@ -26,7 +26,7 @@ module Functional
 
     # A guard clause on a pattern match.
     # @!visibility private
-    GUARD_CLAUSE = Class.new do # :nodoc:
+    GUARD_CLAUSE = Class.new do
       def initialize(func, clazz, matcher)
         @func = func
         @clazz = clazz
@@ -37,38 +37,58 @@ module Functional
           raise ArgumentError.new("block missing for `when` guard on function `#{@func}` of class #{@clazz}")
         end
         @matcher[@matcher.length-1] = block
-        return nil
+        self
       end
     end
 
     # @!visibility private
-    def self.__match_pattern__(args, pattern) # :nodoc:
-      return unless __valid_pattern__?(args, pattern)
-      pattern.each_with_index do |p, i|
-        break if p == ALL && i+1 == pattern.length
-        arg = args[i]
-        next if p.is_a?(Class) && arg.is_a?(p)
-        if p.is_a?(Hash) && arg.is_a?(Hash) && ! p.empty?
-          p.each do |key, value|
-            return false unless arg.has_key?(key)
-            next if value == UNBOUND
-            return false unless arg[key] == value
-          end
-          next
+    def __match_pattern__(args, pattern)
+      return false unless __valid_pattern__?(args, pattern)
+
+      pattern.length.times.all? do |index|
+        param = pattern[index]
+        arg = args[index]
+
+        __all_param_and_last_arg__?(pattern, param, index) ||
+          __arg_is_type_of_param__?(param, arg) ||
+          __hash_param_with_matching_arg__?(param, arg) ||
+          __param_matches_arg__?(param, arg)
+      end
+    end
+
+    # @!visibility private
+    def __all_param_and_last_arg__?(pattern, param, index)
+      param == ALL && index+1 == pattern.length
+    end
+
+    # @!visibility private
+    def __arg_is_type_of_param__?(param, arg)
+      param.is_a?(Class) && arg.is_a?(param)
+    end
+
+    # @!visibility private
+    def __hash_param_with_matching_arg__?(param, arg)
+      param.is_a?(Hash) &&
+        arg.is_a?(Hash) &&
+        ! param.empty? &&
+        param.all? do |key, value|
+          arg.has_key?(key) && (value == UNBOUND || arg[key] == value)
         end
-        return false unless p == UNBOUND || p == arg
-      end
-      return true
     end
 
     # @!visibility private
-    def self.__valid_pattern__?(args, pattern) # :nodoc:
+    def __param_matches_arg__?(param, arg)
+      param == UNBOUND || param == arg
+    end
+
+    # @!visibility private
+    def __valid_pattern__?(args, pattern)
       (pattern.last == ALL && args.length >= pattern.length) \
         || (args.length == pattern.length)
     end
 
     # @!visibility private
-    def self.__unbound_args__(match, args) # :nodoc:
+    def __unbound_args__(match, args)
       argv = []
       match.first.each_with_index do |p, i|
         if p == ALL && i == match.first.length-1
@@ -81,27 +101,27 @@ module Functional
           argv << args[i] 
         end
       end
-      return argv
+      argv
     end
 
     # @!visibility private
-    def self.__pattern_match__(clazz, func, *args, &block) # :nodoc:
+    def __pattern_match__(clazz, func, *args, &block)
       args = args.first
 
       matchers = clazz.__function_pattern_matches__[func]
       return Either.reason(:nodef) if matchers.nil?
 
       match = matchers.detect do |matcher|
-        if PatternMatching.__match_pattern__(args, matcher.first)
+        if __match_pattern__(args, matcher.first)
           if matcher.last.nil?
             true # no guard clause
           else
-            self.instance_exec(*PatternMatching.__unbound_args__(matcher, args), &matcher.last)
+            self.instance_exec(*__unbound_args__(matcher, args), &matcher.last)
           end
         end
       end
 
-      return (match ? Either.value(match) : Either.reason(:nomatch))
+      (match ? Either.value(match) : Either.reason(:nomatch))
     end
 
     def self.included(base)
@@ -114,37 +134,46 @@ module Functional
     module ClassMethods
 
       # @!visibility private
-      def _() # :nodoc:
-        return UNBOUND
+      def _()
+        UNBOUND
       end
 
       # @!visibility private
-      def defn(func, *args, &block) # :nodoc:
+      def defn(func, *args, &block)
         unless block_given?
           raise ArgumentError.new("block missing for definition of function `#{func}` on class #{self}")
         end
 
+        # add a new pattern for this function
         pattern = __add_pattern_for__(func, *args, &block)
 
+        # define the delegator function if it doesn't exist yet
         unless self.instance_methods(false).include?(func)
           __define_method_with_matching__(func)
         end
 
-        return GUARD_CLAUSE.new(func, self, pattern)
+        # return a guard clause to be added to the pattern
+        GUARD_CLAUSE.new(func, self, pattern)
       end
 
       # @!visibility private
-      def __define_method_with_matching__(func) # :nodoc:
+      # define an arity -1 function that dispatches to the appropriate
+      # pattern match variant or raises an exception
+      def __define_method_with_matching__(func)
         define_method(func) do |*args, &block|
-          match = PatternMatching.__pattern_match__(self.method(func).owner, func, args, block)
+          # get the collection of matched patterns for this function
+          # use owner to ensure we look up the inheritance tree
+          match = __pattern_match__(self.method(func).owner, func, args, block)
           if match.value?
             # if a match is found call the block
-            argv = PatternMatching.__unbound_args__(match.value, args)
+            argv = __unbound_args__(match.value, args)
             return self.instance_exec(*argv, &match.value[1])
           else # if result == :nodef || result == :nomatch
             begin
+              # delegate to the superclass
               super(*args, &block)
             rescue NoMethodError, ArgumentError
+              # raise a custom error
               raise NoMethodError.new("no method `#{func}` matching #{args} found for class #{self.class}")
             end
           end
@@ -152,17 +181,23 @@ module Functional
       end
 
       # @!visibility private
-      def __function_pattern_matches__ # :nodoc:
+      def __function_pattern_matches__
         @__function_pattern_matches__ ||= Hash.new
       end
 
       # @!visibility private
-      def __add_pattern_for__(func, *args, &block) # :nodoc:
+      def __add_pattern_for__(func, *args, &block)
+        # create an empty proc if no function body is given
         block = Proc.new{} unless block_given?
+        # retrieve the list of patterns for this function from the class cache
         matchers = self.__function_pattern_matches__
+        # add a new pattern collection when a new function is given
         matchers[func] = [] unless matchers.has_key?(func)
+        # store the new pattern in the collection
+        # the last element of the array is the guard clause
         matchers[func] << [args, block, nil]
-        return matchers[func].last
+        # why are we returning nil?
+        matchers[func].last
       end
     end
   end
