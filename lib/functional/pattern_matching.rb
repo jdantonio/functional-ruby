@@ -41,50 +41,55 @@ module Functional
       end
     end
 
-    # @!visibility private
-    def __match_pattern__(args, pattern)
-      return false unless __valid_pattern__?(args, pattern)
 
-      pattern.length.times.all? do |index|
-        param = pattern[index]
-        arg = args[index]
+    class SignatureMatcher
 
-        __all_param_and_last_arg__?(pattern, param, index) ||
-          __arg_is_type_of_param__?(param, arg) ||
-          __hash_param_with_matching_arg__?(param, arg) ||
-          __param_matches_arg__?(param, arg)
+      def initialize(pattern, args)
+        @pattern = pattern
+        @args = args
       end
-    end
 
-    # @!visibility private
-    def __all_param_and_last_arg__?(pattern, param, index)
-      param == ALL && index+1 == pattern.length
-    end
+      def match?(args, pattern)
+        return false unless valid_pattern?(args, pattern)
 
-    # @!visibility private
-    def __arg_is_type_of_param__?(param, arg)
-      param.is_a?(Class) && arg.is_a?(param)
-    end
+        pattern.length.times.all? do |index|
+          param = pattern[index]
+          arg = args[index]
 
-    # @!visibility private
-    def __hash_param_with_matching_arg__?(param, arg)
-      param.is_a?(Hash) &&
-        arg.is_a?(Hash) &&
-        ! param.empty? &&
-        param.all? do |key, value|
-          arg.has_key?(key) && (value == UNBOUND || arg[key] == value)
+          all_param_and_last_arg?(pattern, param, index) ||
+            arg_is_type_of_param?(param, arg) ||
+            hash_param_with_matching_arg?(param, arg) ||
+            param_matches_arg?(param, arg)
         end
-    end
+      end
 
-    # @!visibility private
-    def __param_matches_arg__?(param, arg)
-      param == UNBOUND || param == arg
-    end
+      private
 
-    # @!visibility private
-    def __valid_pattern__?(args, pattern)
-      (pattern.last == ALL && args.length >= pattern.length) \
-        || (args.length == pattern.length)
+      def valid_pattern?(args, pattern)
+        (pattern.last == ALL && args.length >= pattern.length) \
+          || (args.length == pattern.length)
+      end
+
+      def all_param_and_last_arg?(pattern, param, index)
+        param == ALL && index+1 == pattern.length
+      end
+
+      def arg_is_type_of_param?(param, arg)
+        param.is_a?(Class) && arg.is_a?(param)
+      end
+
+      def hash_param_with_matching_arg?(param, arg)
+        param.is_a?(Hash) &&
+          arg.is_a?(Hash) &&
+          ! param.empty? &&
+          param.all? do |key, value|
+            arg.has_key?(key) && (value == UNBOUND || arg[key] == value)
+          end
+      end
+
+      def param_matches_arg?(param, arg)
+        param == UNBOUND || param == arg
+      end
     end
 
     # @!visibility private
@@ -112,7 +117,8 @@ module Functional
       return Either.reason(:nodef) if matchers.nil?
 
       match = matchers.detect do |matcher|
-        if __match_pattern__(args, matcher.first)
+        #if __match_pattern__(args, matcher.first)
+        if SignatureMatcher.new(matcher.first, args).match?
           if matcher.last.nil?
             true # no guard clause
           else
