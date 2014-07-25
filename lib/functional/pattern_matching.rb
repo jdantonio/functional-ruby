@@ -1,4 +1,4 @@
-require_relative 'either'
+require_relative 'method_signature'
 
 module Functional
 
@@ -26,77 +26,29 @@ module Functional
 
     # A guard clause on a pattern match.
     # @!visibility private
-    GUARD_CLAUSE = Class.new do
-      def initialize(func, clazz, matcher)
-        @func = func
+    GuardClause = Class.new do
+      def initialize(function, clazz, pattern)
+        @function = function
         @clazz = clazz
-        @matcher = matcher
+        @pattern = pattern
       end
       def when(&block)
         unless block_given?
-          raise ArgumentError.new("block missing for `when` guard on function `#{@func}` of class #{@clazz}")
+          raise ArgumentError.new("block missing for `when` guard on function `#{@function}` of class #{@clazz}")
         end
-        @matcher[@matcher.length-1] = block
+        @pattern.guard = block
         self
       end
     end
 
     # @!visibility private
-    class SignatureMatcher
-
-      def initialize(pattern, args)
-        @pattern = pattern
-        @args = args
-      end
-
-      def match?
-        return false unless valid_pattern?(@args, @pattern)
-
-        @pattern.length.times.all? do |index|
-          param = @pattern[index]
-          arg = @args[index]
-
-          all_param_and_last_arg?(@pattern, param, index) ||
-            arg_is_type_of_param?(param, arg) ||
-            hash_param_with_matching_arg?(param, arg) ||
-            param_matches_arg?(param, arg)
-        end
-      end
-
-      private
-
-      def valid_pattern?(args, pattern)
-        (pattern.last == ALL && args.length >= pattern.length) \
-          || (args.length == pattern.length)
-      end
-
-      def all_param_and_last_arg?(pattern, param, index)
-        param == ALL && index+1 == pattern.length
-      end
-
-      def arg_is_type_of_param?(param, arg)
-        param.is_a?(Class) && arg.is_a?(param)
-      end
-
-      def hash_param_with_matching_arg?(param, arg)
-        param.is_a?(Hash) &&
-          arg.is_a?(Hash) &&
-          ! param.empty? &&
-          param.all? do |key, value|
-            arg.has_key?(key) && (value == UNBOUND || arg[key] == value)
-          end
-      end
-
-      def param_matches_arg?(param, arg)
-        param == UNBOUND || param == arg
-      end
-    end
+    FunctionPattern = Struct.new(:function, :args, :body, :guard)
 
     # @!visibility private
     def __unbound_args__(match, args)
       argv = []
-      match.first.each_with_index do |p, i|
-        if p == ALL && i == match.first.length-1
+      match.args.each_with_index do |p, i|
+        if p == ALL && i == match.args.length-1
           argv << args[(i..args.length)].reduce([]){|memo, arg| memo << arg }
         elsif p.is_a?(Hash) && p.values.include?(UNBOUND)
           p.each do |key, value|
@@ -109,24 +61,18 @@ module Functional
       argv
     end
 
+    def __pass_guard__?(matcher, args)
+      matcher.guard.nil? ||
+        self.instance_exec(*__unbound_args__(matcher, args), &matcher.guard)
+    end
+
     # @!visibility private
-    def __pattern_match__(clazz, func, *args, &block)
+    def __pattern_match__(clazz, function, *args, &block)
       args = args.first
-
-      matchers = clazz.__function_pattern_matches__[func]
-      return Either.reason(:nodef) if matchers.nil?
-
-      match = matchers.detect do |matcher|
-        if SignatureMatcher.new(matcher.first, args).match?
-          if matcher.last.nil?
-            true # no guard clause
-          else
-            self.instance_exec(*__unbound_args__(matcher, args), &matcher.last)
-          end
-        end
+      matchers = clazz.__function_pattern_matches__.fetch(function, [])
+      matchers.detect do |matcher|
+        MethodSignature.match?(matcher.args, args) && __pass_guard__?(matcher, args)
       end
-
-      (match ? Either.value(match) : Either.reason(:nomatch))
     end
 
     def self.included(base)
@@ -144,42 +90,42 @@ module Functional
       end
 
       # @!visibility private
-      def defn(func, *args, &block)
+      def defn(function, *args, &block)
         unless block_given?
-          raise ArgumentError.new("block missing for definition of function `#{func}` on class #{self}")
+          raise ArgumentError.new("block missing for definition of function `#{function}` on class #{self}")
         end
 
         # add a new pattern for this function
-        pattern = __add_pattern_for__(func, *args, &block)
+        pattern = __register_pattern__(function, *args, &block)
 
         # define the delegator function if it doesn't exist yet
-        unless self.instance_methods(false).include?(func)
-          __define_method_with_matching__(func)
+        unless self.instance_methods(false).include?(function)
+          __define_method_with_matching__(function)
         end
 
         # return a guard clause to be added to the pattern
-        GUARD_CLAUSE.new(func, self, pattern)
+        GuardClause.new(function, self, pattern)
       end
 
       # @!visibility private
       # define an arity -1 function that dispatches to the appropriate
       # pattern match variant or raises an exception
-      def __define_method_with_matching__(func)
-        define_method(func) do |*args, &block|
+      def __define_method_with_matching__(function)
+        define_method(function) do |*args, &block|
           # get the collection of matched patterns for this function
           # use owner to ensure we look up the inheritance tree
-          match = __pattern_match__(self.method(func).owner, func, args, block)
-          if match.value?
+          match = __pattern_match__(self.method(function).owner, function, args, block)
+          if match
             # if a match is found call the block
-            argv = __unbound_args__(match.value, args)
-            return self.instance_exec(*argv, &match.value[1])
-          else # if result == :nodef || result == :nomatch
+            argv = __unbound_args__(match, args)
+            return self.instance_exec(*argv, &match.body)
+          else
             begin
               # delegate to the superclass
               super(*args, &block)
             rescue NoMethodError, ArgumentError
               # raise a custom error
-              raise NoMethodError.new("no method `#{func}` matching #{args} found for class #{self.class}")
+              raise NoMethodError.new("no method `#{function}` matching #{args} found for class #{self.class}")
             end
           end
         end
@@ -191,18 +137,13 @@ module Functional
       end
 
       # @!visibility private
-      def __add_pattern_for__(func, *args, &block)
-        # create an empty proc if no function body is given
+      def __register_pattern__(function, *args, &block)
         block = Proc.new{} unless block_given?
-        # retrieve the list of patterns for this function from the class cache
-        matchers = self.__function_pattern_matches__
-        # add a new pattern collection when a new function is given
-        matchers[func] = [] unless matchers.has_key?(func)
-        # store the new pattern in the collection
-        # the last element of the array is the guard clause
-        matchers[func] << [args, block, nil]
-        # why are we returning nil?
-        matchers[func].last
+        pattern = FunctionPattern.new(function, args, block)
+        patterns = self.__function_pattern_matches__.fetch(function, [])
+        patterns << pattern
+        self.__function_pattern_matches__[function] = patterns
+        pattern
       end
     end
   end

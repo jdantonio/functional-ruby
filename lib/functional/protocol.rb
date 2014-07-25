@@ -41,7 +41,7 @@ module Functional
 
     return protocol_info unless block_given?
 
-    if block_given? && ! protocol_info.nil?
+    if block_given? && protocol_info
       raise ProtocolError.new(":#{name} has already been defined")
     end
 
@@ -128,7 +128,7 @@ module Functional
     # @return [Boolean] true if the target satisfies the protocol else false
     def self.satisfies?(target, protocol)
       info = @@info[protocol]
-      return ! info.nil? && info.satisfies?(target)
+      return info && info.satisfies?(target)
     end
 
     # Reduces a list of protocols to a list of unspecified protocols.
