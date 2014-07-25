@@ -112,21 +112,21 @@ module Functional
       # pattern match variant or raises an exception
       def __define_method_with_matching__(function)
         define_method(function) do |*args, &block|
-          # get the collection of matched patterns for this function
-          # use owner to ensure we look up the inheritance tree
-          match = __pattern_match__(self.method(function).owner, function, args, block)
-          if match
-            # if a match is found call the block
-            argv = __unbound_args__(match, args)
-            return self.instance_exec(*argv, &match.body)
-          else
-            begin
+          begin
+            # get the collection of matched patterns for this function
+            # use owner to ensure we climb the inheritance tree
+            match = __pattern_match__(self.method(function).owner, function, args, block)
+            if match
+              # call the matched function
+              argv = __unbound_args__(match, args)
+              self.instance_exec(*argv, &match.body)
+            else
               # delegate to the superclass
               super(*args, &block)
-            rescue NoMethodError, ArgumentError
-              # raise a custom error
-              raise NoMethodError.new("no method `#{function}` matching #{args} found for class #{self.class}")
             end
+          rescue NoMethodError, ArgumentError
+            # raise a custom error
+            raise NoMethodError.new("no method `#{function}` matching #{args} found for class #{self.class}")
           end
         end
       end
