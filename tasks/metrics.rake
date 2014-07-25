@@ -5,6 +5,5 @@ end
 
 desc 'Display code quality analysis report'
 task :critic do
-  sh 'rubycritic lib'
-  sh 'open tmp/rubycritic/overview.html'
+  sh 'rubycritic lib --path critic'
 end
