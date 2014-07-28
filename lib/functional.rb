@@ -1,4 +1,5 @@
 require 'functional/either'
+require 'functional/memo'
 require 'functional/option'
 require 'functional/pattern_matching'
 require 'functional/protocol'
