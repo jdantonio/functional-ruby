@@ -15,7 +15,7 @@ module Functional
   # return the cached value. The operation will only be run once. This means that
   # any side effects created by the operation will only happen once as well.
   #
-  # @see http://clojuredocs.org/clojure_core/clojure.core/delay
+  # @see http://clojuredocs.org/clojure_core/clojure.core/delay Clojure delay
   class Delay
 
     # Create a new `Delay` in the `:pending` state.

@@ -471,3 +471,15 @@
 #     true
 #   }
 #   ```
+#   
+#   ## Inspiration
+#   
+#   Pattern matching has its roots in logic programming languages such as
+#   [Prolog](http://en.wikipedia.org/wiki/Prolog). Pattern matching is a core
+#   feature of the [Erlang](http://www.erlang.org/) programming language. A few
+#   helpful resources are:
+#   
+#   * Erlang [modules](http://erlang.org/doc/reference_manual/modules.html)
+#   * Erlang [pattern matching](http://erlang.org/doc/reference_manual/patterns.html)
+
+

@@ -56,7 +56,7 @@ module Functional
   # allow modules, classes, and methods to be interrogated based on their behavior.
   # It is a logical extension of the `respond_to?` method, but vastly more powerful.
   #   
-  # @!macro pattern_matching
+  # @!macro protocol
   module Protocol
 
     # The global registry of specified protocols.

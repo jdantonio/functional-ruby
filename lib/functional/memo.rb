@@ -1,8 +1,9 @@
 require 'thread'
 
-# http://clojuredocs.org/clojure_core/clojure.core/memoize
 module Functional
 
+  # @see http://en.wikipedia.org/wiki/Memoization Memoization (Wikipedia)
+  # @see http://clojuredocs.org/clojure_core/clojure.core/memoize Clojure memoize
   module Memo
 
     def self.extended(base)
