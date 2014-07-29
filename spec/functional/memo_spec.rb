@@ -25,6 +25,10 @@ module Functional
         def self.increment(n)
           self.count += 1
         end
+
+        def self.exception(ex = StandardError)
+          raise ex
+        end
       end
     end
 
@@ -42,6 +46,12 @@ module Functional
         expect {
           subject.memoize(:foo)
         }.to raise_error(NameError)
+      end
+
+      it 'raises an exception when the given method has already been memoized' do
+        expect{
+          subject.memoize(:add)
+        }.to raise_error(ArgumentError)
       end
 
       it 'allocates a different cache for each class/module' do
@@ -109,7 +119,46 @@ module Functional
     end
 
     context 'thread safety' do
-      pending
+
+      let(:mutex){ Mutex.new }
+
+      before(:each) do
+        allow(Mutex).to receive(:new).with(no_args).and_return(mutex)
+        allow(mutex).to receive(:lock).with(no_args).and_return(mutex)
+        allow(mutex).to receive(:unlock).with(no_args).and_return(mutex)
+      end
+
+      it 'locks a mutex whenever a memoized function is called' do
+        expect(mutex).to receive(:lock).exactly(:once).with(no_args)
+
+        subject.memoize(:increment)
+        subject.increment(0)
+      end
+
+      it 'unlocks the mutex whenever a memoized function is called' do
+        expect(mutex).to receive(:unlock).exactly(:once).with(no_args)
+
+        subject.memoize(:increment)
+        subject.increment(0)
+      end
+
+      it 'unlocks the mutex when the method call raises an exception' do
+        expect(mutex).to receive(:unlock).exactly(:once).with(no_args)
+
+        subject.memoize(:exception)
+        begin
+          subject.exception
+        rescue
+          # suppress
+        end
+      end
+
+      it 'uses different mutexes for different functions' do
+        expect(Mutex).to receive(:new).with(no_args).exactly(3).times.and_return(mutex)
+        # once for memoize(:add) in the definition
+        subject.memoize(:increment)
+        subject.memoize(:exception)
+      end
     end
   end
 end
