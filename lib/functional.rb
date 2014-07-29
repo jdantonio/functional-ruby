@@ -1,3 +1,4 @@
+require 'functional/delay'
 require 'functional/either'
 require 'functional/memo'
 require 'functional/option'
@@ -8,6 +9,15 @@ require 'functional/record'
 require 'functional/type_check'
 require 'functional/union'
 require 'functional/version'
+
+Functional::SpecifyProtocol(:Disposition) do
+  instance_method :value, 0
+  instance_method :value?, 0
+  instance_method :reason, 0
+  instance_method :reason?, 0
+  instance_method :fulfilled?, 0
+  instance_method :rejected?, 0
+end
 
 # Erlang, Clojure, and Go inspired functional programming tools to Ruby.
 module Functional

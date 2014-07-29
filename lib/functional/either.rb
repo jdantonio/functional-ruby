@@ -8,15 +8,6 @@ Functional::SpecifyProtocol(:Either) do
   instance_method :right?, 0
 end
 
-Functional::SpecifyProtocol(:Disposition) do
-  instance_method :value, 0
-  instance_method :value?, 0
-  instance_method :reason, 0
-  instance_method :reason?, 0
-  instance_method :fulfilled?, 0
-  instance_method :rejected?, 0
-end
-
 module Functional
 
   # The `Either` type represents a value of one of two possible types (a disjoint union).
