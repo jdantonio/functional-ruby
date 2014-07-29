@@ -7,38 +7,46 @@ module Functional
 
     def self.included(base)
       base.extend(ClassMethods)
-      base.send(:__memo_mutex__=, Mutex.new)
       base.send(:__method_memos__=, {})
       super(base)
     end
 
     module ClassMethods
 
-      Memo = Struct.new(:function, :cache)
+      Memo = Struct.new(:function, :mutex, :cache, :max_cache) do
+        def max_cache?
+          max_cache > 0 && cache.size >= max_cache
+        end
+      end
 
-      attr_accessor :__memo_mutex__
       attr_accessor :__method_memos__
 
       def memoize(func, opts = {})
+        max_cache = opts[:at_most].to_i
+        raise ArgumentError.new(':max_cache must be > 0') if max_cache < 0
         func = func.to_sym
-        __method_memos__[func] = Memo.new(method(func), {})
+        __method_memos__[func] = Memo.new(method(func), Mutex.new, {}, max_cache.to_i)
         __define_memo_proxy__(func)
       end
 
       def __define_memo_proxy__(func)
         self.class_eval <<-RUBY
-          def self.#{func}(*args)
-            self.__proxy_memoized_method(:#{func}, *args)
+          def self.#{func}(*args, &block)
+            self.__proxy_memoized_method(:#{func}, *args, &block)
           end
         RUBY
       end
 
-      def __proxy_memoized_method(func, *args)
+      def __proxy_memoized_method(func, *args, &block)
         memo = self.__method_memos__[func]
-        if memo.cache.has_key?(args)
+        ## probably lock mutex here
+        if block_given?
+          memo.function.call(*args, &block)
+        elsif memo.cache.has_key?(args)
           memo.cache[args]
         else
-          memo.cache[args] = memo.function.call(*args)
+          result = memo.function.call(*args)
+          memo.cache[args] = result unless memo.max_cache?
         end
       end
     end
