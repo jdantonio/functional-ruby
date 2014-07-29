@@ -5,6 +5,12 @@ module Functional
 
   module Memo
 
+    def self.extended(base)
+      base.extend(ClassMethods)
+      base.send(:__method_memos__=, {})
+      super(base)
+    end
+
     def self.included(base)
       base.extend(ClassMethods)
       base.send(:__method_memos__=, {})

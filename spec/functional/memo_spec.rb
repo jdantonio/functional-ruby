@@ -14,8 +14,6 @@ module Functional
 
         self.count = 0
 
-        def foo() nil; end
-
         def self.add(a, b)
           self.count += 1
           a + b
@@ -42,12 +40,6 @@ module Functional
         }.to raise_error(NameError)
       end
 
-      it 'raises an exception when given an instance method' do
-        expect {
-          subject.memoize(:foo)
-        }.to raise_error(NameError)
-      end
-
       it 'raises an exception when the given method has already been memoized' do
         expect{
           subject.memoize(:add)
@@ -65,6 +57,57 @@ module Functional
 
         expect(class_1.count).to eq 1
         expect(class_2.count).to eq 1
+      end
+
+      it 'works when included in a class' do
+        subject = Class.new do
+          include Functional::Memo
+          class << self
+            attr_accessor :count
+          end
+          self.count = 0
+          def self.foo
+            self.count += 1
+          end
+          memoize :foo
+        end
+
+        10.times{ subject.foo }
+        expect(subject.count).to eq 1
+      end
+
+      it 'works when included in a module' do
+        subject = Module.new do
+          include Functional::Memo
+          class << self
+            attr_accessor :count
+          end
+          self.count = 0
+          def self.foo
+            self.count += 1
+          end
+          memoize :foo
+        end
+
+        10.times{ subject.foo }
+        expect(subject.count).to eq 1
+      end
+
+      it 'works when extended by a module' do
+        subject = Module.new do
+          extend Functional::Memo
+          class << self
+            attr_accessor :count
+          end
+          self.count = 0
+          def self.foo
+            self.count += 1
+          end
+          memoize :foo
+        end
+
+        10.times{ subject.foo }
+        expect(subject.count).to eq 1
       end
     end
 
