@@ -92,8 +92,8 @@ Pattern matching using protocols, type checking, and other options:
 ```ruby
 class Foo
   include Functional::PatternMatching
+  include Functional::Protocol
   include Functional::TypeChecking
-  include Functional::PatternMatching
 
   def greet
     return 'Hello, World!'
