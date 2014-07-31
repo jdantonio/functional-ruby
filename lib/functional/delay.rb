@@ -16,6 +16,8 @@ module Functional
   # any side effects created by the operation will only happen once as well.
   #
   # @see http://clojuredocs.org/clojure_core/clojure.core/delay Clojure delay
+  #
+  # @!macro thread_safe_immutable_object
   class Delay
 
     # Create a new `Delay` in the `:pending` state.
@@ -30,6 +32,9 @@ module Functional
       @task  = block
     end
 
+    # Current state of block processing.
+    #
+    # @return [Symbol] the current state of block processing
     def state
       @mutex.lock
       @state
@@ -37,6 +42,10 @@ module Functional
       @mutex.unlock
     end
 
+    # The exception raised when processing the block. Returns `nil` if the
+    # operation is still `:pending` or has been `:fulfilled`.
+    #
+    # @return [StandardError] the exception raised when processing the block else nil
     def reason
       @mutex.lock
       @reason
@@ -87,6 +96,12 @@ module Functional
 
     protected
 
+    # @!visibility private
+    #
+    # Execute the enclosed task then cache and return the result if
+    # the current state is pending. Otherwise, return the cached result.
+    #
+    # @return [Object] the result of the block operation
     def execute_task_once
       if @state == :pending
         begin

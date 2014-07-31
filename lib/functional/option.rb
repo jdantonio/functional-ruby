@@ -16,6 +16,8 @@ module Functional
   #
   # @see Functional::AbstractStruct
   # @see http://functionaljava.googlecode.com/svn/artifacts/3.0/javadoc/index.html Functional Java
+  #
+  # @!macro thread_safe_immutable_object
   class Option
     include AbstractStruct
 

@@ -51,6 +51,8 @@ module Functional
   # @see Functional::Union
   # @see http://www.ruby-doc.org/core-2.1.2/Struct.html Ruby `Struct` class
   # @see http://en.wikipedia.org/wiki/Union_type "Union type" on Wikipedia
+  #
+  # @!macro thread_safe_immutable_object
   module Union
     extend self
 

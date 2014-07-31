@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-$: << File.expand_path(File.join(File.dirname(__FILE__), '../lib'))
+$LOAD_PATH << File.expand_path('../../lib', __FILE__)
 
 require 'functional'
 

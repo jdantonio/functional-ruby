@@ -2,40 +2,19 @@ require 'thread'
 
 module Functional
 
-  # @example
-  #   class Factors
-  #     include Functional::Memo
+  # Memoization is a technique for optimizing functions that are time-consuming
+  # and/or involve expensive calculations. Every time a memoized function is
+  # called the result is caches with reference to the given parameters.
+  # Subsequent calls to the function that use the same parameters will return
+  # the cached result. As a result the response time for frequently called
+  # functions is vastly incresed (after the first call with any given set of)
+  # arguments, at the cost of increased memory usage (the cache).
   #   
-  #     def self.sum_of(number)
-  #       of(number).reduce(:+)
-  #     end
-  #   
-  #     def self.of(number)
-  #       (1..number).select {|i| factor?(number, i)}
-  #     end
-  #   
-  #     def self.factor?(number, potential)
-  #       number % potential == 0
-  #     end
-  #   
-  #     def self.perfect?(number)
-  #       sum_of(number) == 2 * number
-  #     end
-  #   
-  #     def self.abundant?(number)
-  #       sum_of(number) > 2 * number
-  #     end
-  #   
-  #     def self.deficient?(number)
-  #       sum_of(number) < 2 * number
-  #     end
-  #   
-  #     memoize(:sum_of)
-  #     memoize(:of)
-  #   end
+  # @!macro memoize
   #
-  # @see http://en.wikipedia.org/wiki/Memoization Memoization (Wikipedia)
-  # @see http://clojuredocs.org/clojure_core/clojure.core/memoize Clojure memoize
+  # @note Memoized method calls are thread safe and can safely be used in concurrent systems.
+  #   Declaring memoization on a function is *not* thread safe and should only be done during
+  #   application initialization.
   module Memo
 
     def self.extended(base)

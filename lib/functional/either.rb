@@ -76,6 +76,8 @@ module Functional
   # @see http://functionaljava.googlecode.com/svn/artifacts/3.0/javadoc/fj/data/Either.html Functional Java
   # @see https://hackage.haskell.org/package/base-4.2.0.1/docs/Data-Either.html Haskell Data.Either
   # @see http://ruby-concurrency.github.io/concurrent-ruby/Concurrent/Obligation.html Concurrent Ruby
+  #
+  # @!macro thread_safe_immutable_object
   class Either
     include AbstractStruct
 
