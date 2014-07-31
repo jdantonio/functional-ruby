@@ -75,7 +75,7 @@ require 'functional'
 
 ## Examples
 
-Specifying a protocol:
+Specifying a [protocol](http://rubydoc.info/github/jdantonio/functional-ruby/master/Functional/Protocol):
 
 ```ruby
 Functional::SpecifyProtocol(:Name) do
@@ -86,7 +86,27 @@ Functional::SpecifyProtocol(:Name) do
 end
 ```
 
-Pattern matching using protocols, type checking, and other options:
+Defining immutable [data structures](http://rubydoc.info/github/jdantonio/functional-ruby/master/Functional/AbstractStruct) including
+[Either](http://rubydoc.info/github/jdantonio/functional-ruby/master/Functional/Either),
+[Option](http://rubydoc.info/github/jdantonio/functional-ruby/master/Functional/Option),
+[Union](http://rubydoc.info/github/jdantonio/functional-ruby/master/Functional/Union) and
+[Record](http://rubydoc.info/github/jdantonio/functional-ruby/master/Functional/Record)
+
+```ruby
+Name = Functional::Record.new(:first, :middle, :last, :suffix) do
+  mandatory :first, :last
+  default :first, 'J.'
+  default :last, 'Doe'
+end
+
+anon = Name.new #=> #<record Name :first=>"J.", :middle=>nil, :last=>"Doe", :suffix=>nil>
+matz = Name.new(first: 'Yukihiro', last: 'Matsumoto') #=> #<record Name :first=>"Yukihiro", :middle=>nil, :last=>"Matsumoto", :suffix=>nil>
+```
+
+[Pattern matching](http://rubydoc.info/github/jdantonio/functional-ruby/master/Functional/PatternMatching)
+using [protocols](http://rubydoc.info/github/jdantonio/functional-ruby/master/Functional/Protocol),
+[type](http://rubydoc.info/github/jdantonio/functional-ruby/master/Functional/TypeCheck) checking,
+and other options:
 
 ```ruby
 class Foo
@@ -110,12 +130,8 @@ class Foo
     "Hello, #{name.first} #{name.last}!"
   }.when {|name| Satisfy?(:Name) }
 
-  defn(:greet, :male, _) { |name|
-    "Hello, Mr. #{name}!"
-  }
-
-  defn(:greet, :female, _) { |name|
-    "Hello, Ms. #{name}!"
+  defn(:greet, :doctor, _) { |name|
+    "Hello, Dr. #{name}!"
   }
 
   defn(:greet, nil, _) { |name|
@@ -128,7 +144,7 @@ class Foo
 end
 ```
 
-Memoization:
+Performance improvement of idempotent functions through [memoization](http://rubydoc.info/github/jdantonio/functional-ruby/master/Functional/Memo):
 
 ```ruby
 class Factors
