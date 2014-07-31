@@ -1,13 +1,12 @@
 # Functional Ruby
 [![Gem Version](https://badge.fury.io/rb/functional-ruby.png)](http://badge.fury.io/rb/functional-ruby) [![Build Status](https://secure.travis-ci.org/jdantonio/functional-ruby.png)](https://travis-ci.org/jdantonio/functional-ruby?branch=master) [![Coverage Status](https://coveralls.io/repos/jdantonio/functional-ruby/badge.png)](https://coveralls.io/r/jdantonio/functional-ruby) [![Code Climate](https://codeclimate.com/github/jdantonio/functional-ruby.png)](https://codeclimate.com/github/jdantonio/functional-ruby) [![Inline docs](http://inch-ci.org/github/jdantonio/functional-ruby.png)](http://inch-ci.org/github/jdantonio/functional-ruby) [![Dependency Status](https://gemnasium.com/jdantonio/functional-ruby.png)](https://gemnasium.com/jdantonio/functional-ruby)
 
-A gem for adding functional programming tools to Ruby. Inspired by [Erlang](http://www.erlang.org/),
-[Clojure](http://clojure.org/), and [Functional Java](http://functionaljava.org/).
+**A gem for adding functional programming tools to Ruby. Inspired by [Erlang](http://www.erlang.org/),
+[Clojure](http://clojure.org/), and [Functional Java](http://functionaljava.org/).**
 
-*NOTE: Version 1.0 is a complete rewrite. Previous versions were a dumping
-grouns for a bunch of disconnected but interesting ideas. Version 1.0 is a
-focussed and cohesive set of utilities inspired by other languages but designed
-to work together in ways idiomatic to Ruby.*
+*NOTE: Version 1.0 is a complete rewrite. Previous versions lacked a unified
+focus. Version 1.0 is a cohesive set of utilities inspired by other languages
+but designed to work together in ways idiomatic to Ruby.*
 
 ## Introduction
 

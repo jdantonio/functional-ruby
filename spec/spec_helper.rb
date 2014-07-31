@@ -1,5 +1,3 @@
-#require 'coveralls'
-#Coveralls.wear!
 require 'simplecov'
 require 'coveralls'
 
@@ -13,6 +11,8 @@ SimpleCov.start do
   add_filter '/spec/'
 end
 
+#require 'coveralls'
+#Coveralls.wear!
 #require 'codeclimate-test-reporter'
 #CodeClimate::TestReporter.start
 
