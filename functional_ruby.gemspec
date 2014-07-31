@@ -9,12 +9,12 @@ Gem::Specification.new do |s|
   s.author      = "Jerry D'Antonio"
   s.email       = 'jerry.dantonio@gmail.com'
   s.homepage    = 'https://github.com/jdantonio/functional-ruby/'
-  s.summary     = 'Erlang, Clojure, and Haskell inspired functional programming tools to Ruby.'
+  s.summary     = 'Erlang, Clojure, Haskell, and Functional Java inspired functional programming tools for Ruby.'
   s.license     = 'MIT'
   s.date        = Time.now.strftime('%Y-%m-%d')
 
   s.description = <<-EOF
-    A gem for adding Erlang, Clojure, and Go inspired functional programming tools to Ruby.
+    A gem for adding functional programming tools to Ruby. Inspired by Erlang, Clojure, Haskell, and Functional Java.
   EOF
 
   s.files             = Dir['README*', 'LICENSE*', 'CHANGELOG*']
