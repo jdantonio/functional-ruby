@@ -4,6 +4,11 @@
 A gem for adding functional programming tools to Ruby. Inspired by [Erlang](http://www.erlang.org/),
 [Clojure](http://clojure.org/), and [Functional Java](http://functionaljava.org/).
 
+*NOTE: Version 1.0 is a complete rewrite. Previous versions were a dumping
+grouns for a bunch of disconnected but interesting ideas. Version 1.0 is a
+focussed and cohesive set of utilities inspired by other languages but designed
+to work together in ways idiomatic to Ruby.*
+
 ## Introduction
 
 Two things I love are [Ruby](http://www.ruby-lang.org/en/) and
@@ -29,6 +34,8 @@ Our goal is to implement various functional programming patterns in Ruby. Specif
 * Be as fast as reasonably possible
 
 ## Features
+
+Complete API documentation can be found at [Rubydoc.info](http://rubydoc.info/github/jdantonio/functional-ruby/master/frames).
 
 * Protocol specifications inspired by Clojure [protocol](http://clojure.org/protocols),
   Erlang [behavior](http://www.erlang.org/doc/design_principles/des_princ.html#id60128),
@@ -65,6 +72,84 @@ Once you've installed the gem you must `require` it in your project:
 
 ```ruby
 require 'functional'
+```
+
+## Examples
+
+Specifying a protocol:
+
+```ruby
+Functional::SpecifyProtocol(:Name) do
+  attr_accessor :first
+  attr_accessor :middle
+  attr_accessor :last
+  attr_accessor :suffix
+end
+```
+
+Pattern matching using protocols, type checking, and other options:
+
+```ruby
+class Foo
+  include Functional::PatternMatching
+  include Functional::TypeChecking
+  include Functional::PatternMatching
+
+  def greet
+    return 'Hello, World!'
+  end
+
+  defn(:greet, _) do |name|
+    "Hello, #{name}!"
+  end
+
+  defn(:greet, _) { |name|
+    "Pleased to meet you, #{name.fulle_name}!"
+  }.when {|name| Type?(CustomerModel, ClientModel) }
+
+  defn(:greet, _) { |name|
+    "Hello, #{name.first} #{name.last}!"
+  }.when {|name| Satisfy?(:Name) }
+
+  defn(:greet, :male, _) { |name|
+    "Hello, Mr. #{name}!"
+  }
+
+  defn(:greet, :female, _) { |name|
+    "Hello, Ms. #{name}!"
+  }
+
+  defn(:greet, nil, _) { |name|
+    "Goodbye, #{name}!"
+  }
+
+  defn(:greet, _, _) { |_, name|
+    "Hello, #{name}!"
+  }
+end
+```
+
+Memoization:
+
+```ruby
+class Factors
+  include Functional::Memo
+
+  def self.sum_of(number)
+    of(number).reduce(:+)
+  end
+
+  def self.of(number)
+    (1..number).select {|i| factor?(number, i)}
+  end
+
+  def self.factor?(number, potential)
+    number % potential == 0
+  end
+
+  memoize(:sum_of)
+  memoize(:of)
+end
 ```
 
 ## Contributing
