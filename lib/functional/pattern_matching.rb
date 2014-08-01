@@ -75,6 +75,7 @@ module Functional
       end
     end
 
+    # @!visibility private
     def self.included(base)
       base.extend(ClassMethods)
       super(base)

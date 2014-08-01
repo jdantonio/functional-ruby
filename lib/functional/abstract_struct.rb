@@ -11,6 +11,8 @@ end
 module Functional
 
   # An abstract base class for immutable struct classes.
+  #
+  # @since 1.0.0
   module AbstractStruct
 
     # @return [Array] the values of all record fields in order, frozen

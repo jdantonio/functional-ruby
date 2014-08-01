@@ -3,6 +3,8 @@ module Functional
   # Supplies type-checking helpers whenever included.
   #
   # @see http://ruby-concurrency.github.io/concurrent-ruby/Concurrent/Actor/TypeCheck.html TypeCheck in Concurrent Ruby
+  #
+  # @since 1.0.0
   module TypeCheck
 
     # Performs an `is_a?` check of the given value object against the

@@ -6,6 +6,8 @@ module Functional
     #
     # Helper functions used when pattern matching runtime arguments against
     # a method defined with the `defn` function of Functional::PatternMatching.
+    #
+    # @since 1.0.0
     module MethodSignature
       extend self
 

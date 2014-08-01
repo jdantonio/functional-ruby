@@ -57,6 +57,8 @@ module Functional
   # It is a logical extension of the `respond_to?` method, but vastly more powerful.
   #   
   # @!macro protocol
+  #
+  # @since 1.0.0 (formerly "behavior")
   module Protocol
 
     # The global registry of specified protocols.

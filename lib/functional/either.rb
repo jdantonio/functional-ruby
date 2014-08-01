@@ -77,6 +77,8 @@ module Functional
   # @see https://hackage.haskell.org/package/base-4.2.0.1/docs/Data-Either.html Haskell Data.Either
   # @see http://ruby-concurrency.github.io/concurrent-ruby/Concurrent/Obligation.html Concurrent Ruby
   #
+  # @since 1.0.0
+  #
   # @!macro thread_safe_immutable_object
   class Either
     include AbstractStruct

@@ -17,6 +17,8 @@ module Functional
   #
   # @see http://clojuredocs.org/clojure_core/clojure.core/delay Clojure delay
   #
+  # @since 1.0.0
+  #
   # @!macro thread_safe_immutable_object
   class Delay
 
