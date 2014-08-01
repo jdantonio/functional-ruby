@@ -76,5 +76,49 @@ module Functional
       expect(f1.bar?).to be true
       expect(f2.bar?).to be true
     end
+
+    context 'thread safety' do
+
+      let(:safe_clazz) do
+        Class.new do
+          include Functional::Final
+          final_attribute :bar
+          def initialize
+            thread_safe_final
+          end
+        end
+      end
+
+      let(:mutex){ Mutex.new }
+
+      before(:each) do
+        allow(Mutex).to receive(:new).with(no_args).and_return(mutex)
+        allow(mutex).to receive(:unlock).with(no_args)
+      end
+
+      subject { safe_clazz.new }
+
+      it 'does not normally create a mutex' do
+        expect(Mutex).to_not receive(:new).with(any_args)
+        subject = clazz.new
+      end
+
+      it 'creates a mutex when #thread_safe_final is called' do
+        expect(Mutex).to receive(:new).with(no_args).and_return(mutex)
+        subject
+      end
+
+      it 'locks the writer method when #thread_safe_final' do
+        expect(mutex).to receive(:try_lock).with(no_args).and_return(true)
+        subject.bar = 42
+      end
+
+      it 'raises an exception on writing if the mutex is locked' do
+        allow(mutex).to receive(:try_lock).with(no_args).and_return(false)
+        expect {
+          subject.bar = 42
+        }.to raise_error(Functional::ImmutablityError)
+      end
+    end
   end
 end
