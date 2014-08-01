@@ -4,6 +4,8 @@ module Functional
   # itself from a block. Used by {Functional#SpecifyProtocol}.
   # 
   # @see Functional::Protocol
+  #
+  # @since 1.0.0
   class ProtocolInfo
 
     # The symbolic name of the protocol
@@ -63,6 +65,7 @@ module Functional
     private
 
     # Data structure for encapsulating the protocol info data.
+    # @!visibility private
     Info = Struct.new(:instance_methods, :class_methods, :constants)
 
     # Does the target satisfy the constants expected by this protocol?

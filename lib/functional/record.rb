@@ -19,6 +19,8 @@ module Functional
   # @see Functional::AbstractStruct
   # @see Functional::Union
   #
+  # @since 1.0.0
+  #
   # @!macro thread_safe_immutable_object
   module Record
     extend self
