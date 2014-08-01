@@ -28,7 +28,7 @@ module Functional
   # end
   # ```
   # This will cause several instance methods to be defined: a reader, a writer,
-  # and a predicate.
+  # a predicate, and a "try" writer.
   #
   # ### Attribute Reader
   #
@@ -84,6 +84,22 @@ module Functional
   # the attribute reader should never be checked for `nil` as a way of determining if
   # the value has been set. Always use the predicate.
   #
+  # ### Attribute "Try" Writer
+  #
+  # There may be circumstance where a final attribute needs to be set if and only if
+  # it has not been set already. But exception handling is expensive. The "try" writer 
+  # encapsulates the patter of "set this final attribute if it has not already been set"
+  # into a single method call. The return value of the "try" method will be either
+  # `true` or `false`, indicating whether or not the value was changed.
+  #
+  # ```ruby
+  # foo = Foo.new
+  # foo.try_bar(42)      #=> true
+  # foo.bar              #=> 42
+  # foo.try_bar('Boom!') #=> false
+  # foo.bar              #=> 42
+  # ```
+  #
   # ## Inspiration
   #
   # * [Java's `final` keyword](http://en.wikipedia.org/wiki/Final_(Java))
@@ -113,13 +129,19 @@ module Functional
       # @see http://en.wikipedia.org/wiki/Final_(Java) final (Java) at Wikipedia
       def final_attribute(name, *names)
         (names << name).each do |func|
-          self.send(:define_method, func.to_sym){ nil }
-          self.send(:define_method, "#{func}?".to_sym){ false }
-          self.send(:define_method, "#{func}=".to_sym){|value|
+          self.send(:define_method, func){ nil }
+          self.send(:define_method, "#{func}?"){ false }
+
+          self.send(:define_method, "try_#{func}"){|value|
+            # not atomic, needs improvement
+            send("#{func}?") ? false : ->{ send("#{func}=", value); true }.call
+          }
+
+          self.send(:define_method, "#{func}="){|value|
             singleton = class << self; self end 
-            singleton.send(:define_method, "#{func}?".to_sym){ true }
-            singleton.send(:define_method, func.to_sym){ value }
-            singleton.send(:define_method, "#{func}=".to_sym) {|value|
+            singleton.send(:define_method, "#{func}?"){ true }
+            singleton.send(:define_method, func){ value }
+            singleton.send(:define_method, "#{func}=") {|value|
               raise ImmutablityError.new("final accessor '#{func}' has already been set")
             }
             value
