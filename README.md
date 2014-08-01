@@ -8,6 +8,8 @@
 focus. Version 1.0 is a cohesive set of utilities inspired by other languages
 but designed to work together in ways idiomatic to Ruby.*
 
+Please see the [changelog](https://github.com/jdantonio/functional-ruby/blob/master/CHANGELOG.md) for more information.
+
 ## Introduction
 
 Two things I love are [Ruby](http://www.ruby-lang.org/en/) and
@@ -47,6 +49,8 @@ Complete API documentation can be found at [Rubydoc.info](http://rubydoc.info/gi
 * `Either` and `Option` classes based on [Functional Java](http://functionaljava.org/) and [Haskell](https://hackage.haskell.org/package/base-4.2.0.1/docs/Data-Either.html)
 * [Memoization](http://en.wikipedia.org/wiki/Memoization) of class methods based on Clojure [memoize](http://clojuredocs.org/clojure_core/clojure.core/memoize)
 * Lazy execution with a `Delay` class based on Clojure [delay](http://clojuredocs.org/clojure_core/clojure.core/delay)
+* A `final_attribute` variant of Ruby's `attr_accessor` that allows an attribute to be
+  written at most once. Based on [Java's `final` keyword](http://en.wikipedia.org/wiki/Final_(Java))
 
 ### Supported Ruby Versions
 

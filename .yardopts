@@ -10,4 +10,5 @@
 ./lib/**/*.rb
 -
 README.md
+CHANGELOG.md
 LICENSE
