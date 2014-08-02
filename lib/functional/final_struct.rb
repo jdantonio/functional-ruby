@@ -54,9 +54,7 @@ module Functional
     end
 
     def get(field)
-      @mutex.synchronize {
-        send(field)
-      }
+      send(field)
     end
     alias_method :[], :get
 
@@ -128,13 +126,6 @@ module Functional
         nil
       else
         super
-      end
-    end
-
-    # Returns the object's singleton class.
-    def singleton_class
-      class << self
-        self
       end
     end
   end

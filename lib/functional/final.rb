@@ -116,12 +116,16 @@ module Functional
           self.send(:define_method, func){ nil }
           self.send(:define_method, "#{func}?"){ false }
           self.send(:define_method, "#{func}="){|value|
-            singleton = class << self; self end 
-            singleton.send(:define_method, "#{func}?"){ true }
-            singleton.send(:define_method, func){ value }
-            singleton.send(:define_method, "#{func}=") {|value|
+            # Each of the following method calls is atomic, but they are not atomic as a group.
+            # Wrapping all three method calls in an atomic block would be very difficult
+            # (if not impossible) given that 1) this is a mixin module and 2) Ruby lacks a memory model.
+            # Since calling this method more than once is a logical error that raises an exception,
+            # the following call order will provide the expected behavior when used properly.
+            singleton_class.send(:define_method, "#{func}?"){ true }
+            singleton_class.send(:define_method, "#{func}=") {|value|
               raise FinalityError.new("final accessor '#{func}' has already been set")
             }
+            singleton_class.send(:define_method, func){ value }
             value
           }
         end
