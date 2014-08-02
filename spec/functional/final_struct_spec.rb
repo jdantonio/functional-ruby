@@ -8,14 +8,14 @@ module Functional
 
       specify 'with no args defines no fields' do
         subject = FinalStruct.new
-        expect(subject.to_h).to be_empty?
+        expect(subject.to_h).to be_empty
       end
 
       specify 'with a hash defines fields for hash keys' do
         subject = FinalStruct.new(foo: 1, bar: :two, baz: 'three')
-        expect(subject).to respond_to?(:foo)
-        expect(subject).to respond_to?(:bar)
-        expect(subject).to respond_to?(:baz)
+        expect(subject).to respond_to(:foo)
+        expect(subject).to respond_to(:bar)
+        expect(subject).to respond_to(:baz)
       end
 
       specify 'with a hash sets fields using has values' do
@@ -75,9 +75,9 @@ module Functional
       end
 
       specify 'have a magic predicate that always returns false' do
-        expect(subject).to_not be_foo
-        expect(subject).to_not be_bar
-        expect(subject).to_not be_baz
+        expect(subject.foo?).to be false
+        expect(subject.bar?).to be false
+        expect(subject.baz?).to be false
       end
 
       specify 'have a magic writer that sets the field' do
@@ -116,7 +116,7 @@ module Functional
         subject.set(:harmless, 'mostly')
         expect {
           subject.set(:harmless, 'extremely')
-        }.to raise_erro(Functional::FinalityError)
+        }.to raise_error(Functional::FinalityError)
       end
 
       specify '#[]= is an alias for set' do
@@ -124,11 +124,11 @@ module Functional
         expect(subject.harmless).to eq 'mostly'
         expect {
           subject[:harmless] = 'extremely'
-        }.to raise_erro(Functional::FinalityError)
+        }.to raise_error(Functional::FinalityError)
       end
 
       specify '#get_or_set returns the value of a set field' do
-        subject.set(:answer, 42)
+        subject.answer = 42
         expect(subject.get_or_set(:answer, 100)).to eq 42
       end
 
@@ -154,11 +154,19 @@ module Functional
       specify '#fetch does not set an unset field' do
         subject.fetch(:answer, 42)
         expect(subject.answer).to be_nil
-        expect(subject).to_not be_answer
+        expect(subject.answer?).to be false
       end
 
       specify '#to_h returns the key/value pairs for all set values' do
         subject = FinalStruct.new(field_value_pairs)
+        expect(subject.to_h).to eq field_value_pairs
+      end
+
+      specify '#to_h is updated when new fields are added' do
+        subject = FinalStruct.new
+        field_value_pairs.each_pair do |field, value|
+          subject.set(field, value)
+        end
         expect(subject.to_h).to eq field_value_pairs
       end
 
@@ -205,9 +213,9 @@ module Functional
         expect(first == second).to be false
       end
 
-      specify '#inspect begins with FinalStruct' do
+      specify '#inspect begins with the class name' do
         subject = FinalStruct.new(foo: 1, bar: :two, baz: 'three')
-        expect(subject.inspect).to match(/^#<FinalStruct\s+/)
+        expect(subject.inspect).to match(/^#<#{described_class}\s+/)
       end
 
       specify '#inspect includes all field/value pairs' do
@@ -215,8 +223,7 @@ module Functional
         subject = FinalStruct.new(field_value_pairs)
 
         field_value_pairs.each do |field, value|
-          value_regex = "\"?#{value}\"?"
-          expect(struct.inspect).to match(/:#{field}=>#{value_regex}/)
+          expect(subject.inspect).to match(/:#{field}=>"?:?#{value}"?/)
         end
       end
 
