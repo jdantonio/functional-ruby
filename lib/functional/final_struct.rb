@@ -1,3 +1,4 @@
+require 'thread'
 require_relative 'final'
 
 module Functional
@@ -47,40 +48,54 @@ module Functional
 
     def initialize(attributes = {})
       raise ArgumentError.new('field/value pairs must be given as a hash or not at all') unless attributes.is_a?(Hash)
+      @mutex = Mutex.new
       @attribute_hash = {}
       attributes.each_pair{|field, value| add_new_field(field, value) }
     end
 
     def get(field)
-      send(field)
+      @mutex.synchronize {
+        send(field)
+      }
     end
     alias_method :[], :get
 
     def set(field, value)
-      send("#{field}=", value)
+      @mutex.synchronize {
+        send("#{field}=", value)
+      }
     end
     alias_method :[]=, :set
 
     def get_or_set(field, value)
-      if send("#{field}?")
-        send(field)
-      else
-        add_new_field(field, value)
-      end
+      @mutex.synchronize {
+        if send("#{field}?")
+          send(field)
+        else
+          add_new_field(field, value)
+        end
+      }
     end
 
     def fetch(field, default)
-      send("#{field}?") ? send(field) : default
+      @mutex.synchronize {
+        send("#{field}?") ? send(field) : default
+      }
     end
+
     def each_pair
       return enum_for(:each_pair) unless block_given?
-      @attribute_hash.each do |field, value|
-        yield(field, value)
-      end
+      @mutex.synchronize {
+        @attribute_hash.each do |field, value|
+          yield(field, value)
+        end
+      }
     end
 
     def to_h
-      @attribute_hash.dup
+      @mutex.synchronize {
+        @attribute_hash.dup
+      }
     end
 
     def eql?(other)
