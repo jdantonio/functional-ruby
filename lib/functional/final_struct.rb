@@ -46,11 +46,16 @@ module Functional
   class FinalStruct
     include Functional::Final
 
+    # Creates a new `FinalStruct` object. By default, the resulting `FinalStruct`
+    # object will have no attributes. The optional hash, if given, will generate
+    # attributes and values (can be a `Hash` or any object with a `to_h` method).
+    #
+    # @param [Hash] attributes the field/value pairs to set on creation
     def initialize(attributes = {})
-      raise ArgumentError.new('field/value pairs must be given as a hash or not at all') unless attributes.is_a?(Hash)
+      raise ArgumentError.new('field/value pairs must be given as a hash or not at all') unless attributes.respond_to?(:to_h)
       @mutex = Mutex.new
       @attribute_hash = {}
-      attributes.each_pair{|field, value| add_new_field(field, value) }
+      attributes.to_h.each_pair{|field, value| add_new_field(field, value) }
     end
 
     def get(field)

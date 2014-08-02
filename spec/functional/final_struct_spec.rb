@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'ostruct'
 
 module Functional
 
@@ -30,6 +31,36 @@ module Functional
         expect(subject).to be_foo
         expect(subject).to be_bar
         expect(subject).to be_baz
+      end
+
+      specify 'can be created from an OpenStruct' do
+        struct = OpenStruct.new(answer: 42, harmless: 'mostly')
+        subject = FinalStruct.new(struct)
+        expect(subject.answer).to eq 42
+        expect(subject.harmless).to eq 'mostly'
+      end
+
+      specify 'can be created from a Struct' do
+        clazz = Struct.new(:answer, :harmless)
+        struct = clazz.new(42, 'mostly')
+        subject = FinalStruct.new(struct)
+        expect(subject.answer).to eq 42
+        expect(subject.harmless).to eq 'mostly'
+      end
+
+      specify 'can be created from a Functional::Record' do
+        clazz = Functional::Record.new(:answer, :harmless)
+        struct = clazz.new(answer: 42, harmless: 'mostly')
+        subject = FinalStruct.new(struct)
+        expect(subject.answer).to eq 42
+        expect(subject.harmless).to eq 'mostly'
+      end
+
+      specify 'can be created from a Functional::Union' do
+        clazz = Functional::Union.new(:answer, :harmless)
+        subject = clazz.answer(42)
+        expect(subject.answer).to eq 42
+        expect(subject.harmless).to be_nil
       end
 
       specify 'raises an exception if given a non-hash argument' do
