@@ -2,7 +2,7 @@ module Functional
 
   # An exception raised when an attempt is made to modify an
   # immutable object or attribute.
-  ImmutablityError = Class.new(StandardError)
+  FinalityError = Class.new(StandardError)
 
   # Functions for supporting immutability inspired by Java's `final` keyword.
   #
@@ -51,13 +51,13 @@ module Functional
   # a valid value). Once set the reader method will forever return the new value.
   # It is a logical error to attempt to write a final attribute more than once.
   # The second and subsequent call to the writer of a final attribute will
-  # result in a {Functional::ImmutablityError} being raised.
+  # result in a {Functional::FinalityError} being raised.
   #
   # ```ruby
   # foo = Foo.new
   # foo.bar = 42 #=> 42
   # foo.bar      #=> 42
-  # foo.bar = 42 #=> Functional::ImmutablityError: final accessor 'bar' has already been set
+  # foo.bar = 42 #=> Functional::FinalityError: final accessor 'bar' has already been set
   # ```
   #
   # The return value of the attribute writer method, when successful, is the new value.
@@ -120,7 +120,7 @@ module Functional
             singleton.send(:define_method, "#{func}?"){ true }
             singleton.send(:define_method, func){ value }
             singleton.send(:define_method, "#{func}=") {|value|
-              raise ImmutablityError.new("final accessor '#{func}' has already been set")
+              raise FinalityError.new("final accessor '#{func}' has already been set")
             }
             value
           }

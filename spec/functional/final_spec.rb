@@ -40,7 +40,7 @@ module Functional
       subject.bar = 42
       expect {
         subject.bar = 42
-      }.to raise_error(Functional::ImmutablityError)
+      }.to raise_error(Functional::FinalityError)
     end
 
     specify 'accepts multiple attribute names on one call' do
