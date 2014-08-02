@@ -6,71 +6,224 @@ module Functional
 
     context 'instanciation' do
 
-      specify 'with no args defines no fields'
+      specify 'with no args defines no fields' do
+        subject = FinalStruct.new
+        expect(subject.to_h).to be_empty?
+      end
 
-      specify 'with a hash defines fields for hash keys'
+      specify 'with a hash defines fields for hash keys' do
+        subject = FinalStruct.new(foo: 1, bar: :two, baz: 'three')
+        expect(subject).to respond_to?(:foo)
+        expect(subject).to respond_to?(:bar)
+        expect(subject).to respond_to?(:baz)
+      end
 
-      specify 'with a hash sets fields using has values'
+      specify 'with a hash sets fields using has values' do
+        subject = FinalStruct.new(foo: 1, bar: :two, baz: 'three')
+        expect(subject.foo).to eq 1
+        expect(subject.bar).to eq :two
+        expect(subject.baz).to eq 'three'
+      end
 
-      specify 'raises an exception if given a non-hash argument'
+      specify 'with a hash creates true predicates for has keys' do
+        subject = FinalStruct.new(foo: 1, bar: :two, baz: 'three')
+        expect(subject).to be_foo
+        expect(subject).to be_bar
+        expect(subject).to be_baz
+      end
+
+      specify 'raises an exception if given a non-hash argument' do
+        expect {
+          FinalStruct.new(:bogus)
+        }.to raise_error(ArgumentError)
+      end
     end
 
     context 'set fields' do
 
-      specify 'have a reader which returns the value'
+      subject do
+        struct = FinalStruct.new
+        struct.foo = 42
+        struct.bar = "Don't Panic"
+        struct
+      end
 
-      specify 'have a predicate which returns true'
+      specify 'have a reader which returns the value' do
+        expect(subject.foo).to eq 42
+        expect(subject.bar).to eq "Don't Panic"
+      end
 
-      specify 'raise an exception when written to again'
+      specify 'have a predicate which returns true' do
+        expect(subject).to be_foo
+        expect(subject).to be_bar
+      end
+
+      specify 'raise an exception when written to again' do
+        expect {subject.foo = 0}.to raise_error(Functional::FinalityError)
+        expect {subject.bar = 0}.to raise_error(Functional::FinalityError)
+      end
     end
 
     context 'unset fields' do
 
-      specify 'have a magic reader that always returns nil'
+      subject { FinalStruct.new }
 
-      specify 'have a magic predicate that always returns false'
+      specify 'have a magic reader that always returns nil' do
+        expect(subject.foo).to be nil
+        expect(subject.bar).to be nil
+        expect(subject.baz).to be nil
+      end
 
-      specify 'have a magic writer that sets the field'
+      specify 'have a magic predicate that always returns false' do
+        expect(subject).to_not be_foo
+        expect(subject).to_not be_bar
+        expect(subject).to_not be_baz
+      end
+
+      specify 'have a magic writer that sets the field' do
+        expect(subject.foo = 42).to eq 42
+        expect(subject.bar = :towel).to eq :towel
+        expect(subject.baz = "Don't Panic").to eq "Don't Panic"
+      end
     end
 
     context 'accessors' do
 
-      specify '#get returns the value of a set field'
+      let!(:field_value_pairs) { {foo: 1, bar: :two, baz: 'three'} }
 
-      specify '#get returns nil for an unset field'
+      subject { FinalStruct.new(field_value_pairs) }
 
-      specify '#[] is an alias for #get'
+      specify '#get returns the value of a set field' do
+        expect(subject.get(:foo)).to eq 1
+      end
 
-      specify '#set sets the value of an unset field'
+      specify '#get returns nil for an unset field' do
+        expect(subject.get(:bogus)).to be nil
+      end
 
-      specify '#set raises an exception if the field has already been set'
+      specify '#[] is an alias for #get' do
+        expect(subject[:foo]).to eq 1
+        expect(subject[:bogus]).to be nil
+      end
 
-      specify '#[]= is an alias for set'
+      specify '#set sets the value of an unset field' do
+        subject.set(:harmless, 'mostly')
+        expect(subject.harmless).to eq 'mostly'
+        expect(subject).to be_harmless
+      end
 
-      specify '#get_or_set returns the value of a set field'
+      specify '#set raises an exception if the field has already been set' do
+        subject.set(:harmless, 'mostly')
+        expect {
+          subject.set(:harmless, 'extremely')
+        }.to raise_erro(Functional::FinalityError)
+      end
 
-      specify '#get_or_set sets the value of an unset field'
+      specify '#[]= is an alias for set' do
+        subject[:harmless] = 'mostly'
+        expect(subject.harmless).to eq 'mostly'
+        expect {
+          subject[:harmless] = 'extremely'
+        }.to raise_erro(Functional::FinalityError)
+      end
 
-      specify '#get_or_set returns the value of a newly set field'
+      specify '#get_or_set returns the value of a set field' do
+        subject.set(:answer, 42)
+        expect(subject.get_or_set(:answer, 100)).to eq 42
+      end
 
-      specify '#fetch gets the value of an unset field'
+      specify '#get_or_set sets the value of an unset field' do
+        subject.get_or_set(:answer, 42)
+        expect(subject.answer).to eq 42
+        expect(subject).to be_answer
+      end
 
-      specify '#fetch returns the given value when the field is unset'
+      specify '#get_or_set returns the value of a newly set field' do
+        expect(subject.get_or_set(:answer, 42)).to eq 42
+      end
 
-      specify '#to_h returns the key/value pairs for all set values'
+      specify '#fetch gets the value of a set field' do
+        subject.harmless = 'mostly'
+        expect(subject.fetch(:harmless, 'extremely')).to eq 'mostly'
+      end
 
-      specify '#each_pair returns an enumerator when no block given'
+      specify '#fetch returns the given value when the field is unset' do
+        expect(subject.fetch(:harmless, 'extremely')).to eq 'extremely'
+      end
 
-      specify '#each_pair enumerates over each field/value pair'
+      specify '#fetch does not set an unset field' do
+        subject.fetch(:answer, 42)
+        expect(subject.answer).to be_nil
+        expect(subject).to_not be_answer
+      end
+
+      specify '#to_h returns the key/value pairs for all set values' do
+        subject = FinalStruct.new(field_value_pairs)
+        expect(subject.to_h).to eq field_value_pairs
+      end
+
+      specify '#each_pair returns an Enumerable when no block given' do
+        subject = FinalStruct.new(field_value_pairs)
+        expect(subject.each_pair).to be_a Enumerable
+      end
+
+      specify '#each_pair enumerates over each field/value pair' do
+        subject = FinalStruct.new(field_value_pairs)
+        result = {}
+
+        subject.each_pair do |field, value|
+          result[field] = value
+        end
+
+        expect(result).to eq field_value_pairs
+      end
     end
 
     context 'reflection' do
 
-      specify '#eql? returns true when both define the same fields with the same values'
+      specify '#eql? returns true when both define the same fields with the same values' do
+        first = FinalStruct.new(foo: 1, bar: :two, baz: 'three')
+        second = FinalStruct.new(foo: 1, bar: :two, baz: 'three')
 
-      specify '#eql? returns false when other has different fields defined'
+        expect(first.eql?(second)).to be true
+        expect(first == second).to be true
+      end
 
-      specify '#eql? returns false when other has different field values'
+      specify '#eql? returns false when other has different fields defined' do
+        first = FinalStruct.new(foo: 1, bar: :two, baz: 'three')
+        second = FinalStruct.new(foo: 1, bar: :two)
+
+        expect(first.eql?(second)).to be false
+        expect(first == second).to be false
+      end
+
+      specify '#eql? returns false when other has different field values' do
+        first = FinalStruct.new(foo: 1, bar: :two, baz: 'three')
+        second = FinalStruct.new(foo: 1, bar: :two, baz: 3)
+
+        expect(first.eql?(second)).to be false
+        expect(first == second).to be false
+      end
+
+      specify '#inspect begins with FinalStruct' do
+        subject = FinalStruct.new(foo: 1, bar: :two, baz: 'three')
+        expect(subject.inspect).to match(/^#<FinalStruct\s+/)
+      end
+
+      specify '#inspect includes all field/value pairs' do
+        field_value_pairs = {foo: 1, bar: :two, baz: 'three'}
+        subject = FinalStruct.new(field_value_pairs)
+
+        field_value_pairs.each do |field, value|
+          value_regex = "\"?#{value}\"?"
+          expect(struct.inspect).to match(/:#{field}=>#{value_regex}/)
+        end
+      end
+
+      specify '#to_s returns the same value as #inspect' do
+        subject = FinalStruct.new(foo: 1, bar: :two, baz: 'three')
+        expect(subject.to_s).to eq subject.inspect
+      end
     end
   end
 end
