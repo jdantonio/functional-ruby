@@ -49,6 +49,8 @@ module Functional
   #
   # @see Functional::Final
   # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/ostruct/rdoc/OpenStruct.html
+  #
+  # @!macro thread_safe_final_object
   class FinalStruct
     include Functional::Final
 
@@ -149,7 +151,9 @@ module Functional
     end
     alias_method :==, :eql?
 
-    # @!macro inspect_method
+    # Describe the contents of this object in a string.
+    #
+    # @return [String] the string representation of this object
     def inspect
       state = to_h.to_s.gsub(/^{/, '').gsub(/}$/, '')
       "#<#{self.class} #{state}>"

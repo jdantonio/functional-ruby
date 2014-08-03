@@ -253,6 +253,12 @@ module Functional
         subject = FinalStruct.new(foo: 1, bar: :two, baz: 'three')
         expect(subject.to_s).to eq subject.inspect
       end
+
+      specify '#method_missing raises an exception for methods with unrecognized signatures' do
+        expect {
+          subject.foo(1, 2, 3)
+        }.to raise_error(NoMethodError)
+      end
     end
   end
 end

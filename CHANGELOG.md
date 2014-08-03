@@ -2,6 +2,8 @@
 
 * A `final_attribute` variant of Ruby's `attr_accessor` that allows an attribute to be
   written at most once. Based on [Java's `final` keyword](http://en.wikipedia.org/wiki/Final_(Java))
+* `FinalStruct`, a variation on Ruby's `OpenStruct` in which all fields are "final" and exhibit
+  the behavior of a `Functional::Final#final_attribute`.
 
 ## Current Release v1.0.0 (July 30, 2014)
 

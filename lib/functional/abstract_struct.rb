@@ -57,7 +57,7 @@ module Functional
 
     # @!macro [attach] inspect_method
     #
-    #   Describe the contents of this record in a string. Will include the name of the
+    #   Describe the contents of this struct in a string. Will include the name of the
     #   record class, all fields, and all values.
     #
     #   @return [String] the class and contents of this record
