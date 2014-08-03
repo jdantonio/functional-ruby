@@ -33,34 +33,14 @@ module Functional
         expect(subject).to be_baz
       end
 
-      specify 'can be created from an OpenStruct' do
-        struct = OpenStruct.new(answer: 42, harmless: 'mostly')
+      specify 'can be created from any object that responds to #to_h' do
+        clazz = Class.new do
+          def to_h; {answer: 42, harmless: 'mostly'}; end
+        end
+        struct = clazz.new
         subject = FinalStruct.new(struct)
         expect(subject.answer).to eq 42
         expect(subject.harmless).to eq 'mostly'
-      end
-
-      specify 'can be created from a Struct' do
-        clazz = Struct.new(:answer, :harmless)
-        struct = clazz.new(42, 'mostly')
-        subject = FinalStruct.new(struct)
-        expect(subject.answer).to eq 42
-        expect(subject.harmless).to eq 'mostly'
-      end
-
-      specify 'can be created from a Functional::Record' do
-        clazz = Functional::Record.new(:answer, :harmless)
-        struct = clazz.new(answer: 42, harmless: 'mostly')
-        subject = FinalStruct.new(struct)
-        expect(subject.answer).to eq 42
-        expect(subject.harmless).to eq 'mostly'
-      end
-
-      specify 'can be created from a Functional::Union' do
-        clazz = Functional::Union.new(:answer, :harmless)
-        subject = clazz.answer(42)
-        expect(subject.answer).to eq 42
-        expect(subject.harmless).to be_nil
       end
 
       specify 'raises an exception if given a non-hash argument' do
@@ -242,6 +222,17 @@ module Functional
 
         expect(first.eql?(second)).to be false
         expect(first == second).to be false
+      end
+
+      specify '#eql? returns false when other is not a FinalStruct' do
+        attributes = {answer: 42, harmless: 'mostly'}
+        clazz = Class.new do
+          def to_h; {answer: 42, harmless: 'mostly'}; end
+        end
+        other = clazz.new
+        subject = FinalStruct.new(attributes)
+        expect(subject.eql?(other)).to be false
+        expect(subject == other).to be false
       end
 
       specify '#inspect begins with the class name' do

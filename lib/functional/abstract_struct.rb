@@ -49,7 +49,7 @@ module Functional
     # field values (according to `Object#==`).
     #
     # @param [Object] other the other record to compare for equality
-    # @return [Booleab] true when equal else false
+    # @return [Boolean] true when equal else false
     def eql?(other)
       self.class == other.class && self.to_h == other.to_h
     end

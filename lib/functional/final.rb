@@ -107,29 +107,60 @@ module Functional
       # @param [Symbol] name the name of the first attribute to create
       # @param [Symbol] names the names of additional attributes to create
       #
-      # @since 1.1.0
-      #
       # @see http://www.ruby-doc.org/core-2.1.2/Module.html#method-i-attr_accessor attr_accessor
       # @see http://en.wikipedia.org/wiki/Final_(Java) final (Java) at Wikipedia
       def final_attribute(name, *names)
         (names << name).each do |func|
-          self.send(:define_method, func){ nil }
-          self.send(:define_method, "#{func}?"){ false }
-          self.send(:define_method, "#{func}="){|value|
-            # Each of the following method calls is atomic, but they are not atomic as a group.
-            # Wrapping all three method calls in an atomic block would be very difficult
-            # (if not impossible) given that 1) this is a mixin module and 2) Ruby lacks a memory model.
-            # Since calling this method more than once is a logical error that raises an exception,
-            # the following call order will provide the expected behavior when used properly.
-            singleton_class.send(:define_method, "#{func}?"){ true }
-            singleton_class.send(:define_method, "#{func}=") {|value|
-              raise FinalityError.new("final accessor '#{func}' has already been set")
-            }
-            singleton_class.send(:define_method, func){ value }
-            value
-          }
+          define_unset_final_attribute(func)
         end
         nil
+      end
+
+      protected
+
+      # Define the class methods for an unset final attribute.
+      #
+      # @param [Symbol] name the name of the first attribute to create
+      #
+      # @!visibility private
+      def define_unset_final_attribute(name)
+        send(:define_method, name){ nil }
+        send(:define_method, "#{name}?"){ false }
+        send(:define_method, "#{name}="){|value|
+          singleton_class.send(:define_set_final_attribute, name, value)
+        }
+        name.to_sym
+      end
+
+      # Define the class/instance/singleton methods for a set final attribute.
+      #
+      # @param [Symbol] name the name of the first attribute to create
+      # @param [Object] value the value to set the attribute to
+      #
+      # @!visibility private
+      def define_set_final_attribute(name, value)
+        # Each of the following method calls is atomic, but they are not atomic as a group.
+        # Wrapping all three method calls in an atomic block would be very difficult
+        # (if not impossible) given that 1) this is a mixin module and 2) Ruby lacks a memory model.
+        # Since calling this method more than once is a logical error that raises an exception,
+        # the following call order will provide the expected behavior when used properly.
+        send(:define_method, "#{name}?"){ true }
+        send(:define_method, "#{name}=") {|value|
+          singleton_class.send(:raise_final_attr_already_set_error, name)
+        }
+        send(:define_method, name){ value }
+        value
+      end
+
+      # Raise an error indicating that the final attribute with the given
+      # name has already been set
+      #
+      # @param [Symbol] name the name of the first attribute causing the error
+      # @raise [Functional::FinalityError] with an appropriate message
+      #
+      # @!visibility private
+      def raise_final_attr_already_set_error(name)
+        raise FinalityError.new("final accessor '#{name}' has already been set")
       end
     end
   end
