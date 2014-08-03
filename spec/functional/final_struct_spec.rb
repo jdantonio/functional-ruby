@@ -12,25 +12,18 @@ module Functional
         expect(subject.to_h).to be_empty
       end
 
-      specify 'with a hash defines fields for hash keys' do
-        subject = FinalStruct.new(foo: 1, bar: :two, baz: 'three')
-        expect(subject).to respond_to(:foo)
-        expect(subject).to respond_to(:bar)
-        expect(subject).to respond_to(:baz)
-      end
-
       specify 'with a hash sets fields using has values' do
-        subject = FinalStruct.new(foo: 1, bar: :two, baz: 'three')
+        subject = FinalStruct.new(foo: 1, 'bar' => :two, baz: 'three')
         expect(subject.foo).to eq 1
         expect(subject.bar).to eq :two
         expect(subject.baz).to eq 'three'
       end
 
       specify 'with a hash creates true predicates for has keys' do
-        subject = FinalStruct.new(foo: 1, bar: :two, baz: 'three')
-        expect(subject).to be_foo
-        expect(subject).to be_bar
-        expect(subject).to be_baz
+        subject = FinalStruct.new(foo: 1, 'bar' => :two, baz: 'three')
+        expect(subject.foo?).to be true
+        expect(subject.bar?).to be true
+        expect(subject.baz?).to be true
       end
 
       specify 'can be created from any object that responds to #to_h' do
@@ -65,8 +58,8 @@ module Functional
       end
 
       specify 'have a predicate which returns true' do
-        expect(subject).to be_foo
-        expect(subject).to be_bar
+        expect(subject.foo?).to be true
+        expect(subject.bar?).to be true
       end
 
       specify 'raise an exception when written to again' do
@@ -120,7 +113,7 @@ module Functional
       specify '#set sets the value of an unset field' do
         subject.set(:harmless, 'mostly')
         expect(subject.harmless).to eq 'mostly'
-        expect(subject).to be_harmless
+        expect(subject.harmless?).to be true
       end
 
       specify '#set raises an exception if the field has already been set' do
@@ -155,7 +148,7 @@ module Functional
       specify '#get_or_set sets the value of an unset field' do
         subject.get_or_set(:answer, 42)
         expect(subject.answer).to eq 42
-        expect(subject).to be_answer
+        expect(subject.answer?).to be true
       end
 
       specify '#get_or_set returns the value of a newly set field' do
@@ -210,24 +203,24 @@ module Functional
     context 'reflection' do
 
       specify '#eql? returns true when both define the same fields with the same values' do
-        first = FinalStruct.new(foo: 1, bar: :two, baz: 'three')
-        second = FinalStruct.new(foo: 1, bar: :two, baz: 'three')
+        first = FinalStruct.new(foo: 1, 'bar' => :two, baz: 'three')
+        second = FinalStruct.new(foo: 1, 'bar' => :two, baz: 'three')
 
         expect(first.eql?(second)).to be true
         expect(first == second).to be true
       end
 
       specify '#eql? returns false when other has different fields defined' do
-        first = FinalStruct.new(foo: 1, bar: :two, baz: 'three')
-        second = FinalStruct.new(foo: 1, bar: :two)
+        first = FinalStruct.new(foo: 1, 'bar' => :two, baz: 'three')
+        second = FinalStruct.new(foo: 1, 'bar' => :two)
 
         expect(first.eql?(second)).to be false
         expect(first == second).to be false
       end
 
       specify '#eql? returns false when other has different field values' do
-        first = FinalStruct.new(foo: 1, bar: :two, baz: 'three')
-        second = FinalStruct.new(foo: 1, bar: :two, baz: 3)
+        first = FinalStruct.new(foo: 1, 'bar' => :two, baz: 'three')
+        second = FinalStruct.new(foo: 1, 'bar' => :two, baz: 3)
 
         expect(first.eql?(second)).to be false
         expect(first == second).to be false
@@ -245,12 +238,12 @@ module Functional
       end
 
       specify '#inspect begins with the class name' do
-        subject = FinalStruct.new(foo: 1, bar: :two, baz: 'three')
+        subject = FinalStruct.new(foo: 1, 'bar' => :two, baz: 'three')
         expect(subject.inspect).to match(/^#<#{described_class}\s+/)
       end
 
       specify '#inspect includes all field/value pairs' do
-        field_value_pairs = {foo: 1, bar: :two, baz: 'three'}
+        field_value_pairs = {foo: 1, 'bar' => :two, baz: 'three'}
         subject = FinalStruct.new(field_value_pairs)
 
         field_value_pairs.each do |field, value|
@@ -259,7 +252,7 @@ module Functional
       end
 
       specify '#to_s returns the same value as #inspect' do
-        subject = FinalStruct.new(foo: 1, bar: :two, baz: 'three')
+        subject = FinalStruct.new(foo: 1, 'bar' => :two, baz: 'three')
         expect(subject.to_s).to eq subject.inspect
       end
 

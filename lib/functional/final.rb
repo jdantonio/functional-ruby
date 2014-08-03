@@ -97,6 +97,18 @@ module Functional
       super(base)
     end
 
+    # Raise an error indicating that the final attribute with the given
+    # name has already been set
+    #
+    # @param [Symbol] name the name of the first attribute causing the error
+    # @raise [Functional::FinalityError] with an appropriate message
+    #
+    # @!visibility private
+    def raise_final_attr_already_set_error(name)
+      raise FinalityError.new("final accessor '#{name}' has already been set")
+    end
+    module_function :raise_final_attr_already_set_error
+
     # @!visibility private
     module ClassMethods
 
@@ -146,21 +158,10 @@ module Functional
         # the following call order will provide the expected behavior when used properly.
         send(:define_method, "#{name}?"){ true }
         send(:define_method, "#{name}=") {|value|
-          singleton_class.send(:raise_final_attr_already_set_error, name)
+          raise_final_attr_already_set_error(name)
         }
         send(:define_method, name){ value }
         value
-      end
-
-      # Raise an error indicating that the final attribute with the given
-      # name has already been set
-      #
-      # @param [Symbol] name the name of the first attribute causing the error
-      # @raise [Functional::FinalityError] with an appropriate message
-      #
-      # @!visibility private
-      def raise_final_attr_already_set_error(name)
-        raise FinalityError.new("final accessor '#{name}' has already been set")
       end
     end
   end

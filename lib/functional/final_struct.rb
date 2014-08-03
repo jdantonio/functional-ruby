@@ -49,7 +49,6 @@ module Functional
   #
   # @!macro thread_safe_final_object
   class FinalStruct
-    include Functional::Final
 
     # Creates a new `FinalStruct` object. By default, the resulting `FinalStruct`
     # object will have no attributes. The optional hash, if given, will generate
@@ -60,38 +59,55 @@ module Functional
       raise ArgumentError.new('attributes must be given as a hash or not at all') unless attributes.respond_to?(:to_h)
       @mutex = Mutex.new
       @attribute_hash = {}
-      attributes.to_h.each_pair{|field, value| define_new_set_final_attribute(field, value) }
+      attributes.to_h.each_pair do |field, value|
+        set_attribute(field, value)
+      end
     end
 
-    # Get the value of the given field.
+    # @!macro [attach] final_struct_get_method
     #
-    # @param [Symbol] field the field to retrieve the value for
-    # @return [Object] the value of the field is set else nil
+    #   Get the value of the given field.
+    #
+    #   @param [Symbol] field the field to retrieve the value for
+    #   @return [Object] the value of the field is set else nil
     def get(field)
-      send(field)
+      @mutex.synchronize {
+        get_attribute(field)
+      }
     end
     alias_method :[], :get
 
-    # Set the value of the give field to the given value.
+    # @!macro [attach] final_struct_set_method
     #
-    # It is a logical error to attempt to set a `final` field more than once, as this
-    # violates the concept of finality. Calling the method a second or subsequent time
-    # for a given field will result in an exception being raised.
+    #   Set the value of the give field to the given value.
     #
-    # @param [Symbol] field the field to set the value for
-    # @param [Object] value the value to set the field to
-    # @return [Object] the final value of the given field
+    #   It is a logical error to attempt to set a `final` field more than once, as this
+    #   violates the concept of finality. Calling the method a second or subsequent time
+    #   for a given field will result in an exception being raised.
+    #
+    #   @param [Symbol] field the field to set the value for
+    #   @param [Object] value the value to set the field to
+    #   @return [Object] the final value of the given field
+    #
     # @raise [Functional::FinalityError] if the given field has already been set
     def set(field, value)
-      send("#{field}=", value)
+      @mutex.synchronize {
+        if attribute_has_been_set?(field)
+          Functional::Final::raise_final_attr_already_set_error(field)
+        else
+          set_attribute(field, value)
+        end
+      }
     end
     alias_method :[]=, :set
 
-    # Check the internal hash to unambiguously verify that the given
-    # attribute has been set.
+    # @!macro [attach] final_struct_set_predicate
     #
-    # @param [Symbol] field the field to get the value for
-    # @return [Boolean] true if the field has been set else false
+    #   Check the internal hash to unambiguously verify that the given
+    #   attribute has been set.
+    #
+    #   @param [Symbol] field the field to get the value for
+    #   @return [Boolean] true if the field has been set else false
     def set?(field)
       @mutex.synchronize {
         attribute_has_been_set?(field)
@@ -105,9 +121,9 @@ module Functional
     # @param [Object] value the value to set the field to when not previously set
     # @return [Object] the final value of the given field
     def get_or_set(field, value)
-      set(field, value) 
-    rescue Functional::FinalityError
-      get(field)
+      @mutex.synchronize {
+        attribute_has_been_set?(field) ? get_attribute(field) : set_attribute(field, value)
+      }
     end
 
     # Get the current value of the given field if already set else return the given
@@ -118,7 +134,7 @@ module Functional
     # @return [Object] the value of the given field else the given default value
     def fetch(field, default)
       @mutex.synchronize {
-        attribute_has_been_set?(field) ? get(field) : default
+        attribute_has_been_set?(field) ? get_attribute(field) : default
       }
     end
 
@@ -162,6 +178,8 @@ module Functional
     # Describe the contents of this object in a string.
     #
     # @return [String] the string representation of this object
+    #
+    # @!visibility private
     def inspect
       state = to_h.to_s.gsub(/^{/, '').gsub(/}$/, '')
       "#<#{self.class} #{state}>"
@@ -170,49 +188,36 @@ module Functional
 
     private
 
-    # Check the internal hash to unambiguously verify that the given
-    # attribute has been set.
-    #
-    # @param [Symbol] field the field to get the value for
-    # @return [Boolean] true if the field has been set else false
-    def attribute_has_been_set?(field)
-      @attribute_hash.has_key?(field)
+    # @!macro final_struct_get_method
+    def get_attribute(field)
+      @attribute_hash[field.to_sym]
     end
 
-    # Define the new methods to support the given attribute set to the
-    # given value.
-    #
-    # @param [Symbol] field the field to set the value for
-    # @param [Object] value the value to set the field to
-    # @return [Object] the value of the given field
-    def define_new_set_final_attribute(field, value)
-      @mutex.synchronize {
-        field = field.to_sym
-        # check for concurrent writer calls edge case
-        raise_final_attr_already_set_error(field) if attribute_has_been_set?(field)
-        # else create the new field with the given value
-        singleton_class.send(:define_set_final_attribute, field, value)
-        @attribute_hash[field] = value
-        value
-      }
+    # @!macro final_struct_set_method
+    def set_attribute(field, value)
+      @attribute_hash[field.to_sym] = value
+    end
+
+    # @!macro final_struct_set_predicate
+    def attribute_has_been_set?(field)
+      @attribute_hash.has_key?(field.to_sym)
     end
 
     # Check the method name and args for signatures matching potential
     # final attribute reader, writer, and predicate methods. If the signature
     # matches a reader or predicate, treat the attribute as unset. If the
-    # signature matches a writer, attempt to set the new attribute by defining
-    # the appropriate final methods.
+    # signature matches a writer, attempt to set the new attribute.
     #
     # @param [Symbol] symbol the name of the called function
     # @param [Array] args zero or more arguments
     # @return [Object] the result of the proxied method or the `super` call
     def method_missing(symbol, *args)
       if args.length == 1 && (match = /([^=]+)=$/.match(symbol))
-        define_new_set_final_attribute(match[1], args.first)
-      elsif args.length == 0 && symbol =~ /\?$/
-        false
+        set(match[1], args.first)
+      elsif args.length == 0 && (match = /([^\?]+)\?$/.match(symbol))
+        set?(match[1])
       elsif args.length == 0
-        nil
+        get(symbol)
       else
         super
       end
