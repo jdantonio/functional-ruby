@@ -7,10 +7,7 @@ module Functional
   # exhibit the behavior of a `Functional::Final#final_attribute`. This means
   # that new fields can be arbitrarily added to a `FinalStruct` object but once
   # set each field becomes immutable. Additionally, predicate methods exist for
-  # all fields and these predicates indicate if the field has been set. To
-  # optimize performance on subsequent reader and predicate calls, once an
-  # attribute is set the appropriate methods will be defined on the object,
-  # thus avoiding additional calls to `method_missing`.
+  # all fields and these predicates indicate if the field has been set.
   #
   # There are two ways to initialize a `FinalStruct`: with zero arguments or
   # with a `Hash` (or any other object that implements a `to_h` method). The
@@ -89,6 +86,17 @@ module Functional
       send("#{field}=", value)
     end
     alias_method :[]=, :set
+
+    # Check the internal hash to unambiguously verify that the given
+    # attribute has been set.
+    #
+    # @param [Symbol] field the field to get the value for
+    # @return [Boolean] true if the field has been set else false
+    def set?(field)
+      @mutex.synchronize {
+        attribute_has_been_set?(field)
+      }
+    end
 
     # Get the current value of the given field if already set else set the value of
     # the given field to the given value.

@@ -138,6 +138,15 @@ module Functional
         }.to raise_error(Functional::FinalityError)
       end
 
+      specify '#set? returns false for an unset field' do
+        expect(subject.set?(:harmless)).to be false
+      end
+
+      specify '#set? returns true for a field that has been set' do
+        subject.set(:harmless, 'mostly')
+        expect(subject.set?(:harmless)).to be true
+      end
+
       specify '#get_or_set returns the value of a set field' do
         subject.answer = 42
         expect(subject.get_or_set(:answer, 100)).to eq 42
