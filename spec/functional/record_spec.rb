@@ -24,7 +24,7 @@ module Functional
       it 'default all fields values to nil' do
         fields = [:foo, :bar, :baz]
         clazz = Record.new(*fields)
-        
+
         record = clazz.new
 
         fields.each do |field|
@@ -169,6 +169,35 @@ module Functional
         expect {
           clazz_baz.new(baz: 42)
         }.to_not raise_error
+      end
+    end
+
+    context 'subclassing' do
+
+      specify 'supports all capabilities on subclasses' do
+        record_clazz = Functional::Record.new(:first, :middle, :last, :suffix) do
+          mandatory :first, :last
+        end
+
+        clazz = Class.new(record_clazz) do
+          def full_name
+            "#{first} #{last}"
+          end
+
+          def formal_name
+            name = [first, middle, last].select{|s| ! s.to_s.empty?}.join(' ')
+            suffix.to_s.empty? ? name : name + ", #{suffix}"
+          end
+        end
+
+        jerry = clazz.new(first: 'Jerry', last: "D'Antonio")
+        ted = clazz.new(first: 'Ted', middle: 'Theodore', last: 'Logan', suffix: 'Esq.')
+
+        expect(jerry.full_name).to eq "Jerry D'Antonio"
+        expect(jerry.formal_name).to eq "Jerry D'Antonio"
+
+        expect(ted.full_name).to eq "Ted Logan"
+        expect(ted.formal_name).to eq "Ted Theodore Logan, Esq."
       end
     end
   end

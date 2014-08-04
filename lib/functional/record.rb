@@ -129,8 +129,8 @@ module Functional
     # @return [Functional::AbstractStruct] the record class
     def define_initializer(record)
       record.send(:define_method, :initialize) do |data = {}|
-        restrictions = self.class.class_variable_get(:@@restrictions)
-        data = fields.reduce({}) do |memo, field|
+        restrictions = record.class_variable_get(:@@restrictions)
+        data = record.fields.reduce({}) do |memo, field|
           memo[field] = data.fetch(field, restrictions.clone_default(field))
           memo
         end
