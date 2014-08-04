@@ -124,6 +124,69 @@
 #   is created. Default values should be simple types like `String`, `Fixnum`,
 #   and `Boolean`. If complex operations need performed when setting default
 #   values the a `Class` should be used instead of a `Record`.
+#
+#   ### Why Declaration Differs from Ruby's Struct
+#
+#   Those familiar with Ruby's `Struct` class will notice one important
+#   difference when declaring a `Record`: the block passes to `new` cannot be
+#   used to define additional methods. When declaring a new class created from a
+#   Ruby `Struct` the block can perform any additional class definition that
+#   could be done had the class be defined normally. The excellent
+#   [Values](https://github.com/tcrayford/Values) supports this same behavior.
+#   `Record` does not allow additional class definitions during declaration for
+#   one simple reason: doing so violates two very important tenets of functional
+#   programming. Specifically, immutability and the separation of data from
+#   operations.
+#
+#   `Record` exists for the purpose of creating immutable objects. If additional
+#   instance methods were to be defined on a record class it would be possible
+#   to violate immutability. Not only could additional, mutable state be added
+#   to the class, but the existing immutable attributes could be overridden by
+#   mutable methods. The security of providing an immutable object would be
+#   completely shattered, thus defeating the original purpose of the record
+#   class. Of course it would be possible to allow this feature and trust the
+#   programmer to not violate the intended immutability of class, but opening
+#   `Record` to the *possibility* of immutability violation is unnecessary and
+#   unwise.
+#
+#   More important than the potential for immutability violations is the fact
+#   the adding additional methods to a record violates the principal of
+#   separating data from operations on that data. This is one of the core ideas
+#   in functional programming. Data is defined in pure structures that contain
+#   no behavior and operations on that data are provided by polymorphic
+#   functions. This may seem counterintuitive to object oriented programmers,
+#   but that is the nature of functional programming. Adding behavior to a
+#   record, even when that behavior does not violate immutability, is still
+#   anathema to functional programming, and it is why records in languages like
+#   Erlang and Clojure do not have functions defined within them.
+#
+#   Should additional methods need defined on a `Record` class, the appropriate
+#   practice is to declare the record class then declare another class which
+#   extends the record. The record class remains pure data and the subclass
+#   contains additional operations on that data.
+#
+#   ```ruby
+#   NameRecord = Functional::Record.new(:first, :middle, :last, :suffix) do
+#     mandatory :first, :last
+#   end
+#   
+#   class Name < NameRecord
+#     def full_name
+#       "#{first} #{last}"
+#     end
+#   
+#     def formal_name
+#       name = [first, middle, last].select{|s| ! s.to_s.empty?}.join(' ')
+#       suffix.to_s.empty? ? name : name + ", #{suffix}"
+#     end
+#   end
+#
+#   jerry = Name.new(first: 'Jerry', last: "D'Antonio")
+#   ted   = Name.new(first: 'Ted', middle: 'Theodore', last: 'Logan', suffix: 'Esq.')
+#
+#   jerry.formal_name #=> "Jerry D'Antonio"
+#   ted.formal_name   #=> "Ted Theodore Logan, Esq."
+#   ```
 #   
 #   ## Inspiration
 #   
