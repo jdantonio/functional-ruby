@@ -3,7 +3,7 @@ require_relative 'final'
 module Functional
 
   # A variation on Ruby's `OpenStruct` in which all fields are immutable and
-  # set at instanciation. For compatibility with {Functional::FinalStruct}, 
+  # set at instantiation. For compatibility with {Functional::FinalStruct}, 
   # predicate methods exist for all potential fields and these predicates
   # indicate if the field has been set. Calling a predicate method for a field
   # that does not exist on the struct will return false.
