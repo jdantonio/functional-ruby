@@ -123,6 +123,40 @@ module Functional
         }.to raise_error(Functional::FinalityError)
       end
 
+      specify '#set defines a reader method on the singleton class for the new field' do
+        foo = FinalStruct.new
+        bar = FinalStruct.new
+
+        expect(foo.respond_to?(:foo)).to be false
+        expect(bar.respond_to?(:bar)).to be false
+
+        foo.foo = :foo
+        bar.bar = :bar
+
+        expect(foo.respond_to?(:foo)).to be true
+        expect(foo.respond_to?(:bar)).to be false
+
+        expect(bar.respond_to?(:bar)).to be true
+        expect(bar.respond_to?(:foo)).to be false
+      end
+
+      specify '#set defines a predicate method on the singleton class for the new field' do
+        foo = FinalStruct.new
+        bar = FinalStruct.new
+
+        expect(foo.respond_to?(:foo?)).to be false
+        expect(bar.respond_to?(:bar?)).to be false
+
+        foo.foo = :foo
+        bar.bar = :bar
+
+        expect(foo.respond_to?(:foo?)).to be true
+        expect(foo.respond_to?(:bar?)).to be false
+
+        expect(bar.respond_to?(:bar?)).to be true
+        expect(bar.respond_to?(:foo?)).to be false
+      end
+
       specify '#[]= is an alias for set' do
         subject[:harmless] = 'mostly'
         expect(subject.harmless).to eq 'mostly'

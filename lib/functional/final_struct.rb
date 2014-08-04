@@ -49,6 +49,7 @@ module Functional
   #
   # @!macro thread_safe_final_object
   class FinalStruct
+    include Final
 
     # Creates a new `FinalStruct` object. By default, the resulting `FinalStruct`
     # object will have no attributes. The optional hash, if given, will generate
@@ -195,6 +196,7 @@ module Functional
 
     # @!macro final_struct_set_method
     def set_attribute(field, value)
+      singleton_class.send(:define_set_final_attribute, field, value)
       @attribute_hash[field.to_sym] = value
     end
 
