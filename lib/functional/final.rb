@@ -148,9 +148,10 @@ module Functional
       #
       # @param [Symbol] name the name of the first attribute to create
       # @param [Object] value the value to set the attribute to
+      # @param [Boolean] define_writer will define a final writer method when true
       #
       # @!visibility private
-      def define_set_final_attribute(name, value)
+      def define_set_final_attribute(name, value, define_writer = true)
         # Each of the following method calls is atomic, but they are not atomic as a group.
         # Wrapping all three method calls in an atomic block would be very difficult
         # (if not impossible) given that 1) this is a mixin module and 2) Ruby lacks a memory model.
@@ -159,7 +160,7 @@ module Functional
         send(:define_method, "#{name}?"){ true }
         send(:define_method, "#{name}=") {|value|
           raise_final_attr_already_set_error(name)
-        }
+        } if define_writer
         send(:define_method, name){ value }
         value
       end

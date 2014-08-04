@@ -45,6 +45,7 @@ module Functional
   # @since 1.1.0
   #
   # @see Functional::Final
+  # @see Functional::FinalStruct
   # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/ostruct/rdoc/OpenStruct.html
   #
   # @!macro thread_safe_final_object
@@ -187,20 +188,23 @@ module Functional
     end
     alias_method :to_s, :inspect
 
-    private
+    protected
 
     # @!macro final_struct_get_method
+    # @!visibility private
     def get_attribute(field)
       @attribute_hash[field.to_sym]
     end
 
     # @!macro final_struct_set_method
+    # @!visibility private
     def set_attribute(field, value)
       singleton_class.send(:define_set_final_attribute, field, value)
       @attribute_hash[field.to_sym] = value
     end
 
     # @!macro final_struct_set_predicate
+    # @!visibility private
     def attribute_has_been_set?(field)
       @attribute_hash.has_key?(field.to_sym)
     end
@@ -213,6 +217,8 @@ module Functional
     # @param [Symbol] symbol the name of the called function
     # @param [Array] args zero or more arguments
     # @return [Object] the result of the proxied method or the `super` call
+    #
+    # @!visibility private
     def method_missing(symbol, *args)
       if args.length == 1 && (match = /([^=]+)=$/.match(symbol))
         set(match[1], args.first)
