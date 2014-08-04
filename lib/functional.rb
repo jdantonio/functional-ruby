@@ -10,6 +10,7 @@ require 'functional/protocol_info'
 require 'functional/record'
 require 'functional/type_check'
 require 'functional/union'
+require 'functional/value_struct'
 require 'functional/version'
 
 Functional::SpecifyProtocol(:Disposition) do
