@@ -3,10 +3,9 @@ require 'thread'
 
 module Functional
 
-  # A variation on Ruby's `OpenStruct` in which all fields are "final" and
-  # exhibit the behavior of a `Functional::Final#final_attribute`. This means
+  # A variation on Ruby's `OpenStruct` in which all fields are "final" (meaning
   # that new fields can be arbitrarily added to a `FinalStruct` object but once
-  # set each field becomes immutable. Additionally, predicate methods exist for
+  # set each field becomes immutable). Additionally, predicate methods exist for
   # all fields and these predicates indicate if the field has been set.
   #
   # There are two ways to initialize a `FinalStruct`: with zero arguments or
@@ -44,8 +43,9 @@ module Functional
   #
   # @since 1.1.0
   #
-  # @see Functional::FinalStruct
+  # @see Functional::FinalVar
   # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/ostruct/rdoc/OpenStruct.html
+  # @see http://en.wikipedia.org/wiki/Final_(Java) Java `final` keyword
   #
   # @!macro thread_safe_final_object
   class FinalStruct
