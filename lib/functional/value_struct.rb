@@ -1,5 +1,3 @@
-require_relative 'final'
-
 module Functional
 
   # A variation on Ruby's `OpenStruct` in which all fields are immutable and
@@ -28,7 +26,6 @@ module Functional
   #
   # @!macro thread_safe_immutable_object
   class ValueStruct
-    include Functional::Final
 
     def initialize(attributes)
       raise ArgumentError.new('attributes must be given as a hash') unless attributes.respond_to?(:each_pair)
@@ -123,11 +120,11 @@ module Functional
     # @!visibility private
     def set_attribute(field, value)
       @attribute_hash[field.to_sym] = value
-      singleton_class.send(:define_set_final_attribute, field, value, false)
     end
 
     # Check the method name and args for signatures matching potential
-    # final  predicate methods. If the signature matches return false.
+    # final predicate methods. If the signature matches call the appropriate
+    # method
     #
     # @param [Symbol] symbol the name of the called function
     # @param [Array] args zero or more arguments
@@ -136,7 +133,9 @@ module Functional
     # @!visibility private
     def method_missing(symbol, *args)
       if args.length == 0 && (match = /([^\?]+)\?$/.match(symbol))
-        false
+        set?(match[1])
+      elsif args.length == 0 && set?(symbol)
+        get(symbol)
       else
         super
       end

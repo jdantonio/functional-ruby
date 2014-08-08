@@ -1,6 +1,5 @@
 require 'functional/delay'
 require 'functional/either'
-require 'functional/final'
 require 'functional/final_struct'
 require 'functional/memo'
 require 'functional/option'
