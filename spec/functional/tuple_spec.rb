@@ -22,7 +22,7 @@ module Functional
       end
 
       it 'creates a tuple when given a single array argument' do
-        subject = Tuple.new[:foo, :bar, :baz]
+        subject = Tuple.new([:foo, :bar, :baz])
 
         expect(subject).to_not be_empty
         expect(subject[0]).to eq :foo
@@ -31,9 +31,10 @@ module Functional
       end
 
       it 'creates a tuple when given a single argument that responds to #to_a' do
-        subject = Class.new {
+        clazz = Class.new {
           def to_a() [:foo, :bar, :baz]; end
         }.new
+        subject = Tuple.new(clazz)
 
         expect(subject).to_not be_empty
         expect(subject[0]).to eq :foo
@@ -65,9 +66,9 @@ module Functional
       end
 
       it 'returns the nth element from the end when given a valid negative index' do
-        expect(subject.at(-1)).to eq :foo
+        expect(subject.at(-1)).to eq :baz
         expect(subject.at(-2)).to eq :bar
-        expect(subject.at(-3)).to eq :baz
+        expect(subject.at(-3)).to eq :foo
       end
 
       it 'returns nil when given a non-negative out-of-bounds index' do
@@ -82,14 +83,14 @@ module Functional
         expect(subject.nth(0)).to eq :foo
         expect(subject.nth(1)).to eq :bar
         expect(subject.nth(-2)).to eq :bar
-        expect(subject.nth(-3)).to eq :baz
+        expect(subject.nth(-3)).to eq :foo
       end
 
       it 'is aliased as #[]' do
         expect(subject[0]).to eq :foo
         expect(subject[1]).to eq :bar
         expect(subject[-2]).to eq :bar
-        expect(subject[-3]).to eq :baz
+        expect(subject[-3]).to eq :foo
       end
     end
 
@@ -104,17 +105,17 @@ module Functional
       end
 
       it 'returns the nth element from the end when given a valid negative index' do
-        expect(subject.fetch(-1, 42)).to eq :foo
+        expect(subject.fetch(-1, 42)).to eq :baz
         expect(subject.fetch(-2, 42)).to eq :bar
-        expect(subject.fetch(-3, 42)).to eq :baz
+        expect(subject.fetch(-3, 42)).to eq :foo
       end
 
       it 'returns the given default when given a non-negative out-of-bounds index' do
-        expect(subject.at(3, 42)).to eq 42
+        expect(subject.fetch(3, 42)).to eq 42
       end
 
       it 'returns the given default when given a negative out-of-bounds index' do
-        expect(subject.at(-4, 42)).to eq 42
+        expect(subject.fetch(-4, 42)).to eq 42
       end
     end
 
@@ -125,12 +126,12 @@ module Functional
       end
 
       it 'returns the length of a non-empty tuple' do
-        expect(Tuple.new(1, 2, 3).length).to eq 3
+        expect(Tuple.new([1, 2, 3]).length).to eq 3
       end
 
       it 'is aliased a #size' do
         expect(Tuple.new.size).to eq 0
-        expect(Tuple.new(1, 2, 3).size).to eq 3
+        expect(Tuple.new([1, 2, 3]).size).to eq 3
       end
     end
 
@@ -216,7 +217,7 @@ module Functional
 
       it 'returns a tuple with all elements from both tuples' do
         subject = Tuple.new([1, 2, 3])
-        other = Tuple.new([1, 2, 3])
+        other = Tuple.new([1, 2, 3, 4])
         result = subject.union(other)
         expect(result).to be_a_different_tuple_than(subject)
         expect(result).to eq [1, 2, 3, 4]
@@ -224,14 +225,14 @@ module Functional
 
       it 'removes duplicates from self' do
         subject = Tuple.new([1, 2, 2, 3, 3, 3])
-        other = Tuple.new([1, 2, 3])
+        other = Tuple.new([1, 2, 3, 4])
         result = subject.union(other)
         expect(result).to be_a_different_tuple_than(subject)
         expect(result).to eq [1, 2, 3, 4]
       end
 
       it 'removes duplicates from other' do
-        subject = Tuple.new([1, 2, 3])
+        subject = Tuple.new([1, 2, 3, 4])
         other = Tuple.new([1, 2, 2, 3, 3, 3])
         result = subject.union(other)
         expect(result).to be_a_different_tuple_than(subject)
@@ -385,31 +386,38 @@ module Functional
     context '#repeat' do
 
       it 'returns an empty tuple when multipled by zero' do
-        subject = [1, 2, 3]
+        subject = Tuple.new([1, 2, 3])
         result = subject.repeat(0)
         expect(result).to be_a_different_tuple_than(subject)
-        expect(subject).to be_empty
+        expect(result).to be_empty
       end
 
       it 'returns a copy of self when multipled by one' do
-        subject = [1, 2, 3]
+        subject = Tuple.new([1, 2, 3])
         result = subject.repeat(1)
         expect(result).to be_a_different_tuple_than(subject)
-        expect(subject).to eq [1, 2, 3]
+        expect(result).to eq [1, 2, 3]
       end
 
       it 'returns a tuple containing elements from self repeated n times' do
-        subject = [1, 2, 3]
+        subject = Tuple.new([1, 2, 3])
         result = subject.repeat(3)
         expect(result).to be_a_different_tuple_than(subject)
-        expect(subject).to eq [1, 2, 3, 1, 2, 3, 1, 2, 3]
+        expect(result).to eq [1, 2, 3, 1, 2, 3, 1, 2, 3]
+      end
+
+      it 'raises an exception when given a negative argument' do
+        subject = Tuple.new([1, 2, 3])
+        expect {
+          subject.repeat(-2)
+        }.to raise_error(ArgumentError)
       end
 
       it 'is aliased as #*' do
-        subject = [1, 2, 3]
+        subject = Tuple.new([1, 2, 3])
         result = subject * 3
         expect(result).to be_a_different_tuple_than(subject)
-        expect(subject).to eq [1, 2, 3, 1, 2, 3, 1, 2, 3]
+        expect(result).to eq [1, 2, 3, 1, 2, 3, 1, 2, 3]
       end
     end
 
@@ -446,14 +454,14 @@ module Functional
 
       it 'enumerates over each element' do
         result = []
-        subject = Tuple.new(1, 2, 2, 3, 3, 3)
+        subject = Tuple.new([1, 2, 2, 3, 3, 3])
         subject.each{|item| result << item }
         expect(result).to eq [1, 2, 2, 3, 3, 3]
       end
 
       it 'does not call the block when empty' do
         result = false
-        Tuple.each{|item| expected = true}
+        Tuple.new.each{|item| expected = true}
         expect(result).to be false
       end
     end
@@ -483,7 +491,7 @@ module Functional
 
       it 'does not call the block when empty' do
         result = false
-        Tuple.each_with_index{|item, index| expected = true}
+        Tuple.new.each_with_index{|item, index| expected = true}
         expect(result).to be false
       end
     end
@@ -526,7 +534,7 @@ module Functional
 
       it 'does not call the block when empty' do
         result = false
-        Tuple.sequence{|item, rest| expected = true}
+        Tuple.new.sequence{|item, rest| expected = true}
         expect(result).to be false
       end
     end
@@ -628,18 +636,18 @@ module Functional
       it 'returns an array with the same elements as self' do
         subject = Tuple.new([1, 2, 3]).to_a
         expect(subject).to be_a Array
-        expect(subject).to [1, 2, 3]
+        expect(subject).to eq [1, 2, 3]
       end
 
       it 'returns a non-frozen array' do
         expect(Tuple.new.to_a).to_not be_frozen
-        expect(Tuple.new([1, 2, 3]).to_a).to be_frozen
+        expect(Tuple.new([1, 2, 3]).to_a).to_not be_frozen
       end
 
       it 'is aliased as #to_ary' do
         subject = Tuple.new([1, 2, 3]).to_ary
         expect(subject).to be_a Array
-        expect(subject).to [1, 2, 3]
+        expect(subject).to eq [1, 2, 3]
       end
     end
 
