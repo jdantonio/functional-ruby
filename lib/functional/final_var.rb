@@ -8,8 +8,8 @@ module Functional
 
   # A thread safe object that holds a single value and is "final" (meaning
   # that the value can be set at most once after which it becomes immutable).
-  # The value can be set at instanciation which will result in the object
-  # becomming fully and immediately immutable. Attempting to set the value
+  # The value can be set at instantiation which will result in the object
+  # becoming fully and immediately immutable. Attempting to set the value
   # once it has been set is a logical error and will result in an exception
   # being raised.
   #
