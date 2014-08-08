@@ -611,6 +611,12 @@ module Functional
         expect(subject.rest).to be_empty
       end
 
+      it 'returns an empty tuple when there is only one item' do
+        subject = Tuple.new([1])
+        expect(subject.rest).to be_a_different_tuple_than(subject)
+        expect(subject.rest).to be_empty
+      end
+
       it 'returns a tuple with all but the first element when not empty' do
         subject = Tuple.new([1, 2, 3])
         expect(subject.rest).to be_a_different_tuple_than(subject)
