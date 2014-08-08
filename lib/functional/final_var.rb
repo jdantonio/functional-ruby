@@ -11,65 +11,79 @@ module Functional
     NO_VALUE = Object.new.freeze
 
     def initialize(value = NO_VALUE)
-      if value == NO_VALUE
-        @set = false
-        @value = nil
-      else
-        @set = true
-        @value = value
-      end
+      @mutex = Mutex.new
+      @value = value
     end
 
     def get
-      @value
+      @mutex.synchronize {
+        has_been_set? ? @value : nil
+      }
     end
     alias_method :value, :get
 
     def set(value)
-      if @set
-        raise FinalityError.new('value has already been set')
-      else
-        @set = true
-        @value = value
-      end
+      @mutex.synchronize {
+        if has_been_set?
+          raise FinalityError.new('value has already been set')
+        else
+          @value = value
+        end
+      }
     end
     alias_method :value=, :set
 
     def set?
-      @set
+      @mutex.synchronize {
+        has_been_set?
+      }
     end
     alias_method :value?, :set?
 
     def get_or_set(value)
-      if @set
-        @value
-      else
-        @value = value
-      end
+      @mutex.synchronize {
+        if has_been_set?
+          @value
+        else
+          @value = value
+        end
+      }
     end
 
     def fetch(default)
-      @set ? @value : default
+      @mutex.synchronize {
+        has_been_set? ? @value : default
+      }
     end
 
     def eql?(other)
-      if ! set?
+      if (val = fetch(NO_VALUE)) == NO_VALUE
         false
       elsif other.is_a?(FinalVar)
-        value == other.value
+        val == other.value
       else
-        value == other
+        val == other
       end
     end
     alias_method :==, :eql?
 
     def inspect
-      val = set? ? "value=#{value.is_a?(String) ? ('"' + value + '"') : value }" : 'unset'
+      if (val = fetch(NO_VALUE)) == NO_VALUE
+        val = 'unset'
+      else
+        val = "value=#{val.is_a?(String) ? ('"' + val + '"') : val }"
+      end
       "#<#{self.class} #{val}>"
     end
 
     def to_s
       value.to_s
+    end
+
+    private
+
+    def has_been_set?
+      @value != NO_VALUE
     end
   end
 end
