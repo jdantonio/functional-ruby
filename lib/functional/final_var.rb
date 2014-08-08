@@ -41,19 +41,12 @@ module Functional
     # @!visibility private 
     NO_VALUE = Object.new.freeze
 
-    # @!visibility private 
-    FAKE_MUTEX = Module.new {
-      def self.synchronize
-        yield
-      end
-    }
-
     # Create a new `FinalVar` with the given value or "unset" when
     # no value is given.
     #
     # @param [Object] value if given, the immutable value of the object
     def initialize(value = NO_VALUE)
-      @mutex = (value == NO_VALUE ? Mutex.new : FAKE_MUTEX)
+      @mutex = Mutex.new
       @value = value
     end
 
@@ -78,10 +71,8 @@ module Functional
           raise FinalityError.new('value has already been set')
         else
           @value = value
-          @mutex = FAKE_MUTEX
         end
       }
-      @value
     end
     alias_method :value=, :set
 
