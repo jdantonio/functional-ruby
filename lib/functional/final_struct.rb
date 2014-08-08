@@ -1,7 +1,10 @@
 require 'thread'
-require_relative 'final'
 
 module Functional
+
+  # An exception raised when an attempt is made to modify an
+  # immutable object or attribute.
+  FinalityError = Class.new(StandardError)
 
   # A variation on Ruby's `OpenStruct` in which all fields are "final" and
   # exhibit the behavior of a `Functional::Final#final_attribute`. This means
@@ -44,13 +47,11 @@ module Functional
   #
   # @since 1.1.0
   #
-  # @see Functional::Final
   # @see Functional::FinalStruct
   # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/ostruct/rdoc/OpenStruct.html
   #
   # @!macro thread_safe_final_object
   class FinalStruct
-    include Final
 
     # Creates a new `FinalStruct` object. By default, the resulting `FinalStruct`
     # object will have no attributes. The optional hash, if given, will generate
@@ -95,7 +96,7 @@ module Functional
     def set(field, value)
       @mutex.synchronize {
         if attribute_has_been_set?(field)
-          Functional::Final::raise_final_attr_already_set_error(field)
+          raise_final_attr_already_set_error(field)
         else
           set_attribute(field, value)
         end
@@ -199,7 +200,6 @@ module Functional
     # @!macro final_struct_set_method
     # @!visibility private
     def set_attribute(field, value)
-      singleton_class.send(:define_set_final_attribute, field, value)
       @attribute_hash[field.to_sym] = value
     end
 
@@ -207,6 +207,17 @@ module Functional
     # @!visibility private
     def attribute_has_been_set?(field)
       @attribute_hash.has_key?(field.to_sym)
+    end
+
+    # Raise an error indicating that the final attribute with the given
+    # name has already been set
+    #
+    # @param [Symbol] name the name of the first attribute causing the error
+    # @raise [Functional::FinalityError] with an appropriate message
+    #
+    # @!visibility private
+    def raise_final_attr_already_set_error(name)
+      raise FinalityError.new("final accessor '#{name}' has already been set")
     end
 
     # Check the method name and args for signatures matching potential
