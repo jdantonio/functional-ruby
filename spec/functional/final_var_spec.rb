@@ -43,6 +43,10 @@ module Functional
         expect(subject.get).to eq 42
       end
 
+      it 'returns the new value when unset' do
+        expect(subject.set(42)).to eq 42
+      end
+
       it 'raises an exception when already set' do
         subject.set(42)
         expect {
@@ -125,7 +129,7 @@ module Functional
 
       specify '#eql? returns true when set and the value matches other' do
         subject = FinalVar.new(42)
-        expect(subject.eql?(42)).to be false
+        expect(subject.eql?(42)).to be true
       end
 
       specify '#eql? returns true when set and other is a FinalVar with the same value' do
@@ -159,46 +163,6 @@ module Functional
       specify '#to_s returns the value as a string when set' do
         expect(FinalVar.new(42).to_s).to eq 42.to_s
         expect(FinalVar.new('42').to_s).to eq '42'
-      end
-    end
-
-    context 'metaprogramming' do
-
-      it 'when set defines #get and #value on the singleton class' do
-        subject = FinalVar.new
-        subject.set(42)
-
-        other = FinalVar.new
-        other.set(:foo)
-
-        expect(subject.get).to eq 42
-        expect(subject.value).to eq 42
-        expect(other.get).to eq :foo
-        expect(other.value).to eq :foo
-      end
-
-      it 'when set defines #set? and #value? on the singleton class' do
-        subject = FinalVar.new
-        subject.set(42)
-
-        other = FinalVar.new
-
-        expect(subject.get).to eq 42
-        expect(subject.value).to eq 42
-        expect(other.get).to be nil
-        expect(other.value).to be nil
-      end
-
-      it 'when set defines #set and #value= on the singleton class' do
-        subject = FinalVar.new
-        subject.set(42)
-
-        other = FinalVar.new
-
-        expect {
-          subject.set(42)
-        }.to raise_error(Functional::FinalityError)
-        expect(other.set(:foo)).to eq :foo
       end
     end
   end

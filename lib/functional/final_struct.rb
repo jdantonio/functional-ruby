@@ -1,10 +1,7 @@
+require_relative 'final_var'
 require 'thread'
 
 module Functional
-
-  # An exception raised when an attempt is made to modify an
-  # immutable object or attribute.
-  FinalityError = Class.new(StandardError)
 
   # A variation on Ruby's `OpenStruct` in which all fields are "final" and
   # exhibit the behavior of a `Functional::Final#final_attribute`. This means
@@ -96,7 +93,7 @@ module Functional
     def set(field, value)
       @mutex.synchronize {
         if attribute_has_been_set?(field)
-          raise_final_attr_already_set_error(field)
+          raise FinalityError.new("final accessor '#{field}' has already been set")
         else
           set_attribute(field, value)
         end
@@ -207,17 +204,6 @@ module Functional
     # @!visibility private
     def attribute_has_been_set?(field)
       @attribute_hash.has_key?(field.to_sym)
-    end
-
-    # Raise an error indicating that the final attribute with the given
-    # name has already been set
-    #
-    # @param [Symbol] name the name of the first attribute causing the error
-    # @raise [Functional::FinalityError] with an appropriate message
-    #
-    # @!visibility private
-    def raise_final_attr_already_set_error(name)
-      raise FinalityError.new("final accessor '#{name}' has already been set")
     end
 
     # Check the method name and args for signatures matching potential

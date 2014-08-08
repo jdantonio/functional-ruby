@@ -1,9 +1,12 @@
-require_relative 'final'
+require 'thread'
 
 module Functional
 
+  # An exception raised when an attempt is made to modify an
+  # immutable object or attribute.
+  FinalityError = Class.new(StandardError)
+
   class FinalVar
-    include Final
 
     NO_VALUE = Object.new.freeze
 
@@ -24,10 +27,10 @@ module Functional
 
     def set(value)
       if @set
-        Functional::Final::raise_final_attr_already_set_error(:value)
+        raise FinalityError.new('value has already been set')
       else
-        @value = value
         @set = true
+        @value = value
       end
     end
     alias_method :value=, :set
@@ -47,6 +50,26 @@ module Functional
 
     def fetch(default)
       @set ? @value : default
+    end
+
+    def eql?(other)
+      if ! set?
+        false
+      elsif other.is_a?(FinalVar)
+        value == other.value
+      else
+        value == other
+      end
+    end
+    alias_method :==, :eql?
+
+    def inspect
+      val = set? ? "value=#{value.is_a?(String) ? ('"' + value + '"') : value }" : 'unset'
+      "#<#{self.class} #{val}>"
+    end
+
+    def to_s
+      value.to_s
     end
   end
 end
