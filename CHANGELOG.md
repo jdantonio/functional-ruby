@@ -2,10 +2,10 @@
 
 * A simple implementation of [tuple](http://en.wikipedia.org/wiki/Tuple), an
   immutable, fixed-length list/array/vector-like data structure.
-* A `final_attribute` variant of Ruby's `attr_accessor` that allows an attribute to be
-  written at most once. Based on [Java's `final` keyword](http://en.wikipedia.org/wiki/Final_(Java))
-* `FinalStruct`, a variation on Ruby's `OpenStruct` in which all fields are "final" and exhibit
-  the behavior of a `Functional::Final#final_attribute`.
+* `FinalStruct`, a variation on Ruby's `OpenStruct` in which all fields are "final" (meaning
+  that new fields can be arbitrarily added but once set each field becomes immutable).
+* `FinalVar`, a thread safe object that holds a single value and is "final" (meaning
+  that the value can be set at most once after which it becomes immutable).
 
 ## Current Release v1.0.0 (July 30, 2014)
 

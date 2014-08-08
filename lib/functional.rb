@@ -1,6 +1,7 @@
 require 'functional/delay'
 require 'functional/either'
 require 'functional/final_struct'
+require 'functional/final_var'
 require 'functional/memo'
 require 'functional/option'
 require 'functional/pattern_matching'

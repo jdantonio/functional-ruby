@@ -40,17 +40,17 @@ Complete API documentation can be found at [Rubydoc.info](http://rubydoc.info/gi
 
 * Protocol specifications inspired by Clojure [protocol](http://clojure.org/protocols),
   Erlang [behavior](http://www.erlang.org/doc/design_principles/des_princ.html#id60128),
-  and Objective-C [protocol](https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC/WorkingwithProtocols/WorkingwithProtocols.html)
+  and Objective-C [protocol](https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC/WorkingwithProtocols/WorkingwithProtocols.html).
 * Function overloading with Erlang-style [function](http://erlang.org/doc/reference_manual/functions.html)
-  [pattern matching](http://erlang.org/doc/reference_manual/patterns.html)
+  [pattern matching](http://erlang.org/doc/reference_manual/patterns.html).
 * Simple, thread safe, immutable data structures, such as `Record`, `Union`, and `Tuple`, inspired by
   [Clojure](http://clojure.org/datatypes), [Erlang](http://www.erlang.org/doc/reference_manual/records.html),
   and other functional languages.
-* Thread safe, immutable `Either` and `Option` classes based on [Functional Java](http://functionaljava.org/) and [Haskell](https://hackage.haskell.org/package/base-4.2.0.1/docs/Data-Either.html)
-* [Memoization](http://en.wikipedia.org/wiki/Memoization) of class methods based on Clojure [memoize](http://clojuredocs.org/clojure_core/clojure.core/memoize)
-* Lazy execution with a `Delay` class based on Clojure [delay](http://clojuredocs.org/clojure_core/clojure.core/delay)
-* Thread safe data structures and instance attributes that can be written to at most once
-  before becoming immutable. Based on [Java's `final` keyword](http://en.wikipedia.org/wiki/Final_(Java))
+* Thread safe, immutable `Either` and `Option` classes based on [Functional Java](http://functionaljava.org/) and [Haskell](https://hackage.haskell.org/package/base-4.2.0.1/docs/Data-Either.html).
+* [Memoization](http://en.wikipedia.org/wiki/Memoization) of class methods based on Clojure [memoize](http://clojuredocs.org/clojure_core/clojure.core/memoize).
+* Lazy execution with a `Delay` class based on Clojure [delay](http://clojuredocs.org/clojure_core/clojure.core/delay).
+* Thread safe data structures, such as `FinalStruct` and `FinalVar`, which can be written to at most once
+  before becoming immutable. Based on [Java's `final` keyword](http://en.wikipedia.org/wiki/Final_(Java)).
 
 ### Supported Ruby Versions
 
