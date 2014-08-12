@@ -1,4 +1,4 @@
-### Upcoming Release v1.1.0 (August 10, 2014)
+## Current Release v1.1.0 (August 12, 2014)
 
 * A simple implementation of [tuple](http://en.wikipedia.org/wiki/Tuple), an
   immutable, fixed-length list/array/vector-like data structure.
@@ -7,7 +7,7 @@
 * `FinalVar`, a thread safe object that holds a single value and is "final" (meaning
   that the value can be set at most once after which it becomes immutable).
 
-## Current Release v1.0.0 (July 30, 2014)
+### Previous Release v1.0.0 (July 30, 2014)
 
 * Protocol specifications inspired by Clojure [protocol](http://clojure.org/protocols),
   Erlang [behavior](http://www.erlang.org/doc/design_principles/des_princ.html#id60128),
