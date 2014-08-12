@@ -116,7 +116,7 @@ and other options:
 class Foo
   include Functional::PatternMatching
   include Functional::Protocol
-  include Functional::TypeChecking
+  include Functional::TypeCheck
 
   def greet
     return 'Hello, World!'
