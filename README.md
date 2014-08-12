@@ -127,12 +127,12 @@ class Foo
   end
 
   defn(:greet, _) { |name|
-    "Pleased to meet you, #{name.fulle_name}!"
-  }.when {|name| Type?(CustomerModel, ClientModel) }
+    "Pleased to meet you, #{name.full_name}!"
+  }.when {|name| Type?(name, CustomerModel, ClientModel) }
 
   defn(:greet, _) { |name|
     "Hello, #{name.first} #{name.last}!"
-  }.when {|name| Satisfy?(:Name) }
+  }.when {|name| Satisfy?(name, :Name) }
 
   defn(:greet, :doctor, _) { |name|
     "Hello, Dr. #{name}!"
