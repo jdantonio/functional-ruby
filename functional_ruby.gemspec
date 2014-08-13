@@ -26,5 +26,8 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '>= 1.9.3'
 
+  s.add_runtime_dependency 'atomic', '~> 1.1', '>= 1.1.16'
+  s.add_runtime_dependency 'concurrent-ruby', '= 0.7.0.rc2'
+
   s.add_development_dependency 'bundler'
 end

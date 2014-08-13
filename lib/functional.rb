@@ -23,6 +23,11 @@ Functional::SpecifyProtocol(:Disposition) do
   instance_method :rejected?, 0
 end
 
+require 'atomic'
+require 'concurrent'
+atomic1 = Atomic.new(42)
+atomic2 = Concurrent::Atomic.new(42)
+
 # Erlang, Clojure, and Go inspired functional programming tools to Ruby.
 module Functional
 
