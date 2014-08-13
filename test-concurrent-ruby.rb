@@ -8,17 +8,18 @@ puts atomic.inspect
 
 __END__
 
-[06:58:36 Jerry ~/Projects/FOSS/functional-ruby (testing-concurrent-ruby-bug)]
+[07:47:30 Jerry ~/Projects/FOSS/functional-ruby (test-2-concurrent-ruby-bug)]
 $ rvm use rbx-2.2.10@test --create
 rbx-2.2.10 - #gemset created /Users/Jerry/.rvm/gems/rbx-2.2.10@test
 rbx-2.2.10 - #generating test wrappers..........
 Using /Users/Jerry/.rvm/gems/rbx-2.2.10 with gemset test
 
-[06:58:53 Jerry ~/Projects/FOSS/functional-ruby (testing-concurrent-ruby-bug)]
+[07:47:38 Jerry ~/Projects/FOSS/functional-ruby (test-2-concurrent-ruby-bug)]
 $ bundle install
 Fetching gem metadata from https://rubygems.org/.........
 Resolving dependencies...
 Using rake 10.3.2
+Installing atomic 1.1.16
 Using bundler 1.6.2
 Installing docile 1.1.5
 Installing multi_json 1.10.1
@@ -34,7 +35,7 @@ Installing term-ansicolor 1.3.0
 Installing thor 0.19.1
 Installing coveralls 0.7.0
 Installing diff-lcs 1.2.5
-Using functional-ruby 1.1.0.test1 from source at .
+Using functional-ruby 1.1.0.test2 from source at .
 Installing rspec-support 3.0.2
 Installing rspec-core 3.0.2
 Installing rspec-expectations 3.0.2
@@ -44,7 +45,7 @@ Installing yard 0.8.7.4
 Your bundle is complete!
 Use `bundle show [gemname]` to see where a bundled gem is installed.
 
-[06:59:49 Jerry ~/Projects/FOSS/functional-ruby (testing-concurrent-ruby-bug)]
+[07:48:38 Jerry ~/Projects/FOSS/functional-ruby (test-2-concurrent-ruby-bug)]
 $ gem build functional_ruby.gemspec
 WARNING:  prerelease dependency on concurrent-ruby (= 0.7.0.rc2) is not recommended
 WARNING:  open-ended dependency on bundler (>= 0, development) is not recommended
@@ -53,23 +54,44 @@ WARNING:  open-ended dependency on bundler (>= 0, development) is not recommende
 WARNING:  See http://guides.rubygems.org/specification-reference/ for help
   Successfully built RubyGem
   Name: functional-ruby
-  Version: 1.1.0.test1
-  File: functional-ruby-1.1.0.test1.gem
+  Version: 1.1.0.test2
+  File: functional-ruby-1.1.0.test2.gem
 
-[06:59:57 Jerry ~/Projects/FOSS/functional-ruby (testing-concurrent-ruby-bug)]
-$ ls
-CHANGELOG.md                    README.md                       doc                             pkg                             yardoc
-Gemfile                         Rakefile                        functional-ruby-1.1.0.test1.gem spec
-Gemfile.lock                    coverage                        functional_ruby.gemspec         tasks
-LICENSE                         critic                          lib                             test-concurrent-ruby.rb
-
-[07:00:01 Jerry ~/Projects/FOSS/functional-ruby (testing-concurrent-ruby-bug)]
-$ gem install functional-ruby-1.1.0.test1.gem
-Successfully installed functional-ruby-1.1.0.test1
+[07:48:44 Jerry ~/Projects/FOSS/functional-ruby (test-2-concurrent-ruby-bug)]
+$ gem install functional-ruby-1.1.0.test2.gem
+Successfully installed functional-ruby-1.1.0.test2
 1 gem installed
 
-[07:00:19 Jerry ~/Projects/FOSS/functional-ruby (testing-concurrent-ruby-bug)]
+[07:48:55 Jerry ~/Projects/FOSS/functional-ruby (test-2-concurrent-ruby-bug)]
 $ ruby ./test-concurrent-ruby.rb
-#<Functional::Tuple: [#<Concurrent::Atomic:0x15c8>]>
-#<Concurrent::Atomic:0x15c8>
+An exception occurred running ./test-concurrent-ruby.rb:
+
+    Superclass mismatch: Rubinius::AtomicReference != Concurrent::Atomic (TypeError)
+
+Backtrace:
+
+                      Rubinius.open_class_under at kernel/delta/rubinius.rb:334
+                            Rubinius.open_class at kernel/delta/rubinius.rb:24
+                             Object#__script__ at /Users/Jerry/.rvm/gems/rbx-2.2.10@test/gems/concurrent-ruby-0.7.0.rc2-x86_64-darwin-13/lib/concurrent/atomic.rb:83
+                   Rubinius::CodeLoader.require at kernel/common/code_loader.rb:243
+  Kernel(Object)#gem_original_require (require) at kernel/common/kernel.rb:705
+                         Kernel(Object)#require at /Users/Jerry/.rvm/rubies/rbx-2.2.10/library/rubygems/core_ext/kernel_require.rb:55
+                             Object#__script__ at /Users/Jerry/.rvm/gems/rbx-2.2.10@test/gems/concurrent-ruby-0.7.0.rc2-x86_64-darwin-13/lib/concurrent
+                                                  /configuration.rb:4
+                   Rubinius::CodeLoader.require at kernel/common/code_loader.rb:243
+  Kernel(Object)#gem_original_require (require) at kernel/common/kernel.rb:705
+                         Kernel(Object)#require at /Users/Jerry/.rvm/rubies/rbx-2.2.10/library/rubygems/core_ext/kernel_require.rb:55
+                              Object#__script__ at /Users/Jerry/.rvm/gems/rbx-2.2.10@test/gems/concurrent-ruby-0.7.0.rc2-x86_64-darwin-13/lib/concurrent.rb:3
+                   Rubinius::CodeLoader.require at kernel/common/code_loader.rb:243
+  Kernel(Object)#gem_original_require (require) at kernel/common/kernel.rb:705
+                         Kernel(Object)#require at /Users/Jerry/.rvm/rubies/rbx-2.2.10/library/rubygems/core_ext/kernel_require.rb:55
+                              Object#__script__ at /Users/Jerry/.rvm/gems/rbx-2.2.10@test/gems/functional-ruby-1.1.0.test2/lib/functional.rb:27
+                   Rubinius::CodeLoader.require at kernel/common/code_loader.rb:243
+  Kernel(Object)#gem_original_require (require) at kernel/common/kernel.rb:705
+                         Kernel(Object)#require at /Users/Jerry/.rvm/rubies/rbx-2.2.10/library/rubygems/core_ext/kernel_require.rb:135
+                              Object#__script__ at test-concurrent-ruby.rb:1
+               Rubinius::CodeLoader#load_script at kernel/delta/code_loader.rb:66
+               Rubinius::CodeLoader.load_script at kernel/delta/code_loader.rb:152
+                        Rubinius::Loader#script at kernel/loader.rb:649
+                          Rubinius::Loader#main at kernel/loader.rb:825
 
