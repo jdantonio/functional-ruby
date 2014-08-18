@@ -1,4 +1,5 @@
 require_relative 'abstract_struct'
+require_relative 'protocol'
 require_relative 'type_check'
 
 module Functional
@@ -18,6 +19,8 @@ module Functional
   #
   # @see Functional::AbstractStruct
   # @see Functional::Union
+  # @see Functional::Protocol
+  # @see Functional::TypeCheck
   #
   # @since 1.0.0
   #
@@ -28,10 +31,30 @@ module Functional
     # Create a new record class with the given fields.
     #
     # @return [Functional::AbstractStruct] the new record subclass
-    # @raise [ArgumentError] no fields specified
+    # @raise [ArgumentError] no fields specified or an invalid type
+    #   specification is given
     def new(*fields, &block)
       raise ArgumentError.new('no fields provided') if fields.empty?
-      build(fields, &block)
+        
+      name = nil
+      types = nil
+
+      # check if a name for registration is given
+      if fields.first.is_a?(String)
+        name = fields.first
+        fields = fields[1..fields.length-1]
+      end
+
+      # check for a set of type/protocol specifications
+      if fields.size == 1 && fields.first.respond_to?(:to_h)
+        types = fields.first
+        fields = fields.first.keys
+        check_types!(types)
+      end
+
+      build(name, fields, types, &block)
+    rescue
+      raise ArgumentError.new('invalid specification')
     end
 
     private
@@ -40,14 +63,18 @@ module Functional
     #
     # A set of restrictions governing the creation of a new record.
     class Restrictions
+      include Protocol
       include TypeCheck
 
       # Create a new restrictions object by processing the given
       # block. The block should be the DSL for defining a record class.
       #
+      # @param [Hash] types a hash of fields and the associated type/protocol
+      #   when type/protocol checking is among the restrictions
       # @param [Proc] block A DSL definition of a new record.
       # @yield A DSL definition of a new record.
-      def initialize(&block)
+      def initialize(types = nil, &block)
+        @types = types
         @required = []
         @defaults = {}
         instance_eval(&block) if block_given?
@@ -86,18 +113,44 @@ module Functional
         return value
       end
 
+      # Validate the record data against this set of restrictions.
+      #
+      # @param [Hash] data the data hash
+      # @raise [ArgumentError] when the data does not match the restrictions
+      def validate!(data)
+        validate_mandatory!(data)
+        validate_types!(data)
+      end
+
+      private
+
       # Check the given data hash to see if it contains non-nil values for
       # all mandatory fields.
       #
       # @param [Hash] data the data hash
       # @raise [ArgumentError] if any mandatory fields are missing
-      def check_mandatory!(data)
+      def validate_mandatory!(data)
         if data.any?{|k,v| @required.include?(k) && v.nil? }
           raise ArgumentError.new('mandatory fields must not be nil')
         end
       end
 
-      private
+      # Validate the record data against a type/protocol specification.
+      #
+      # @param [Hash] data the data hash
+      # @raise [ArgumentError] when the data does not match the specification
+      def validate_types!(data)
+        return if @types.nil?
+        @types.each do |field, type|
+          value = data[field]
+          next if value.nil?
+          if type.is_a? Module
+            raise ArgumentError.new("'#{field}' must be of type #{type}") unless Type?(value, type)
+          else
+            raise ArgumentError.new("'#{field}' must stasify the protocol :#{type}") unless Satisfy?(value, type)
+          end
+        end
+      end
 
       # Is the given object uncloneable?
       #
@@ -108,14 +161,27 @@ module Functional
       end
     end
 
+    # Validate the given type/protocol specification.
+    #
+    # @param [Hash] types the type specification
+    # @raise [ArgumentError] when the specification is not valid
+    def check_types!(types)
+      return if types.nil?
+      unless types.all?{|k,v| v.is_a?(Module) || v.is_a?(Symbol) }
+        raise ArgumentError.new('invalid specification')
+      end
+    end
+
     # Use the given `AbstractStruct` class and build the methods necessary
     # to support the given data fields.
     #
+    # @param [String] name the name under which to register the record when given
     # @param [Array] fields the list of symbolic names for all data fields
     # @return [Functional::AbstractStruct] the record class
-    def build(fields, &block)
+    def build(name, fields, types, &block)
+      fields = [name].concat(fields) unless name.nil?
       record, fields = AbstractStruct.define_class(self, :record, fields)
-      record.class_variable_set(:@@restrictions, Restrictions.new(&block))
+      record.class_variable_set(:@@restrictions, Restrictions.new(types, &block))
       define_initializer(record)
       fields.each do |field|
         define_reader(record, field)
@@ -134,7 +200,7 @@ module Functional
           memo[field] = data.fetch(field, restrictions.clone_default(field))
           memo
         end
-        restrictions.check_mandatory!(data)
+        restrictions.validate!(data)
         set_data_hash(data)
         set_values_array(data.values)
         self.freeze
