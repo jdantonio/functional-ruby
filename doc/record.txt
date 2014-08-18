@@ -20,10 +20,27 @@
 #   ```ruby
 #   Functional::Record.new("Customer", :name, :address) #=> Functional::Record::Customer
 #   ```
-#   
-#   **NOTE:** The `new` method of `Record` does not accept a block the way Ruby's `Struct`
-#   does. The block passed to the `new` method of `Record` is used to set mandatory fields
-#   and default values (see below). It is *not* used for additional class declarations.
+#
+#   ### Type Specification
+#
+#   Unlike a Ruby `Struct`, a `Record` may be declared with a type/protocol
+#   specification. In this case, all data members are checked against the
+#   specification whenever a new record is created. Declaring a `Record` with a
+#   type specification is similar to declaring a normal `Record`, except that
+#   the field list is given as a hash with field names as the keys and a class or
+#   protocol as the values.
+#
+#   ```ruby
+#   Functional::SpecifyProtocol(:Name) do
+#     attr_reader :first
+#     attr_reader :middle
+#     attr_reader :last
+#   end
+#
+#   TypedCustomer = Functional::Record.new(name: :Name, address: String) #=> TypedCustomer
+#
+#   Functional::Record.new("TypedCustomer", name: :Name, address: String) #=> Functional::Record::TypedCustomer
+#   ```
 #   
 #   ### Construction
 #   
@@ -44,6 +61,28 @@
 #   
 #   Functional::Record::Customer.new(name: 'Dave', address: '123 Main')
 #    #=> #<record Functional::Record::Customer :name=>"Dave", :address=>"123 Main">
+#   ```
+#
+#   When a record is defined with a type/protocol specification, the values of
+#   all non-nil data members are checked against the specification. Any data
+#   value that is not of the given type or does not satisfy the given protocol
+#   will cause an exception to be raised:
+#
+#   ```ruby
+#   class Name
+#     attr_reader :first, :middle, :last
+#     def initialize(first, middle, last)
+#       @first = first
+#       @middle = middle
+#       @last = last
+#     end
+#   end
+#   
+#   name = Name.new('Douglas', nil, 'Adams') #=> #<Name:0x007fc8b951a278 ...
+#   TypedCustomer.new(name: name, address: '123 Main') #=> #<record TypedCustomer :name=>#<Name:0x007f914cce05b0 ...
+#   
+#   TypedCustomer.new(name: 'Douglas Adams', address: '123 Main') #=> ArgumentError: 'name' must stasify the protocol :Name
+#   TypedCustomer.new(name: name, address: 42) #=> ArgumentError: 'address' must be of type String
 #   ```
 #   
 #   ### Default Values
@@ -198,10 +237,13 @@
 #   and [C#](http://msdn.microsoft.com/en-us/library/ah19swz4.aspx),
 #   just to name a few. Immutable records exist primarily in functional languages
 #   like [Haskell](http://en.wikibooks.org/wiki/Haskell/More_on_datatypes#Named_Fields_.28Record_Syntax.29),
-#   Clojure, and Erlang. The latter two are the main influences for this implementation.
+#   Clojure, and Erlang. The inspiration for declaring records with a type
+#   specification is taken from [PureScript](http://www.purescript.org/), a
+#   compile-to-JavaScript language inspired by Haskell.
 #   
 #   * [Ruby Struct](http://www.ruby-doc.org/core-2.1.2/Struct.html)
 #   * [Clojure Datatypes](http://clojure.org/datatypes)
 #   * [Clojure *defrecord* macro](http://clojure.github.io/clojure/clojure.core-api.html#clojure.core/defrecord)
 #   * [Erlang Records (Reference)](http://www.erlang.org/doc/reference_manual/records.html)
 #   * [Erlang Records (Examples)](http://www.erlang.org/doc/programming_examples/records.html)
+#   * [PureScript Records](http://docs.purescript.org/en/latest/types.html#records)
