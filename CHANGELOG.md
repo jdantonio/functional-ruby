@@ -1,3 +1,7 @@
+### Upcoming Release v1.2.0 (TBD)
+
+* `Record` classes can be declared with a type/protocol specification for type safety.
+
 ## Current Release v1.1.0 (August 12, 2014)
 
 * A simple implementation of [tuple](http://en.wikipedia.org/wiki/Tuple), an
