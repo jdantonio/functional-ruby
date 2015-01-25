@@ -4,12 +4,6 @@
 **A gem for adding functional programming tools to Ruby. Inspired by [Erlang](http://www.erlang.org/),
 [Clojure](http://clojure.org/), and [Functional Java](http://functionaljava.org/).**
 
-*NOTE: Version 1.0 is a complete rewrite. Previous versions lacked a unified
-focus. Version 1.0 is a cohesive set of utilities inspired by other languages
-but designed to work together in ways idiomatic to Ruby.*
-
-Please see the [changelog](https://github.com/jdantonio/functional-ruby/blob/master/CHANGELOG.md) for more information.
-
 ## Introduction
 
 Two things I love are [Ruby](http://www.ruby-lang.org/en/) and
