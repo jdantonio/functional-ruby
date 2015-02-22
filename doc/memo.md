@@ -10,11 +10,11 @@
    [memoization](http://en.wikipedia.org/wiki/Memoization).
 
 ###    Declaration
-   
+
    Using memoization requires two simple steps: including the
    `Functional::Memo` module within a class or module and calling the `memoize`
    function to enable memoization on one or more methods.
-   
+
    ```ruby
    Module EvenNumbers
      include Functional::Memoize
@@ -46,7 +46,7 @@
    the maximum size of the cache. Once the maximum cache size is reached, calls
    to to the method with uncached args will still result in the method being
    called, but the results will not be cached.
-   
+
    ```ruby
    Module EvenNumbers
      include Functional::Memoize
@@ -119,34 +119,34 @@
 
    ```ruby
    require 'functional'
-   
+
    class Factors
      include Functional::Memo
-   
+
      def self.sum_of(number)
        of(number).reduce(:+)
      end
-   
+
      def self.of(number)
        (1..number).select {|i| factor?(number, i)}
      end
-   
+
      def self.factor?(number, potential)
        number % potential == 0
      end
-   
+
      def self.perfect?(number)
        sum_of(number) == 2 * number
      end
-   
+
      def self.abundant?(number)
        sum_of(number) > 2 * number
      end
-   
+
      def self.deficient?(number)
        sum_of(number) < 2 * number
      end
-   
+
      memoize(:sum_of)
      memoize(:of)
    end
@@ -155,10 +155,10 @@
    This code was tested in IRB using MRI 2.1.2 on a MacBook Pro. The `sum_of`
    method was called three times against the number 10,000,000 and the
    benchmark results of each run were captured. The test code:
-   
+
    ```ruby
    require 'benchmark'
-   
+
    3.times do
      stats = Benchmark.measure do
        Factors.sum_of(10_000_000)

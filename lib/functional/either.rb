@@ -10,45 +10,47 @@ end
 
 module Functional
 
-  # The `Either` type represents a value of one of two possible types (a disjoint union).
-  # It is an immutable structure that contains one and only one value. That value can
-  # be stored in one of two virtual position, `left` or `right`. The position provides
-  # context for the encapsulated data.
+  # The `Either` type represents a value of one of two possible types (a
+  # disjoint union). It is an immutable structure that contains one and only one
+  # value. That value can be stored in one of two virtual position, `left` or
+  # `right`. The position provides context for the encapsulated data.
   #
-  # One of the main uses of `Either` is as a return value that can indicate either
-  # success or failure. Object oriented programs generally report errors through
-  # either state or exception handling, neither of which work well in functional
-  # programming. In the former case, a method is called on an object and when an
-  # error occurs the state of the object is updated to reflect the error. This does
-  # not translate well to functional programming because they eschew state and
-  # mutable objects. In the latter, an exception handling block provides branching
-  # logic when an exception is thrown. This does not translate well to functional
-  # programming because it eschews side effects like structured exception handling
-  # (and structured exception handling tends to be very expensive). `Either` provides
-  # a powerful and easy-to-use alternative.
+  # One of the main uses of `Either` is as a return value that can indicate
+  # either success or failure. Object oriented programs generally report errors
+  # through either state or exception handling, neither of which work well in
+  # functional programming. In the former case, a method is called on an object
+  # and when an error occurs the state of the object is updated to reflect the
+  # error. This does not translate well to functional programming because they
+  # eschew state and mutable objects. In the latter, an exception handling block
+  # provides branching logic when an exception is thrown. This does not
+  # translate well to functional programming because it eschews side effects
+  # like structured exception handling (and structured exception handling tends
+  # to be very expensive). `Either` provides a powerful and easy-to-use
+  # alternative.
   #
-  # A function that may generate an error can choose to return an immutable `Either`
-  # object in which the position of the value (left or right) indicates the nature
-  # of the data. By convention, a `left` value indicates an error and a `right` value
-  # indicates success. This leaves the caller with no ambiguity regarding success or
-  # failure, requires no persistent state, and does not require expensive exception
-  # handling facilities.
+  # A function that may generate an error can choose to return an immutable
+  # `Either` object in which the position of the value (left or right) indicates
+  # the nature of the data. By convention, a `left` value indicates an error and
+  # a `right` value indicates success. This leaves the caller with no ambiguity
+  # regarding success or failure, requires no persistent state, and does not
+  # require expensive exception handling facilities.
   #
-  # `Either` provides several aliases and convenience functions to facilitate these
-  # failure/success conventions. The `left` and `right` functions, including their
-  # derivatives, are mirrored by `reason` and `value`. Failure is indicated by the
-  # presence of a `reason` and success is indicated by the presence of a `value`.
-  # When an operation has failed the either is in a `rejected` state, and when an
-  # operation has successed the either is in a `fulfilled` state. A common convention
-  # is to use a Ruby `Exception` as the `reason`. The factory method `error` facilitates
-  # this. The semantics and conventions of `reason`, `value`, and their derivatives
-  # follow the conventions of the Concurrent Ruby gem.
+  # `Either` provides several aliases and convenience functions to facilitate
+  # these failure/success conventions. The `left` and `right` functions,
+  # including their derivatives, are mirrored by `reason` and `value`. Failure
+  # is indicated by the presence of a `reason` and success is indicated by the
+  # presence of a `value`. When an operation has failed the either is in a
+  # `rejected` state, and when an operation has successed the either is in a
+  # `fulfilled` state. A common convention is to use a Ruby `Exception` as the
+  # `reason`. The factory method `error` facilitates this. The semantics and
+  # conventions of `reason`, `value`, and their derivatives follow the
+  # conventions of the Concurrent Ruby gem.
   #
-  # The `left`/`right` and `reason`/`value` methods are not mutually exclusive. They
-  # can be commingled and still result in functionally correct code. This practice
-  # should be avoided, however. Consistent use of either `left`/`right` or
-  # `reason`/`value` against each `Either` instance will result in more expressive,
-  # intent-revealing code.
+  # The `left`/`right` and `reason`/`value` methods are not mutually exclusive.
+  # They can be commingled and still result in functionally correct code. This
+  # practice should be avoided, however. Consistent use of either `left`/`right`
+  # or `reason`/`value` against each `Either` instance will result in more
+  # expressive, intent-revealing code.
   #
   # @example
   #
@@ -86,7 +88,7 @@ module Functional
     self.datatype = :either
     self.fields = [:left, :right].freeze
 
-    # @!visibility private 
+    # @!visibility private
     NO_VALUE = Object.new.freeze
 
     private_class_method :new
@@ -119,7 +121,7 @@ module Functional
       # given error class will be used.
       #
       # @example
-      # 
+      #
       #   either = Functional::Either.error("You're a bad monkey, Mojo Jojo")
       #   either.fulfilled? #=> false
       #   either.rejected?  #=> true
@@ -137,7 +139,7 @@ module Functional
     end
 
     # Projects this either as a left.
-    # 
+    #
     # @return [Object] The left value or `nil` when `right`.
     def left
       left? ? to_h[:left] : nil
@@ -145,7 +147,7 @@ module Functional
     alias_method :reason, :left
 
     # Projects this either as a right.
-    # 
+    #
     # @return [Object] The right value or `nil` when `left`.
     def right
       right? ? to_h[:right] : nil
@@ -213,7 +215,7 @@ module Functional
     # @param [Object] value the value of this either
     # @param [Boolean] is_left is this a left either or right?
     #
-    # @!visibility private 
+    # @!visibility private
     def initialize(value, is_left)
       @is_left = is_left
       hsh = is_left ? {left: value, right: nil} : {left: nil, right: value}

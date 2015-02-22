@@ -35,10 +35,17 @@ module Functional
   # @see Functional::FinalStruct
   # @see http://en.wikipedia.org/wiki/Final_(Java) Java `final` keyword
   #
-  # @!macro thread_safe_final_object
+  # @!macro [new] thread_safe_final_object
+  #
+  #   @note This is a write-once, read-many, thread safe object that can
+  #     be used in concurrent systems. Thread safety guarantees *cannot* be made
+  #     about objects contained *within* this object, however. Ruby variables are
+  #     mutable references to mutable objects. This cannot be changed. The best
+  #     practice it to only encapsulate immutable, frozen, or thread safe objects.
+  #     Ultimately, thread safety is the responsibility of the programmer.
   class FinalVar
 
-    # @!visibility private 
+    # @!visibility private
     NO_VALUE = Object.new.freeze
 
     # Create a new `FinalVar` with the given value or "unset" when

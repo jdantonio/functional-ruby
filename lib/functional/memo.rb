@@ -9,12 +9,12 @@ module Functional
   # the cached result. As a result the response time for frequently called
   # functions is vastly incresed (after the first call with any given set of)
   # arguments, at the cost of increased memory usage (the cache).
-  #   
-  # @!macro memoize
   #
-  # @note Memoized method calls are thread safe and can safely be used in concurrent systems.
-  #   Declaring memoization on a function is *not* thread safe and should only be done during
-  #   application initialization.
+  # {include:file:doc/memo.md}
+  #
+  # @note Memoized method calls are thread safe and can safely be used in
+  #   concurrent systems. Declaring memoization on a function is *not* thread
+  #   safe and should only be done during application initialization.
   #
   # @since 1.0.0
   module Memo
@@ -47,14 +47,15 @@ module Functional
       attr_accessor :__method_memos__
 
       # Returns a memoized version of a referentially transparent function. The
-      # memoized version of the function keeps a cache of the mapping from arguments
-      # to results and, when calls with the same arguments are repeated often, has
-      # higher performance at the expense of higher memory use.
+      # memoized version of the function keeps a cache of the mapping from
+      # arguments to results and, when calls with the same arguments are
+      # repeated often, has higher performance at the expense of higher memory
+      # use.
       #
       # @param [Symbol] func the class/module function to memoize
       # @param [Hash] opts the options controlling memoization
-      # @option opts [Fixnum] :at_most the maximum number of memos to store in the
-      #   cache; a value of zero (the default) or `nil` indicates no limit
+      # @option opts [Fixnum] :at_most the maximum number of memos to store in
+      #   the cache; a value of zero (the default) or `nil` indicates no limit
       #
       # @raise [ArgumentError] when the method has already been memoized
       # @raise [ArgumentError] when :at_most option is a negative number

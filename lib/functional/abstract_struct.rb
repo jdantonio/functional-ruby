@@ -94,7 +94,7 @@ module Functional
     # Set the internal data hash to a copy of the given hash and freeze it.
     # @param [Hash] data the data hash
     #
-    # @!visibility private 
+    # @!visibility private
     def set_data_hash(data)
       @data = data.dup.freeze
     end
@@ -102,7 +102,7 @@ module Functional
     # Set the internal values array to a copy of the given array and freeze it.
     # @param [Array] values the values array
     #
-    # @!visibility private 
+    # @!visibility private
     def set_values_array(values)
       @values = values.dup.freeze
     end
@@ -117,7 +117,7 @@ module Functional
     # @return [Functional::AbstractStruct, Array] the new class and the
     #   (possibly) updated fields array
     #
-    # @!visibility private 
+    # @!visibility private
     def self.define_class(parent, datatype, fields)
       struct = Class.new{ include AbstractStruct }
       if fields.first.is_a? String
@@ -157,7 +157,7 @@ module Functional
       attr_writer :datatype
 
       fields = [].freeze
-      datatype = :struct 
+      datatype = :struct
     end
   end
 end

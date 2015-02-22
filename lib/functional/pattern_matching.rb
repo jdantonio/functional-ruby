@@ -11,7 +11,7 @@ module Functional
   # Erlang-stype pattern matching in Ruby and one of my friends responded
   # "Build it!" So I did. And here it is.
   #
-  # @!macro pattern_matching
+  # {include:file:doc/pattern_matching.md}
   module PatternMatching
 
     # A parameter that is required but that can take any value.
@@ -55,7 +55,7 @@ module Functional
             argv << args[i][key] if value == UNBOUND
           end
         elsif p.is_a?(Hash) || p == UNBOUND || p.is_a?(Class)
-          argv << args[i] 
+          argv << args[i]
         end
       end
       argv

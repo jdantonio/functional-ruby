@@ -2,24 +2,33 @@ require 'thread'
 
 module Functional
 
-  # Lazy evaluation of a block yielding an immutable result. Useful for expensive
-  # operations that may never be needed.
-  # 
+  # Lazy evaluation of a block yielding an immutable result. Useful for
+  # expensive operations that may never be needed.
+  #
   # When a `Delay` is created its state is set to `pending`. The value and
   # reason are both `nil`. The first time the `#value` method is called the
   # enclosed opration will be run and the calling thread will block. Other
   # threads attempting to call `#value` will block as well. Once the operation
   # is complete the *value* will be set to the result of the operation or the
   # *reason* will be set to the raised exception, as appropriate. All threads
-  # blocked on `#value` will return. Subsequent calls to `#value` will immediately
-  # return the cached value. The operation will only be run once. This means that
-  # any side effects created by the operation will only happen once as well.
+  # blocked on `#value` will return. Subsequent calls to `#value` will
+  # immediately return the cached value. The operation will only be run once.
+  # This means that any side effects created by the operation will only happen
+  # once as well.
   #
   # @see http://clojuredocs.org/clojure_core/clojure.core/delay Clojure delay
   #
   # @since 1.0.0
   #
-  # @!macro thread_safe_immutable_object
+  # @!macro [new] thread_safe_immutable_object
+  #
+  #    @note This is a write-once, read-many, thread safe object that can be
+  #      used in concurrent systems. Thread safety guarantees *cannot* be made
+  #      about objects contained *within* this object, however. Ruby variables
+  #      are mutable references to mutable objects. This cannot be changed. The
+  #      best practice it to only encapsulate immutable, frozen, or thread safe
+  #      objects. Ultimately, thread safety is the responsibility of the
+  #      programmer.
   class Delay
 
     # Create a new `Delay` in the `:pending` state.
@@ -47,7 +56,8 @@ module Functional
     # The exception raised when processing the block. Returns `nil` if the
     # operation is still `:pending` or has been `:fulfilled`.
     #
-    # @return [StandardError] the exception raised when processing the block else nil
+    # @return [StandardError] the exception raised when processing the block
+    #   else nil.
     def reason
       @mutex.lock
       @reason
@@ -56,16 +66,16 @@ module Functional
     end
 
     # Return the (possibly memoized) value of the delayed operation.
-    # 
+    #
     # If the state is `:pending` then the calling thread will block while the
     # operation is performed. All other threads simultaneously calling `#value`
     # will block as well. Once the operation is complete (either `:fulfilled` or
     # `:rejected`) all waiting threads will unblock and the new value will be
     # returned.
     #
-    # If the state is not `:pending` when `#value` is called the (possibly memoized)
-    # value will be returned without blocking and without performing the operation
-    # again.
+    # If the state is not `:pending` when `#value` is called the (possibly
+    # memoized) value will be returned without blocking and without performing
+    # the operation again.
     #
     # @return [Object] the (possibly memoized) result of the block operation
     def value
@@ -100,8 +110,8 @@ module Functional
 
     # @!visibility private
     #
-    # Execute the enclosed task then cache and return the result if
-    # the current state is pending. Otherwise, return the cached result.
+    # Execute the enclosed task then cache and return the result if the current
+    # state is pending. Otherwise, return the cached result.
     #
     # @return [Object] the result of the block operation
     def execute_task_once
