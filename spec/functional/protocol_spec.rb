@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe 'protocol specification' do
 
   before(:each) do

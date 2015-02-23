@@ -1,4 +1,3 @@
-require 'spec_helper'
 require 'ostruct'
 
 class Bar
@@ -194,7 +193,7 @@ describe 'complex pattern matching' do
 
     specify { expect(Fizzbuzz.new.who(5)).to eq 15 }
     specify { expect(Fizzbuzz.new.who()).to eq 0 }
-    specify { 
+    specify {
       expect {
         Fizzbuzz.new.who('Jerry', 'secret middle name', "D'Antonio")
       }.to raise_error(NoMethodError)
