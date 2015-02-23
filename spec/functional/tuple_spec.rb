@@ -1,4 +1,3 @@
-require 'spec_helper'
 require 'rspec/expectations'
 
 RSpec::Matchers.define :be_a_different_tuple_than do |expected|

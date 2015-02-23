@@ -1,4 +1,3 @@
-require 'spec_helper'
 require_relative 'abstract_struct_shared'
 require 'securerandom'
 
