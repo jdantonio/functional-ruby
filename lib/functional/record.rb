@@ -9,13 +9,13 @@ module Functional
   # using accessor methods, without having to write an explicit class.
   # The `Record` module generates new `AbstractStruct` subclasses that hold a
   # set of fields with a reader method for each field.
-  #   
+  #
   # A `Record` is very similar to a Ruby `Struct` and shares many of its behaviors
   # and attributes. Unlike a # Ruby `Struct`, a `Record` is immutable: its values
   # are set at construction and can never be changed. Divergence between the two
   # classes derive from this core difference.
-  #   
-  # @!macro record
+  #
+  # {include:file:doc/record.md}
   #
   # @see Functional::AbstractStruct
   # @see Functional::Union
@@ -35,7 +35,7 @@ module Functional
     #   specification is given
     def new(*fields, &block)
       raise ArgumentError.new('no fields provided') if fields.empty?
-        
+
       name = nil
       types = nil
 

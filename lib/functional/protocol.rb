@@ -55,8 +55,8 @@ module Functional
   # interrogate a module, class, or object for its type and ancestry, protocols
   # allow modules, classes, and methods to be interrogated based on their behavior.
   # It is a logical extension of the `respond_to?` method, but vastly more powerful.
-  #   
-  # @!macro protocol
+  #
+  # {include:file:doc/protocol.md}
   #
   # @since 1.0.0 (formerly "behavior")
   module Protocol

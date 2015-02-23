@@ -2,16 +2,16 @@ require_relative 'method_signature'
 
 module Functional
 
-  # As much as I love Ruby I've always been a little disappointed that Ruby doesn't
-  # support function overloading. Function overloading tends to reduce branching
-  # and keep function signatures simpler. No sweat, I learned to do without. Then
-  # I started programming in Erlang. My favorite Erlang feature is, without
-  # question, pattern matching. Pattern matching is like function overloading
-  # cranked to 11. So one day I was musing on Twitter that I'd like to see
-  # Erlang-stype pattern matching in Ruby and one of my friends responded
+  # As much as I love Ruby I've always been a little disappointed that Ruby
+  # doesn't support function overloading. Function overloading tends to reduce
+  # branching and keep function signatures simpler. No sweat, I learned to do
+  # without. Then I started programming in Erlang. My favorite Erlang feature
+  # is, without question, pattern matching. Pattern matching is like function
+  # overloading cranked to 11. So one day I was musing on Twitter that I'd like
+  # to see Erlang-stype pattern matching in Ruby and one of my friends responded
   # "Build it!" So I did. And here it is.
   #
-  # @!macro pattern_matching
+  # {include:file:doc/pattern_matching.md}
   module PatternMatching
 
     # A parameter that is required but that can take any value.
@@ -55,7 +55,7 @@ module Functional
             argv << args[i][key] if value == UNBOUND
           end
         elsif p.is_a?(Hash) || p == UNBOUND || p.is_a?(Class)
-          argv << args[i] 
+          argv << args[i]
         end
       end
       argv
