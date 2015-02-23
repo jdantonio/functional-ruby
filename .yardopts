@@ -6,7 +6,6 @@
 --title=Functional Ruby
 --template default
 
-./doc/**/*.md
 ./lib/**/*.rb
 -
 README.md
