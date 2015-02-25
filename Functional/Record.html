@@ -1,0 +1,751 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>
+  Module: Functional::Record
+  
+    &mdash; Functional
+  
+</title>
+
+  <link rel="stylesheet" href="../css/style.css" type="text/css" charset="utf-8" />
+
+  <link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  hasFrames = window.top.frames.main ? true : false;
+  relpath = '../';
+  framesUrl = "../frames.html#!Functional/Record.html";
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div id="header">
+      <div id="menu">
+  
+    <a href="../_index.html">Index (R)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../Functional.html" title="Functional (module)">Functional</a></span></span>
+     &raquo; 
+    <span class="title">Record</span>
+  
+
+  <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
+</div>
+
+      <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../class_list.html">
+      Class List
+    </a>
+  
+    <a class="full_list_link" id="method_list_link"
+        href="../method_list.html">
+      Method List
+    </a>
+  
+    <a class="full_list_link" id="file_list_link"
+        href="../file_list.html">
+      File List
+    </a>
+  
+</div>
+      <div class="clear"></div>
+    </div>
+
+    <iframe id="search_frame"></iframe>
+
+    <div id="content"><h1>Module: Functional::Record
+  
+  
+  
+</h1>
+
+<dl class="box">
+  
+  
+    
+      <dt class="r1">Extended by:</dt>
+      <dd class="r1"><span class='object_link'><a href="" title="Functional::Record (module)">Record</a></span></dd>
+      
+    
+  
+    
+  
+  
+    <dt class="r2">Included in:</dt>
+    <dd class="r2"><span class='object_link'><a href="" title="Functional::Record (module)">Record</a></span></dd>
+    
+  
+  
+    <dt class="r1 last">Defined in:</dt>
+    <dd class="r1 last">lib/functional/record.rb</dd>
+  
+</dl>
+<div class="clear"></div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>This is a write-once, read-many, thread safe object that can be
+used in concurrent systems. Thread safety guarantees <em>cannot</em> be made
+about objects contained <em>within</em> this object, however. Ruby variables
+are mutable references to mutable objects. This cannot be changed. The
+best practice it to only encapsulate immutable, frozen, or thread safe
+objects. Ultimately, thread safety is the responsibility of the
+programmer.</p>
+</div>
+  </div>
+
+<p>An immutable data structure with multiple data fields. A <code>Record</code> is a
+convenient way to bundle a number of field attributes together,
+using accessor methods, without having to write an explicit class.
+The <code>Record</code> module generates new <code>AbstractStruct</code> subclasses that hold a
+set of fields with a reader method for each field.</p>
+
+<p>A <code>Record</code> is very similar to a Ruby <code>Struct</code> and shares many of its behaviors
+and attributes. Unlike a # Ruby <code>Struct</code>, a <code>Record</code> is immutable: its values
+are set at construction and can never be changed. Divergence between the two
+classes derive from this core difference.</p>
+
+<p><h3>Declaration</h3>
+
+<p>A <code>Record</code> class is declared in a manner identical to that used with Ruby&#39;s <code>Struct</code>.
+   The class method <code>new</code> is called with a list of one or more field names (symbols).
+   A new class will then be dynamically generated along with the necessary reader
+   attributes, one for each field. The newly created class will be anonymous and
+   will mixin <code>Functional::AbstractStruct</code>. The best practice is to assign the newly
+   created record class to a constant:</p>
+
+<pre class="code ruby"><code class="ruby">   Customer = Functional::Record.new(:name, :address) =&gt; Customer
+</code></pre>
+
+<p>Alternatively, the name of the record class, as a string, can be given as the
+   first parameter. In this case the new record class will be created as a constant
+   within the <code>Record</code> module:</p>
+
+<pre class="code ruby"><code class="ruby">   Functional::Record.new(&quot;Customer&quot;, :name, :address) =&gt; Functional::Record::Customer
+</code></pre>
+
+<h3>Type Specification</h3>
+
+<p>Unlike a Ruby <code>Struct</code>, a <code>Record</code> may be declared with a type/protocol
+   specification. In this case, all data members are checked against the
+   specification whenever a new record is created. Declaring a <code>Record</code> with a
+   type specification is similar to declaring a normal <code>Record</code>, except that
+   the field list is given as a hash with field names as the keys and a class or
+   protocol as the values.</p>
+
+<pre class="code ruby"><code class="ruby">   Functional::SpecifyProtocol(:Name) do
+     attr_reader :first
+     attr_reader :middle
+     attr_reader :last
+   end
+
+   TypedCustomer = Functional::Record.new(name: :Name, address: String) =&gt; TypedCustomer
+
+   Functional::Record.new(&quot;TypedCustomer&quot;, name: :Name, address: String) =&gt; Functional::Record::TypedCustomer
+</code></pre>
+
+<h3>Construction</h3>
+
+<p>Construction of a new object from a record is slightly different than for a Ruby <code>Struct</code>.
+   The constructor for a struct class may take zero or more field values and will use those
+   values to popuate the fields. The values passed to the constructor are assumed to be in
+   the same order as the fields were defined. This works for a struct because it is
+   mutable--the field values may be changed after instanciation. Therefore it is not
+   necessary to provide all values to a stuct at creation. This is not the case for a
+   record. A record is immutable. The values for all its fields must be set at instanciation
+   because they cannot be changed later. When creating a new record object the constructor
+   will accept a collection of field/value pairs in hash syntax and will create the new
+   record with the given values:</p>
+
+<pre class="code ruby"><code class="ruby">   Customer.new(name: &#39;Dave&#39;, address: &#39;123 Main&#39;)
+    =&gt; &lt;record Customer :name=&gt;&quot;Dave&quot;, :address=&gt;&quot;123 Main&quot;&gt;
+
+   Functional::Record::Customer.new(name: &#39;Dave&#39;, address: &#39;123 Main&#39;)
+    =&gt; &lt;record Functional::Record::Customer :name=&gt;&quot;Dave&quot;, :address=&gt;&quot;123 Main&quot;&gt;
+</code></pre>
+
+<p>When a record is defined with a type/protocol specification, the values of
+   all non-nil data members are checked against the specification. Any data
+   value that is not of the given type or does not satisfy the given protocol
+   will cause an exception to be raised:</p>
+
+<pre class="code ruby"><code class="ruby">   class Name
+     attr_reader :first, :middle, :last
+     def initialize(first, middle, last)
+       @first = first
+       @middle = middle
+       @last = last
+     end
+   end
+
+   name = Name.new(&#39;Douglas&#39;, nil, &#39;Adams&#39;) =&gt; &lt;Name:0x007fc8b951a278 ...
+   TypedCustomer.new(name: name, address: &#39;123 Main&#39;) =&gt; &lt;record TypedCustomer :name=&gt;&lt;Name:0x007f914cce05b0 ...
+
+   TypedCustomer.new(name: &#39;Douglas Adams&#39;, address: &#39;123 Main&#39;) =&gt; ArgumentError: &#39;name&#39; must stasify the protocol :Name
+   TypedCustomer.new(name: name, address: 42) =&gt; ArgumentError: &#39;address&#39; must be of type String
+</code></pre>
+
+<h3>Default Values</h3>
+
+<p>By default, all record fields are set to <code>nil</code> at instanciation unless explicity set
+   via the constructor. It is possible to specify default values other than <code>nil</code> for
+   zero or more of the fields when a new record class is created. The <code>new</code> method of
+   <code>Record</code> accepts a block which can be used to declare new default values:</p>
+
+<pre class="code ruby"><code class="ruby">   Address = Functional::Record.new(:street_line_1, :street_line_2,
+                                    :city, :state, :postal_code, :country) do
+     default :state, &#39;Ohio&#39;
+     default :country, &#39;USA&#39;
+   end
+    =&gt; Address
+</code></pre>
+
+<p>When a new object is created from a record class with explicit default values, those
+   values will be used for the appropriate fields when no other value is given at
+   construction:</p>
+
+<pre class="code ruby"><code class="ruby">   Address.new(street_line_1: &#39;2401 Ontario St&#39;,
+               city: &#39;Cleveland&#39;, postal_code: 44115)
+    =&gt; &lt;record Address :street_line_1=&gt;&quot;2401 Ontario St&quot;, :street_line_2=&gt;nil, :city=&gt;&quot;Cleveland&quot;, :state=&gt;&quot;Ohio&quot;, :postal_code=&gt;44115, :country=&gt;&quot;USA&quot;&gt;
+</code></pre>
+
+<p>Of course, if a value for a field is given at construction that value will be used instead
+   of the custom default:</p>
+
+<pre class="code ruby"><code class="ruby">   Address.new(street_line_1: &#39;1060 W Addison St&#39;,
+               city: &#39;Chicago&#39;, state: &#39;Illinois&#39;, postal_code: 60613)
+    =&gt; &lt;record Address :street_line_1=&gt;&quot;1060 W Addison St&quot;, :street_line_2=&gt;nil, :city=&gt;&quot;Chicago&quot;, :state=&gt;&quot;Illinois&quot;, :postal_code=&gt;60613, :country=&gt;&quot;USA&quot;&gt;
+</code></pre>
+
+<h3>Mandatory Fields</h3>
+
+<p>By default, all record fields are optional. It is perfectly legal for a record
+   object to exist with all its fields set to <code>nil</code>. During declaration of a new record
+   class the block passed to <code>Record.new</code> can also be used to indicate which fields
+   are mandatory. When a new object is created from a record with mandatory fields
+   an exception will be thrown if any of those fields are nil:</p>
+
+<pre class="code ruby"><code class="ruby">   Name = Functional::Record.new(:first, :middle, :last, :suffix) do
+     mandatory :first, :last
+   end
+    =&gt; Name
+
+   Name.new(first: &#39;Joe&#39;, last: &#39;Armstrong&#39;)
+    =&gt; &lt;record Name :first=&gt;&quot;Joe&quot;, :middle=&gt;nil, :last=&gt;&quot;Armstrong&quot;, :suffix=&gt;nil&gt;
+
+   Name.new(first: &#39;Matz&#39;) =&gt; ArgumentError: mandatory fields must not be nil
+</code></pre>
+
+<p>Of course, declarations for default values and mandatory fields may be used
+   together:</p>
+
+<pre class="code ruby"><code class="ruby">   Person = Functional::Record.new(:first_name, :middle_name, :last_name,
+                                   :street_line_1, :street_line_2,
+                                   :city, :state, :postal_code, :country) do
+     mandatory :first_name, :last_name
+     mandatory :country
+     default :state, &#39;Ohio&#39;
+     default :country, &#39;USA&#39;
+   end
+    =&gt; Person
+</code></pre>
+
+<h3>Default Value Memoization</h3>
+
+<p>Note that the block provided to <code>Record.new</code> is processed once and only once
+   when the new record class is declared. Thereafter the results are memoized
+   and copied (via <code>clone</code>, unless uncloneable) each time a new record object
+   is created. Default values should be simple types like <code>String</code>, <code>Fixnum</code>,
+   and <code>Boolean</code>. If complex operations need performed when setting default
+   values the a <code>Class</code> should be used instead of a <code>Record</code>.</p>
+
+<h5>Why Declaration Differs from Ruby&#39;s Struct</h5>
+
+<p>Those familiar with Ruby&#39;s <code>Struct</code> class will notice one important
+   difference when declaring a <code>Record</code>: the block passes to <code>new</code> cannot be
+   used to define additional methods. When declaring a new class created from a
+   Ruby <code>Struct</code> the block can perform any additional class definition that
+   could be done had the class be defined normally. The excellent
+   <a href="https://github.com/tcrayford/Values">Values</a> supports this same behavior.
+   <code>Record</code> does not allow additional class definitions during declaration for
+   one simple reason: doing so violates two very important tenets of functional
+   programming. Specifically, immutability and the separation of data from
+   operations.</p>
+
+<p><code>Record</code> exists for the purpose of creating immutable objects. If additional
+   instance methods were to be defined on a record class it would be possible
+   to violate immutability. Not only could additional, mutable state be added
+   to the class, but the existing immutable attributes could be overridden by
+   mutable methods. The security of providing an immutable object would be
+   completely shattered, thus defeating the original purpose of the record
+   class. Of course it would be possible to allow this feature and trust the
+   programmer to not violate the intended immutability of class, but opening
+   <code>Record</code> to the <em>possibility</em> of immutability violation is unnecessary and
+   unwise.</p>
+
+<p>More important than the potential for immutability violations is the fact
+   the adding additional methods to a record violates the principal of
+   separating data from operations on that data. This is one of the core ideas
+   in functional programming. Data is defined in pure structures that contain
+   no behavior and operations on that data are provided by polymorphic
+   functions. This may seem counterintuitive to object oriented programmers,
+   but that is the nature of functional programming. Adding behavior to a
+   record, even when that behavior does not violate immutability, is still
+   anathema to functional programming, and it is why records in languages like
+   Erlang and Clojure do not have functions defined within them.</p>
+
+<p>Should additional methods need defined on a <code>Record</code> class, the appropriate
+   practice is to declare the record class then declare another class which
+   extends the record. The record class remains pure data and the subclass
+   contains additional operations on that data.</p>
+
+<pre class="code ruby"><code class="ruby">   NameRecord = Functional::Record.new(:first, :middle, :last, :suffix) do
+     mandatory :first, :last
+   end
+
+   class Name &lt; NameRecord
+     def full_name
+       &quot;{first} {last}&quot;
+     end
+
+     def formal_name
+       name = [first, middle, last].select{|s| ! s.to_s.empty?}.join(&#39; &#39;)
+       suffix.to_s.empty? ? name : name + &quot;, {suffix}&quot;
+     end
+   end
+
+   jerry = Name.new(first: &#39;Jerry&#39;, last: &quot;D&#39;Antonio&quot;)
+   ted   = Name.new(first: &#39;Ted&#39;, middle: &#39;Theodore&#39;, last: &#39;Logan&#39;, suffix: &#39;Esq.&#39;)
+
+   jerry.formal_name =&gt; &quot;Jerry D&#39;Antonio&quot;
+   ted.formal_name   =&gt; &quot;Ted Theodore Logan, Esq.&quot;
+</code></pre>
+
+<h3>Inspiration</h3>
+
+<p>Neither struct nor records are new to computing. Both have been around for a very
+   long time. Mutable structs can be found in many languages including
+   <a href="http://www.ruby-doc.org/core-2.1.2/Struct.html">Ruby</a>,
+   <a href="http://golang.org/ref/specStruct_types">Go</a>,
+   <a href="http://en.wikipedia.org/wiki/Struct_(C_programming_language)">C</a>,
+   and <a href="http://msdn.microsoft.com/en-us/library/ah19swz4.aspx">C</a>,
+   just to name a few. Immutable records exist primarily in functional languages
+   like <a href="http://en.wikibooks.org/wiki/Haskell/More_on_datatypesNamed_Fields_.28Record_Syntax.29">Haskell</a>,
+   Clojure, and Erlang. The inspiration for declaring records with a type
+   specification is taken from <a href="http://www.purescript.org/">PureScript</a>, a
+   compile-to-JavaScript language inspired by Haskell.</p>
+
+<ul>
+<li><a href="http://www.ruby-doc.org/core-2.1.2/Struct.html">Ruby Struct</a></li>
+<li><a href="http://clojure.org/datatypes">Clojure Datatypes</a></li>
+<li><a href="http://clojure.github.io/clojure/clojure.core-api.htmlclojure.core/defrecord">Clojure <em>defrecord</em> macro</a></li>
+<li><a href="http://www.erlang.org/doc/reference_manual/records.html">Erlang Records (Reference)</a></li>
+<li><a href="http://www.erlang.org/doc/programming_examples/records.html">Erlang Records (Examples)</a></li>
+<li><a href="http://docs.purescript.org/en/latest/types.htmlrecords">PureScript Records</a></li>
+</ul>
+</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><span class='object_link'><a href="AbstractStruct.html" title="Functional::AbstractStruct (module)">AbstractStruct</a></span></li>
+    
+      <li><span class='object_link'><a href="Union.html" title="Functional::Union (module)">Union</a></span></li>
+    
+      <li><span class='object_link'><a href="Protocol.html" title="Functional::Protocol (module)">Protocol</a></span></li>
+    
+      <li><span class='object_link'><a href="TypeCheck.html" title="Functional::TypeCheck (module)">TypeCheck</a></span></li>
+    
+  </ul>
+<p class="tag_title">Since:</p>
+<ul class="since">
+  
+    <li>
+      
+      
+      
+      
+        
+        <div class='inline'><p>1.0.0</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div>
+
+
+
+
+
+
+  
+    <h2>
+      Class Method Summary
+      <small>(<a href="#" class="summary_toggle">collapse</a>)</small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#new-class_method" title="#new (class method)">+ (Functional::AbstractStruct) <strong>new</strong>(*fields, &amp;block) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Create a new record class with the given fields.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+    <h2>
+      Instance Method Summary
+      <small>(<a href="#" class="summary_toggle">collapse</a>)</small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#new-instance_method" title="#new (instance method)">- (Functional::AbstractStruct) <strong>new</strong>(*fields, &amp;block) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Create a new record class with the given fields.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+
+  <div id="class_method_details" class="method_details_list">
+    <h2>Class Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="new-class_method">
+  
+    + (<tt><span class='object_link'><a href="AbstractStruct.html" title="Functional::AbstractStruct (module)">Functional::AbstractStruct</a></span></tt>) <strong>new</strong>(*fields, &amp;block) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Create a new record class with the given fields.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="AbstractStruct.html" title="Functional::AbstractStruct (module)">Functional::AbstractStruct</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the new record subclass</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>ArgumentError</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>no fields specified or an invalid type
+specification is given</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Since:</p>
+<ul class="since">
+  
+    <li>
+      
+      
+      
+      
+        
+        <div class='inline'><p>1.0.0</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/functional/record.rb', line 36</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_fields'>fields</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>no fields provided</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_fields'>fields</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
+
+  <span class='id identifier rubyid_name'>name</span> <span class='op'>=</span> <span class='kw'>nil</span>
+  <span class='id identifier rubyid_types'>types</span> <span class='op'>=</span> <span class='kw'>nil</span>
+
+  <span class='comment'># check if a name for registration is given
+</span>  <span class='kw'>if</span> <span class='id identifier rubyid_fields'>fields</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>String</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_name'>name</span> <span class='op'>=</span> <span class='id identifier rubyid_fields'>fields</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
+    <span class='id identifier rubyid_fields'>fields</span> <span class='op'>=</span> <span class='id identifier rubyid_fields'>fields</span><span class='lbracket'>[</span><span class='int'>1</span><span class='op'>..</span><span class='id identifier rubyid_fields'>fields</span><span class='period'>.</span><span class='id identifier rubyid_length'>length</span><span class='op'>-</span><span class='int'>1</span><span class='rbracket'>]</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># check for a set of type/protocol specifications
+</span>  <span class='kw'>if</span> <span class='id identifier rubyid_fields'>fields</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span> <span class='op'>==</span> <span class='int'>1</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_fields'>fields</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:to_h</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_types'>types</span> <span class='op'>=</span> <span class='id identifier rubyid_fields'>fields</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
+    <span class='id identifier rubyid_fields'>fields</span> <span class='op'>=</span> <span class='id identifier rubyid_fields'>fields</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span><span class='period'>.</span><span class='id identifier rubyid_keys'>keys</span>
+    <span class='id identifier rubyid_check_types!'>check_types!</span><span class='lparen'>(</span><span class='id identifier rubyid_types'>types</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_build'>build</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_fields'>fields</span><span class='comma'>,</span> <span class='id identifier rubyid_types'>types</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+<span class='kw'>rescue</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>invalid specification</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="new-instance_method">
+  
+    - (<tt><span class='object_link'><a href="AbstractStruct.html" title="Functional::AbstractStruct (module)">Functional::AbstractStruct</a></span></tt>) <strong>new</strong>(*fields, &amp;block) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Create a new record class with the given fields.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="AbstractStruct.html" title="Functional::AbstractStruct (module)">Functional::AbstractStruct</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the new record subclass</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>ArgumentError</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>no fields specified or an invalid type
+specification is given</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Since:</p>
+<ul class="since">
+  
+    <li>
+      
+      
+      
+      
+        
+        <div class='inline'><p>1.0.0</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/functional/record.rb', line 36</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_fields'>fields</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>no fields provided</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_fields'>fields</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
+
+  <span class='id identifier rubyid_name'>name</span> <span class='op'>=</span> <span class='kw'>nil</span>
+  <span class='id identifier rubyid_types'>types</span> <span class='op'>=</span> <span class='kw'>nil</span>
+
+  <span class='comment'># check if a name for registration is given
+</span>  <span class='kw'>if</span> <span class='id identifier rubyid_fields'>fields</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>String</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_name'>name</span> <span class='op'>=</span> <span class='id identifier rubyid_fields'>fields</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
+    <span class='id identifier rubyid_fields'>fields</span> <span class='op'>=</span> <span class='id identifier rubyid_fields'>fields</span><span class='lbracket'>[</span><span class='int'>1</span><span class='op'>..</span><span class='id identifier rubyid_fields'>fields</span><span class='period'>.</span><span class='id identifier rubyid_length'>length</span><span class='op'>-</span><span class='int'>1</span><span class='rbracket'>]</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># check for a set of type/protocol specifications
+</span>  <span class='kw'>if</span> <span class='id identifier rubyid_fields'>fields</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span> <span class='op'>==</span> <span class='int'>1</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_fields'>fields</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:to_h</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_types'>types</span> <span class='op'>=</span> <span class='id identifier rubyid_fields'>fields</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
+    <span class='id identifier rubyid_fields'>fields</span> <span class='op'>=</span> <span class='id identifier rubyid_fields'>fields</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span><span class='period'>.</span><span class='id identifier rubyid_keys'>keys</span>
+    <span class='id identifier rubyid_check_types!'>check_types!</span><span class='lparen'>(</span><span class='id identifier rubyid_types'>types</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_build'>build</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_fields'>fields</span><span class='comma'>,</span> <span class='id identifier rubyid_types'>types</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+<span class='kw'>rescue</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>invalid specification</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+    <div id="footer">
+  Generated on Tue Feb 24 22:22:37 2015 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.8.7.4 (ruby-2.2.0).
+</div>
+
+  </body>
+</html>

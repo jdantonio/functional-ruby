@@ -1,0 +1,336 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>
+  Module: Functional::Memo
+  
+    &mdash; Functional
+  
+</title>
+
+  <link rel="stylesheet" href="../css/style.css" type="text/css" charset="utf-8" />
+
+  <link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  hasFrames = window.top.frames.main ? true : false;
+  relpath = '../';
+  framesUrl = "../frames.html#!Functional/Memo.html";
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div id="header">
+      <div id="menu">
+  
+    <a href="../_index.html">Index (M)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../Functional.html" title="Functional (module)">Functional</a></span></span>
+     &raquo; 
+    <span class="title">Memo</span>
+  
+
+  <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
+</div>
+
+      <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../class_list.html">
+      Class List
+    </a>
+  
+    <a class="full_list_link" id="method_list_link"
+        href="../method_list.html">
+      Method List
+    </a>
+  
+    <a class="full_list_link" id="file_list_link"
+        href="../file_list.html">
+      File List
+    </a>
+  
+</div>
+      <div class="clear"></div>
+    </div>
+
+    <iframe id="search_frame"></iframe>
+
+    <div id="content"><h1>Module: Functional::Memo
+  
+  
+  
+</h1>
+
+<dl class="box">
+  
+  
+    
+  
+    
+  
+  
+  
+    <dt class="r1 last">Defined in:</dt>
+    <dd class="r1 last">lib/functional/memo.rb</dd>
+  
+</dl>
+<div class="clear"></div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Memoized method calls are thread safe and can safely be used in
+concurrent systems. Declaring memoization on a function is <em>not</em> thread
+safe and should only be done during application initialization.</p>
+</div>
+  </div>
+
+<p>Memoization is a technique for optimizing functions that are time-consuming
+and/or involve expensive calculations. Every time a memoized function is
+called the result is caches with reference to the given parameters.
+Subsequent calls to the function that use the same parameters will return
+the cached result. As a result the response time for frequently called
+functions is vastly incresed (after the first call with any given set of)
+arguments, at the cost of increased memory usage (the cache).</p>
+
+<p><h1>memoize</h1>
+
+<h3>Rationale</h3>
+
+<p>Many computational operations take a significant amount of time and/or use
+   an inordinate amount of resources. If subsequent calls to that function with
+   the same parameters are guaranteed to return the same result, caching the
+   result can lead to significant performance improvements. The process of
+   caching such calls is called
+   <a href="http://en.wikipedia.org/wiki/Memoization">memoization</a>.</p>
+
+<h3>Declaration</h3>
+
+<p>Using memoization requires two simple steps: including the
+   <code>Functional::Memo</code> module within a class or module and calling the <code>memoize</code>
+   function to enable memoization on one or more methods.</p>
+
+<pre class="code ruby"><code class="ruby">   Module EvenNumbers
+     include Functional::Memoize
+
+     self.first(n)
+       (2..n).select{|i| i % 2 == 0 }
+     end
+
+     memoize :first
+   end
+</code></pre>
+
+<p>When a function is memoized an internal cache is created that maps arguments
+   to return values. When the function is called the arguments are checked
+   against the cache. If the args are found the method is not called and the
+   cached result is returned instead.</p>
+
+<h3>Ramifications</h3>
+
+<p>Memoizing long-running methods can lead to significant performance
+   advantages. But there is a trade-off. Memoization may greatly increase the
+   memory footprint of the application. The memo cache itself takes memory. The
+   more arg/result pairs stored in the cache, the more memory is consumed.</p>
+
+<h5>Cache Size Options</h5>
+
+<p>To help control the size of the cache, a limit can be placed on the number
+   of items retained in the cache. The <code>:at_most</code> option, when given, indicates
+   the maximum size of the cache. Once the maximum cache size is reached, calls
+   to to the method with uncached args will still result in the method being
+   called, but the results will not be cached.</p>
+
+<pre class="code ruby"><code class="ruby">   Module EvenNumbers
+     include Functional::Memoize
+
+     self.first(n)
+       (2..n).select{|i| i % 2 == 0 }
+     end
+
+     memoize :first, at_most: 1000
+   end
+</code></pre>
+
+<p>There is no way to predict in advance what the proper cache size is, or if
+   it should be restricted at all. Only performance testing under realistic
+   conditions or profiling of a running system can provide guidance.</p>
+
+<h3>Restrictions</h3>
+
+<p>Not all methods are good candidates for memoization.Only methods that are
+   <a href="http://en.wikipedia.org/wiki/Idempotence">idempotent</a>, <a href="http://en.wikipedia.org/wiki/Referential_transparency_(computer_science)">referentially
+   transparent</a>,
+   and free of <a href="http://en.wikipedia.org/wiki/Side_effect_(computer_science)">side effects</a>
+   can be effectively memoized. If a method creates side effects, such as
+   writing to a log, only the first call to the method will create those side
+   effects. Subsequent calls will return the cached value without calling the
+   method.</p>
+
+<p>Similarly, methods which change internal state will only update the state on
+   the initial call. Later calls will not result in state changes, they will
+   only return the original result. Subsequently, instance methods cannot be
+   memoized. Objects are, by definition, stateful. Method calls exist for the
+   purpose of changing or using the internal state of the object. Such methods
+   cannot be effectively memoized; it would require the internal state of the
+   object to be cached and checked as well.</p>
+
+<p>Block parameters pose a similar problem. Block parameters are inherently
+   stateful (they are closures which capture the enclosing context). And there
+   is no way to check the state of the block along with the args to determine
+   if the cached value should be used. Subsequently, and method call which
+   includes a block will result in the cache being completely skipped. The base
+   method will be called and the result will not be cached. This behavior will
+   occur even when the given method was not programmed to accept a block
+   parameter. Ruby will capture any block passed to any method and make it
+   available to the method even when not documented as a formal parameter or
+   used in the method. This has the interesting side effect of allowing the
+   memo cache to be skipped on any method call, simply be passing a block
+   parameter.</p>
+
+<pre class="code ruby"><code class="ruby">   EvenNumbers.first(100)         causes the result to be cached
+   EvenNumbers.first(100)         retrieves the previous result from the cache
+   EvenNumbers.first(100){ nil }  skips the memo cache and calls the method again
+</code></pre>
+
+<h3>Complete Example</h3>
+
+<p>The following example is borrowed from the book <a href="http://shop.oreilly.com/product/0636920029687.do">Functional Thinking</a>
+   by Neal Ford. In his book he shows an example of memoization in Groovy by
+   summing factors of a given number. This is a great example because it
+   exhibits all the criteria that make a method a good memoization candidate:</p>
+
+<ul>
+<li>Idempotence</li>
+<li>Referential transparency</li>
+<li>Stateless</li>
+<li>Free of side effect</li>
+<li>Computationally expensive (for large numbers)</li>
+</ul>
+
+<p>The following code implements Ford&#39;s algorithms in Ruby, then memoizes two
+   key methods. The Ruby code:</p>
+
+<pre class="code ruby"><code class="ruby">   <span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>functional</span><span class='tstring_end'>&#39;</span></span>
+
+   <span class='kw'>class</span> <span class='const'>Factors</span>
+     <span class='id identifier rubyid_include'>include</span> <span class='const'>Functional</span><span class='op'>::</span><span class='const'>Memo</span>
+
+     <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_sum_of'>sum_of</span><span class='lparen'>(</span><span class='id identifier rubyid_number'>number</span><span class='rparen'>)</span>
+       <span class='id identifier rubyid_of'>of</span><span class='lparen'>(</span><span class='id identifier rubyid_number'>number</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_reduce'>reduce</span><span class='lparen'>(</span><span class='symbol'>:+</span><span class='rparen'>)</span>
+     <span class='kw'>end</span>
+
+     <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_of'>of</span><span class='lparen'>(</span><span class='id identifier rubyid_number'>number</span><span class='rparen'>)</span>
+       <span class='lparen'>(</span><span class='int'>1</span><span class='op'>..</span><span class='id identifier rubyid_number'>number</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_select'>select</span> <span class='lbrace'>{</span><span class='op'>|</span><span class='id identifier rubyid_i'>i</span><span class='op'>|</span> <span class='id identifier rubyid_factor?'>factor?</span><span class='lparen'>(</span><span class='id identifier rubyid_number'>number</span><span class='comma'>,</span> <span class='id identifier rubyid_i'>i</span><span class='rparen'>)</span><span class='rbrace'>}</span>
+     <span class='kw'>end</span>
+
+     <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_factor?'>factor?</span><span class='lparen'>(</span><span class='id identifier rubyid_number'>number</span><span class='comma'>,</span> <span class='id identifier rubyid_potential'>potential</span><span class='rparen'>)</span>
+       <span class='id identifier rubyid_number'>number</span> <span class='op'>%</span> <span class='id identifier rubyid_potential'>potential</span> <span class='op'>==</span> <span class='int'>0</span>
+     <span class='kw'>end</span>
+
+     <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_perfect?'>perfect?</span><span class='lparen'>(</span><span class='id identifier rubyid_number'>number</span><span class='rparen'>)</span>
+       <span class='id identifier rubyid_sum_of'>sum_of</span><span class='lparen'>(</span><span class='id identifier rubyid_number'>number</span><span class='rparen'>)</span> <span class='op'>==</span> <span class='int'>2</span> <span class='op'>*</span> <span class='id identifier rubyid_number'>number</span>
+     <span class='kw'>end</span>
+
+     <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_abundant?'>abundant?</span><span class='lparen'>(</span><span class='id identifier rubyid_number'>number</span><span class='rparen'>)</span>
+       <span class='id identifier rubyid_sum_of'>sum_of</span><span class='lparen'>(</span><span class='id identifier rubyid_number'>number</span><span class='rparen'>)</span> <span class='op'>&gt;</span> <span class='int'>2</span> <span class='op'>*</span> <span class='id identifier rubyid_number'>number</span>
+     <span class='kw'>end</span>
+
+     <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_deficient?'>deficient?</span><span class='lparen'>(</span><span class='id identifier rubyid_number'>number</span><span class='rparen'>)</span>
+       <span class='id identifier rubyid_sum_of'>sum_of</span><span class='lparen'>(</span><span class='id identifier rubyid_number'>number</span><span class='rparen'>)</span> <span class='op'>&lt;</span> <span class='int'>2</span> <span class='op'>*</span> <span class='id identifier rubyid_number'>number</span>
+     <span class='kw'>end</span>
+
+     <span class='id identifier rubyid_memoize'>memoize</span><span class='lparen'>(</span><span class='symbol'>:sum_of</span><span class='rparen'>)</span>
+     <span class='id identifier rubyid_memoize'>memoize</span><span class='lparen'>(</span><span class='symbol'>:of</span><span class='rparen'>)</span>
+   <span class='kw'>end</span>
+</code></pre>
+
+<p>This code was tested in IRB using MRI 2.1.2 on a MacBook Pro. The <code>sum_of</code>
+   method was called three times against the number 10,000,000 and the
+   benchmark results of each run were captured. The test code:</p>
+
+<pre class="code ruby"><code class="ruby">   <span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>benchmark</span><span class='tstring_end'>&#39;</span></span>
+
+   <span class='int'>3</span><span class='period'>.</span><span class='id identifier rubyid_times'>times</span> <span class='kw'>do</span>
+     <span class='id identifier rubyid_stats'>stats</span> <span class='op'>=</span> <span class='const'>Benchmark</span><span class='period'>.</span><span class='id identifier rubyid_measure'>measure</span> <span class='kw'>do</span>
+       <span class='const'>Factors</span><span class='period'>.</span><span class='id identifier rubyid_sum_of'>sum_of</span><span class='lparen'>(</span><span class='int'>10_000_000</span><span class='rparen'>)</span>
+     <span class='kw'>end</span>
+     <span class='id identifier rubyid_puts'>puts</span> <span class='id identifier rubyid_stats'>stats</span>
+   <span class='kw'>end</span>
+</code></pre>
+
+<p>The results of the benchmarking are very revealing. The first run took over
+   a second to calculate the results. The two subsequent runs, which retrieved
+   the previous result from the memo cache, were nearly instantaneous:</p>
+
+<pre class="code ruby"><code class="ruby">   1.080000   0.000000   1.080000 (  1.077524)
+   0.000000   0.000000   0.000000 (  0.000033)
+   0.000000   0.000000   0.000000 (  0.000008)
+</code></pre>
+
+<p>The same code run on the same computer using JRuby 1.7.12 exhibited similar
+   results:</p>
+
+<pre class="code ruby"><code class="ruby">   1.800000   0.030000   1.830000 (  1.494000)
+   0.000000   0.000000   0.000000 (  0.000000)
+   0.000000   0.000000   0.000000 (  0.000000)
+</code></pre>
+
+<h3>Inspiration</h3>
+
+<ul>
+<li><a href="http://en.wikipedia.org/wiki/Memoization">Memoization</a> at Wikipedia</li>
+<li>Clojure <a href="http://clojuredocs.org/clojure_core/clojure.core/memoize">memoize</a> function</li>
+</ul>
+</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Since:</p>
+<ul class="since">
+  
+    <li>
+      
+      
+      
+      
+        
+        <div class='inline'><p>1.0.0</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div>
+
+
+
+
+
+
+
+
+</div>
+
+    <div id="footer">
+  Generated on Tue Feb 24 22:22:37 2015 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.8.7.4 (ruby-2.2.0).
+</div>
+
+  </body>
+</html>

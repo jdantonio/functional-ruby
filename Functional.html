@@ -1,0 +1,514 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>
+  Module: Functional
+  
+    &mdash; Functional
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" charset="utf-8" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  hasFrames = window.top.frames.main ? true : false;
+  relpath = '';
+  framesUrl = "frames.html#!Functional.html";
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div id="header">
+      <div id="menu">
+  
+    <a href="_index.html">Index (F)</a> &raquo;
+    
+    
+    <span class="title">Functional</span>
+  
+
+  <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
+</div>
+
+      <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+      Class List
+    </a>
+  
+    <a class="full_list_link" id="method_list_link"
+        href="method_list.html">
+      Method List
+    </a>
+  
+    <a class="full_list_link" id="file_list_link"
+        href="file_list.html">
+      File List
+    </a>
+  
+</div>
+      <div class="clear"></div>
+    </div>
+
+    <iframe id="search_frame"></iframe>
+
+    <div id="content"><h1>Module: Functional
+  
+  
+  
+</h1>
+
+<dl class="box">
+  
+  
+    
+  
+    
+  
+  
+  
+    <dt class="r1 last">Defined in:</dt>
+    <dd class="r1 last">lib/functional.rb<span class="defines">,<br />
+  lib/functional/memo.rb,<br /> lib/functional/union.rb,<br /> lib/functional/tuple.rb,<br /> lib/functional/delay.rb,<br /> lib/functional/either.rb,<br /> lib/functional/option.rb,<br /> lib/functional/record.rb,<br /> lib/functional/version.rb,<br /> lib/functional/protocol.rb,<br /> lib/functional/final_var.rb,<br /> lib/functional/type_check.rb,<br /> lib/functional/final_struct.rb,<br /> lib/functional/value_struct.rb,<br /> lib/functional/protocol_info.rb,<br /> lib/functional/abstract_struct.rb,<br /> lib/functional/pattern_matching.rb,<br /> lib/functional/method_signature.rb</span>
+</dd>
+  
+</dl>
+<div class="clear"></div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    <p>Erlang, Clojure, and Go inspired functional programming tools to Ruby.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><h2>Defined Under Namespace</h2>
+<p class="children">
+  
+    
+      <strong class="modules">Modules:</strong> <span class='object_link'><a href="Functional/AbstractStruct.html" title="Functional::AbstractStruct (module)">AbstractStruct</a></span>, <span class='object_link'><a href="Functional/Memo.html" title="Functional::Memo (module)">Memo</a></span>, <span class='object_link'><a href="Functional/PatternMatching.html" title="Functional::PatternMatching (module)">PatternMatching</a></span>, <span class='object_link'><a href="Functional/Protocol.html" title="Functional::Protocol (module)">Protocol</a></span>, <span class='object_link'><a href="Functional/Record.html" title="Functional::Record (module)">Record</a></span>, <span class='object_link'><a href="Functional/TypeCheck.html" title="Functional::TypeCheck (module)">TypeCheck</a></span>, <span class='object_link'><a href="Functional/Union.html" title="Functional::Union (module)">Union</a></span>
+    
+  
+    
+      <strong class="classes">Classes:</strong> <span class='object_link'><a href="Functional/Delay.html" title="Functional::Delay (class)">Delay</a></span>, <span class='object_link'><a href="Functional/Either.html" title="Functional::Either (class)">Either</a></span>, <span class='object_link'><a href="Functional/FinalStruct.html" title="Functional::FinalStruct (class)">FinalStruct</a></span>, <span class='object_link'><a href="Functional/FinalVar.html" title="Functional::FinalVar (class)">FinalVar</a></span>, <span class='object_link'><a href="Functional/Option.html" title="Functional::Option (class)">Option</a></span>, <span class='object_link'><a href="Functional/ProtocolInfo.html" title="Functional::ProtocolInfo (class)">ProtocolInfo</a></span>, <span class='object_link'><a href="Functional/Tuple.html" title="Functional::Tuple (class)">Tuple</a></span>, <span class='object_link'><a href="Functional/ValueStruct.html" title="Functional::ValueStruct (class)">ValueStruct</a></span>
+    
+  
+</p>
+
+  <h2>Constant Summary</h2>
+  
+    <dl class="constants">
+      
+        <dt id="Infinity-constant" class="">Infinity =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Infinity</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='int'>1</span><span class='op'>/</span><span class='float'>0.0</span></pre></dd>
+      
+        <dt id="NaN-constant" class="">NaN =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Not a number</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='int'>0</span><span class='op'>/</span><span class='float'>0.0</span></pre></dd>
+      
+        <dt id="VERSION-constant" class="">VERSION =
+          <div class="docstring">
+  <div class="discussion">
+    <p>The current gem version.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>1.1.0</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="ProtocolError-constant" class="">ProtocolError =
+          <div class="docstring">
+  <div class="discussion">
+    <p>An exception indicating a problem during protocol processing.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='const'>Class</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='const'>StandardError</span><span class='rparen'>)</span></pre></dd>
+      
+        <dt id="FinalityError-constant" class="">FinalityError =
+          <div class="docstring">
+  <div class="discussion">
+    <p>An exception raised when an attempt is made to modify an
+immutable object or attribute.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='const'>Class</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='const'>StandardError</span><span class='rparen'>)</span></pre></dd>
+      
+    </dl>
+  
+
+
+
+
+
+
+
+  
+    <h2>
+      Class Method Summary
+      <small>(<a href="#" class="summary_toggle">collapse</a>)</small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#configure-class_method" title="configure (class method)">+ (Object) <strong>configure</strong> {|the| ... }</a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Perform gem-level configuration.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#SpecifyProtocol-class_method" title="SpecifyProtocol (class method)">+ (Functional::ProtocolInfo) <strong>SpecifyProtocol</strong>(name) { ... }</a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Specify a new protocol or retrieve the specification of an existing protocol.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+
+  <div id="class_method_details" class="method_details_list">
+    <h2>Class Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="configure-class_method">
+  
+    + (<tt>Object</tt>) <strong>configure</strong> {|the| ... }
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Perform gem-level configuration.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Yields:</p>
+<ul class="yield">
+  
+    <li>
+      
+      
+        <span class='type'></span>
+      
+      
+      
+        
+        <div class='inline'><p>the configuration commands</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Yield Parameters:</p>
+<ul class="yieldparam">
+  
+    <li>
+      
+        <span class='name'>the</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'>Functional::Configuration</span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>current configuration object</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+57
+58
+59</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/functional.rb', line 57</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_configure'>configure</span>
+  <span class='kw'>yield</span><span class='lparen'>(</span><span class='id identifier rubyid_configuration'>configuration</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="SpecifyProtocol-class_method">
+  
+    + (<tt><span class='object_link'><a href="Functional/ProtocolInfo.html" title="Functional::ProtocolInfo (class)">Functional::ProtocolInfo</a></span></tt>) <strong>SpecifyProtocol</strong>(name) { ... }
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Specify a new protocol or retrieve the specification of an existing
+protocol.</p>
+
+<p>When called without a block the global protocol registry will be searched
+for a protocol with the matching name. If found the corresponding
+<span class='object_link'><a href="Functional/ProtocolInfo.html" title="Functional::ProtocolInfo (class)">ProtocolInfo</a></span> object will be returned. If not found <code>nil</code> will
+be returned.</p>
+
+<p>When called with a block, a new protocol with the given name will be
+created and the block will be processed to provide the specifiction.
+When successful the new <span class='object_link'><a href="Functional/ProtocolInfo.html" title="Functional::ProtocolInfo (class)">ProtocolInfo</a></span> object will be returned.
+An exception will be raised if a protocol with the same name already
+exists.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <p class="tag_title">Examples:</p>
+    
+      
+      <pre class="example code"><code><span class='const'>Functional</span><span class='op'>::</span><span class='const'>SpecifyProtocol</span><span class='lparen'>(</span><span class='symbol'>:Queue</span><span class='rparen'>)</span> <span class='kw'>do</span>
+  <span class='id identifier rubyid_instance_method'>instance_method</span> <span class='symbol'>:push</span><span class='comma'>,</span> <span class='int'>1</span>
+  <span class='id identifier rubyid_instance_method'>instance_method</span> <span class='symbol'>:pop</span><span class='comma'>,</span> <span class='int'>0</span>
+  <span class='id identifier rubyid_instance_method'>instance_method</span> <span class='symbol'>:length</span><span class='comma'>,</span> <span class='int'>0</span>
+<span class='kw'>end</span></code></pre>
+    
+  </div>
+<p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>name</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The global name of the new protocol</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Yields:</p>
+<ul class="yield">
+  
+    <li>
+      
+      
+        <span class='type'></span>
+      
+      
+      
+        
+        <div class='inline'><p>The protocol definition</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Functional/ProtocolInfo.html" title="Functional::ProtocolInfo (class)">Functional::ProtocolInfo</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the newly created or already existing
+protocol specification</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="#ProtocolError-constant" title="Functional::ProtocolError (constant)">Functional::ProtocolError</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>when attempting to specify a protocol
+that has already been specified.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><span class='object_link'><a href="Functional/Protocol.html" title="Functional::Protocol (module)">Protocol</a></span></li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/functional/protocol.rb', line 38</span>
+
+<span class='kw'>def</span> <span class='const'>SpecifyProtocol</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_name'>name</span> <span class='op'>=</span> <span class='id identifier rubyid_name'>name</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span>
+  <span class='id identifier rubyid_protocol_info'>protocol_info</span> <span class='op'>=</span> <span class='const'>Protocol</span><span class='period'>.</span><span class='id identifier rubyid_class_variable_get'>class_variable_get</span><span class='lparen'>(</span><span class='symbol'>:@@info</span><span class='rparen'>)</span><span class='lbracket'>[</span><span class='id identifier rubyid_name'>name</span><span class='rbracket'>]</span>
+
+  <span class='kw'>return</span> <span class='id identifier rubyid_protocol_info'>protocol_info</span> <span class='kw'>unless</span> <span class='id identifier rubyid_block_given?'>block_given?</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_block_given?'>block_given?</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_protocol_info'>protocol_info</span>
+    <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ProtocolError</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>:</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_content'> has already been defined</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_info'>info</span> <span class='op'>=</span> <span class='const'>ProtocolInfo</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+  <span class='const'>Protocol</span><span class='period'>.</span><span class='id identifier rubyid_class_variable_get'>class_variable_get</span><span class='lparen'>(</span><span class='symbol'>:@@info</span><span class='rparen'>)</span><span class='lbracket'>[</span><span class='id identifier rubyid_name'>name</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_info'>info</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+    <div id="footer">
+  Generated on Tue Feb 24 22:22:37 2015 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.8.7.4 (ruby-2.2.0).
+</div>
+
+  </body>
+</html>

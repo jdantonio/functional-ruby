@@ -1,0 +1,1002 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>
+  Module: Functional::Protocol
+  
+    &mdash; Functional
+  
+</title>
+
+  <link rel="stylesheet" href="../css/style.css" type="text/css" charset="utf-8" />
+
+  <link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  hasFrames = window.top.frames.main ? true : false;
+  relpath = '../';
+  framesUrl = "../frames.html#!Functional/Protocol.html";
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div id="header">
+      <div id="menu">
+  
+    <a href="../_index.html">Index (P)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../Functional.html" title="Functional (module)">Functional</a></span></span>
+     &raquo; 
+    <span class="title">Protocol</span>
+  
+
+  <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
+</div>
+
+      <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../class_list.html">
+      Class List
+    </a>
+  
+    <a class="full_list_link" id="method_list_link"
+        href="../method_list.html">
+      Method List
+    </a>
+  
+    <a class="full_list_link" id="file_list_link"
+        href="../file_list.html">
+      File List
+    </a>
+  
+</div>
+      <div class="clear"></div>
+    </div>
+
+    <iframe id="search_frame"></iframe>
+
+    <div id="content"><h1>Module: Functional::Protocol
+  
+  
+  
+</h1>
+
+<dl class="box">
+  
+  
+    
+  
+    
+  
+  
+  
+    <dt class="r1 last">Defined in:</dt>
+    <dd class="r1 last">lib/functional/protocol.rb</dd>
+  
+</dl>
+<div class="clear"></div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    <p>Protocols provide a polymorphism and method-dispatch mechanism that exchews
+stong typing and embraces the dynamic duck typing of Ruby. Rather than
+interrogate a module, class, or object for its type and ancestry, protocols
+allow modules, classes, and methods to be interrogated based on their behavior.
+It is a logical extension of the <code>respond_to?</code> method, but vastly more powerful.</p>
+
+<p><h3>Rationale</h3>
+
+<p>Traditional object orientation implements polymorphism inheritance. The <em>Is-A</em>
+   relationship indicates that one object &quot;is a&quot; instance of another object.
+   Implicit in this relationship, however, is the concept of <a href="http://en.wikipedia.org/wiki/Data_type">type</a>.
+   Every Ruby object has a <em>type</em>, and that type is the name of its <code>Class</code> or
+   <code>Module</code>. The Ruby runtime provides a number of reflective methods that allow
+   objects to be interrogated for type information. The principal of thses is the
+   <code>is_a?</code> (alias <code>kind_of</code>) method defined in class <code>Object</code>.</p>
+
+<p>Unlike many traditional object oriented languages, Ruby is a <a href="http://en.wikipedia.org/wiki/Dynamic_typingDYNAMIC">dynamically typed</a>
+   language. Types exist but the runtime is free to cast one type into another
+   at any time. Moreover, Ruby is a <a href="http://en.wikipedia.org/wiki/Duck_typing">duck typed</a>.
+   If an object &quot;walks like a duck and quacks like a duck then it must be a duck.&quot;
+   When a method needs called on an object Ruby does not check the type of the object,
+   it simply checks to see if the requested function exists with the proper
+   <a href="http://en.wikipedia.org/wiki/Arity">arity</a> and, if it does, dispatches the call.
+   The duck type analogue to <code>is_a?</code> is <code>respond_to?</code>. Thus an object can be interrogated
+   for its behavior rather than its type.</p>
+
+<p>Although Ruby offers several methods for reflecting on the behavior of a module/class/object,
+   such as <code>method</code>, <code>instance_methods</code>, <code>const_defined?</code>, the aforementioned <code>respond_to?</code>,
+   and others, Ruby lacks a convenient way to group collections of methods in any way that
+   does not involve type. Both modules and classes provide mechanisms for combining
+   methods into cohesive abstractions, but they both imply type. This is anathema to Ruby&#39;s
+   dynamism and duck typing. What Ruby needs is a way to collect a group of method names
+   and signatures into a cohesive collection that embraces duck typing and dynamic dispatch.
+   This is what protocols do.</p>
+
+<h3>Specifying</h3>
+
+<p>A &quot;protocol&quot; is a loose collection of method, attribute, and constant names with optional
+   arity values. The protocol definition does very little on its own. The power of protocols
+   is that they provide a way for modules, classes, and objects to be interrogated with
+   respect to common behavior, not common type. At the core a protocol is nothing more
+   than a collection of <code>respond_to?</code> method calls that ask the question &quot;Does this thing
+   <em>behave</em> like this other thing.&quot;</p>
+
+<p>Protocols are specified with the <code>Functional::SpecifyProtocol</code> method. It takes one parameter,
+   the name of the protocol, and a block which contains the protocol specification. This registers
+   the protocol specification and makes it available for use later when interrogating ojects
+   for their behavior.</p>
+
+<h5>Defining Attributes, Methods, and Constants</h5>
+
+<p>A single protocol specification can include definition for attributes, methods,
+   and constants. Methods and attributes can be defined as class/module methods or
+   as instance methods. Within the a protocol specification each item must include
+   the symbolic name of the item being defined.</p>
+
+<pre class="code ruby"><code class="ruby">   <span class='const'>Functional</span><span class='op'>::</span><span class='const'>SpecifyProtocol</span><span class='lparen'>(</span><span class='symbol'>:KitchenSink</span><span class='rparen'>)</span> <span class='kw'>do</span>
+     <span class='id identifier rubyid_instance_method'>instance_method</span>     <span class='symbol'>:instance_method</span>
+     <span class='id identifier rubyid_class_method'>class_method</span>        <span class='symbol'>:class_method</span>
+     <span class='id identifier rubyid_attr_accessor'>attr_accessor</span>       <span class='symbol'>:attr_accessor</span>
+     <span class='id identifier rubyid_attr_reader'>attr_reader</span>         <span class='symbol'>:attr_reader</span>
+     <span class='id identifier rubyid_attr_writer'>attr_writer</span>         <span class='symbol'>:attr_writer</span>
+     <span class='id identifier rubyid_class_attr_accessor'>class_attr_accessor</span> <span class='symbol'>:class_attr_accessor</span>
+     <span class='id identifier rubyid_class_attr_reader'>class_attr_reader</span>   <span class='symbol'>:class_attr_reader</span>
+     <span class='id identifier rubyid_class_attr_writer'>class_attr_writer</span>   <span class='symbol'>:class_attr_writer</span>
+     <span class='id identifier rubyid_constant'>constant</span>            <span class='symbol'>:CONSTANT</span>
+   <span class='kw'>end</span>
+</code></pre>
+
+<p>Definitions for accessors are expanded at specification into the apprporiate
+   method(s). Which means that this:</p>
+
+<pre class="code ruby"><code class="ruby">   <span class='const'>Functional</span><span class='op'>::</span><span class='const'>SpecifyProtocol</span><span class='lparen'>(</span><span class='symbol'>:Name</span><span class='rparen'>)</span> <span class='kw'>do</span>
+     <span class='id identifier rubyid_attr_accessor'>attr_accessor</span> <span class='symbol'>:first</span>
+     <span class='id identifier rubyid_attr_accessor'>attr_accessor</span> <span class='symbol'>:middle</span>
+     <span class='id identifier rubyid_attr_accessor'>attr_accessor</span> <span class='symbol'>:last</span>
+     <span class='id identifier rubyid_attr_accessor'>attr_accessor</span> <span class='symbol'>:suffix</span>
+   <span class='kw'>end</span>
+</code></pre>
+
+<p>is the same as:</p>
+
+<pre class="code ruby"><code class="ruby">   <span class='const'>Functional</span><span class='op'>::</span><span class='const'>SpecifyProtocol</span><span class='lparen'>(</span><span class='symbol'>:Name</span><span class='rparen'>)</span> <span class='kw'>do</span>
+     <span class='id identifier rubyid_instance_method'>instance_method</span> <span class='symbol'>:first</span>
+     <span class='id identifier rubyid_instance_method'>instance_method</span> <span class='symbol'>:first=</span>
+     <span class='id identifier rubyid_instance_method'>instance_method</span> <span class='symbol'>:middle</span>
+     <span class='id identifier rubyid_instance_method'>instance_method</span> <span class='symbol'>:middle=</span>
+     <span class='id identifier rubyid_instance_method'>instance_method</span> <span class='symbol'>:last</span>
+     <span class='id identifier rubyid_instance_method'>instance_method</span> <span class='symbol'>:last=</span>
+     <span class='id identifier rubyid_instance_method'>instance_method</span> <span class='symbol'>:suffix</span>
+     <span class='id identifier rubyid_instance_method'>instance_method</span> <span class='symbol'>:suffix=</span>
+   <span class='kw'>end</span>
+</code></pre>
+
+<p>Protocols only care about the methods themselves, not how they were declared.</p>
+
+<h3>Arity</h3>
+
+<p>In addition to defining <em>which</em> methods exist, the required method arity can
+   indicated. Arity is optional. When no arity is given any arity will be expected.
+   The arity rules follow those defined for the <code>arity</code> method of Ruby&#39;s
+   <a href="http://www.ruby-doc.org/core-2.1.2/Method.htmlmethod-i-arity">Method class</a>:</p>
+
+<ul>
+<li>Methods with a fixed number of arguments have a non-negative arity</li>
+<li>Methods with optional arguments have an arity <code>-n - 1</code>, where n is the number of required arguments</li>
+<li>Methods with a variable number of arguments have an arity of <code>-1</code></li>
+</ul>
+
+<pre class="code ruby"><code class="ruby">   <span class='const'>Functional</span><span class='op'>::</span><span class='const'>SpecifyProtocol</span><span class='lparen'>(</span><span class='symbol'>:Foo</span><span class='rparen'>)</span> <span class='kw'>do</span>
+     <span class='id identifier rubyid_instance_method'>instance_method</span> <span class='symbol'>:any_args</span>
+     <span class='id identifier rubyid_instance_method'>instance_method</span> <span class='symbol'>:no_args</span><span class='comma'>,</span> <span class='int'>0</span>
+     <span class='id identifier rubyid_instance_method'>instance_method</span> <span class='symbol'>:three_args</span><span class='comma'>,</span> <span class='int'>3</span>
+     <span class='id identifier rubyid_instance_method'>instance_method</span> <span class='symbol'>:optional_args</span><span class='comma'>,</span> <span class='op'>-</span><span class='int'>2</span>
+     <span class='id identifier rubyid_instance_method'>instance_method</span> <span class='symbol'>:variable_args</span><span class='comma'>,</span> <span class='op'>-</span><span class='int'>1</span>
+   <span class='kw'>end</span>
+
+   <span class='kw'>class</span> <span class='const'>Bar</span>
+
+     <span class='kw'>def</span> <span class='id identifier rubyid_any_args'>any_args</span><span class='lparen'>(</span><span class='id identifier rubyid_a'>a</span><span class='comma'>,</span> <span class='id identifier rubyid_b'>b</span><span class='comma'>,</span> <span class='id identifier rubyid_c'>c</span><span class='op'>=</span><span class='int'>1</span><span class='comma'>,</span> <span class='id identifier rubyid_d'>d</span><span class='op'>=</span><span class='int'>2</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
+     <span class='kw'>end</span>
+
+     <span class='kw'>def</span> <span class='id identifier rubyid_no_args'>no_args</span>
+     <span class='kw'>end</span>
+
+     <span class='kw'>def</span> <span class='id identifier rubyid_three_args'>three_args</span><span class='lparen'>(</span><span class='id identifier rubyid_a'>a</span><span class='comma'>,</span> <span class='id identifier rubyid_b'>b</span><span class='comma'>,</span> <span class='id identifier rubyid_c'>c</span><span class='rparen'>)</span>
+     <span class='kw'>end</span>
+
+     <span class='kw'>def</span> <span class='id identifier rubyid_optional_args'>optional_args</span><span class='lparen'>(</span><span class='id identifier rubyid_a'>a</span><span class='comma'>,</span> <span class='id identifier rubyid_b'>b</span><span class='op'>=</span><span class='int'>1</span><span class='comma'>,</span> <span class='id identifier rubyid_c'>c</span><span class='op'>=</span><span class='int'>2</span><span class='rparen'>)</span>
+     <span class='kw'>end</span>
+
+     <span class='kw'>def</span> <span class='id identifier rubyid_variable_args'>variable_args</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
+     <span class='kw'>end</span>
+   <span class='kw'>end</span>
+</code></pre>
+
+<h3>Reflection</h3>
+
+<p>Once a protocol has been defined, any class, method, or object may be interrogated
+   for adherence to one or more protocol specifications. The methods of the
+   <code>Functional::Protocol</code> classes provide this capability. The <code>Satisfy?</code> method
+   takes a module/class/object as the first parameter and one or more protocol names
+   as the second and subsequent parameters. It returns a boolean value indicating
+   whether the given object satisfies the protocol requirements:</p>
+
+<pre class="code ruby"><code class="ruby">   Functional::SpecifyProtocol(:Queue) do
+     instance_method :push, 1
+     instance_method :pop, 0
+     instance_method :length, 0
+   end
+
+   Functional::SpecifyProtocol(:List) do
+     instance_method :[]=, 2
+     instance_method :[], 1
+     instance_method :each, 0
+     instance_method :length, 0
+   end
+
+   Functional::Protocol::Satisfy?(Queue, :Queue)        =&gt; true
+   Functional::Protocol::Satisfy?(Queue, :List)         =&gt; false
+
+   list = [1, 2, 3]
+   Functional::Protocol::Satisfy?(Array, :List, :Queue) =&gt; true
+   Functional::Protocol::Satisfy?(list, :List, :Queue)  =&gt; true
+
+   Functional::Protocol::Satisfy?(Hash, :Queue)         =&gt; false
+
+   Functional::Protocol::Satisfy?(&#39;foo bar baz&#39;, :List) =&gt; false
+</code></pre>
+
+<p>The <code>Satisfy!</code> method performs the exact same check but instead raises an exception
+   when the protocol is not satisfied:</p>
+
+<pre class="code ruby"><code class="ruby">   2.1.2 :021 &gt; Functional::Protocol::Satisfy!(Queue, :List)
+   Functional::ProtocolError: Value (Class) &#39;Thread::Queue&#39; does not behave as all of: :List.
+    from /Projects/functional-ruby/lib/functional/protocol.rb:67:in `error&#39;
+    from /Projects/functional-ruby/lib/functional/protocol.rb:36:in `Satisfy!&#39;
+    from (irb):21
+     ...
+</code></pre>
+
+<p>The <code>Functional::Protocol</code> module can be included within other classes
+   to eliminate the namespace requirement when calling:</p>
+
+<pre class="code ruby"><code class="ruby">   class MessageFormatter
+     include Functional::Protocol
+
+     def format(message)
+       if Satisfy?(message, :Internal)
+         format_internal_message(message)
+       elsif Satisfy?(message, :Error)
+         format_error_message(message)
+       else
+         format_generic_message(message)
+       end
+     end
+
+     private
+
+     def format_internal_message(message)
+        format the message...
+     end
+
+     def format_error_message(message)
+        format the message...
+     end
+
+     def format_generic_message(message)
+        format the message...
+     end
+</code></pre>
+
+<h3>Inspiration</h3>
+
+<p>Protocols and similar functionality exist in several other programming languages.
+   A few languages that provided inspiration for this inplementation are:</p>
+
+<ul>
+<li>Clojure <a href="http://clojure.org/protocols">protocol</a></li>
+<li>Erlang <a href="http://www.erlang.org/doc/design_principles/des_princ.htmlid60128">behaviours</a></li>
+<li>Objective-C <a href="https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC/WorkingwithProtocols/WorkingwithProtocols.html">protocol</a>
+ (and the corresponding Swift <a href="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Protocols.html">protocol</a>)</li>
+</ul>
+</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Since:</p>
+<ul class="since">
+  
+    <li>
+      
+      
+      
+      
+        
+        <div class='inline'><p>1.0.0 (formerly &quot;behavior&quot;)</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div>
+  <h2>Constant Summary</h2>
+  
+    <dl class="constants">
+      
+        <dt id="info-classvariable" class="">@@info =
+          <div class="docstring">
+  <div class="discussion">
+    <p>The global registry of specified protocols.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Since:</p>
+<ul class="since">
+  
+    <li>
+      
+      
+      
+      
+        
+        <div class='inline'><p>1.0.0 (formerly &quot;behavior&quot;)</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='lbrace'>{</span><span class='rbrace'>}</span></pre></dd>
+      
+    </dl>
+  
+
+
+
+
+
+
+
+  
+    <h2>
+      Class Method Summary
+      <small>(<a href="#" class="summary_toggle">collapse</a>)</small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#Satisfy%21-class_method" title="Satisfy! (class method)">+ (Symbol) <strong>Satisfy!</strong>(target, *protocols) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Does the given module/class/object fully satisfy the given protocol(s)? Raises a <span class='object_link'><a href="../Functional.html#ProtocolError-constant" title="Functional::ProtocolError (constant)">ProtocolError</a></span> on failure.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#Satisfy%3F-class_method" title="Satisfy? (class method)">+ (Boolean) <strong>Satisfy?</strong>(target, *protocols) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Does the given module/class/object fully satisfy the given protocol(s)?.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#Specified%21-class_method" title="Specified! (class method)">+ (Boolean) <strong>Specified!</strong>(*protocols) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Have the given protocols been specified? Raises a <span class='object_link'><a href="../Functional.html#ProtocolError-constant" title="Functional::ProtocolError (constant)">ProtocolError</a></span> on failure.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#Specified%3F-class_method" title="Specified? (class method)">+ (Boolean) <strong>Specified?</strong>(*protocols) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Have the given protocols been specified?.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+
+  <div id="class_method_details" class="method_details_list">
+    <h2>Class Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="Satisfy!-class_method">
+  
+    + (<tt>Symbol</tt>) <strong>Satisfy!</strong>(target, *protocols) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Does the given module/class/object fully satisfy the given protocol(s)?
+Raises a <span class='object_link'><a href="../Functional.html#ProtocolError-constant" title="Functional::ProtocolError (constant)">Functional::ProtocolError</a></span> on failure.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>target</span>
+      
+      
+        <span class='type'>(<tt>Object</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the method/class/object to interrogate</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>protocols</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>one or more protocols to check against the target</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the target</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>ArgumentError</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>when no protocols given</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../Functional.html#ProtocolError-constant" title="Functional::ProtocolError (constant)">Functional::ProtocolError</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>when one or more protocols are not satisfied</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Since:</p>
+<ul class="since">
+  
+    <li>
+      
+      
+      
+      
+        
+        <div class='inline'><p>1.0.0 (formerly &quot;behavior&quot;)</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+89
+90
+91
+92
+93</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/functional/protocol.rb', line 89</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_Satisfy!'>Satisfy!</span><span class='lparen'>(</span><span class='id identifier rubyid_target'>target</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_protocols'>protocols</span><span class='rparen'>)</span>
+  <span class='const'>Protocol</span><span class='op'>::</span><span class='id identifier rubyid_Satisfy?'>Satisfy?</span><span class='lparen'>(</span><span class='id identifier rubyid_target'>target</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_protocols'>protocols</span><span class='rparen'>)</span> <span class='kw'>or</span>
+    <span class='const'>Protocol</span><span class='period'>.</span><span class='id identifier rubyid_error'>error</span><span class='lparen'>(</span><span class='id identifier rubyid_target'>target</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>does not</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_protocols'>protocols</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_target'>target</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="Satisfy?-class_method">
+  
+    + (<tt>Boolean</tt>) <strong>Satisfy?</strong>(target, *protocols) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Does the given module/class/object fully satisfy the given protocol(s)?</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>target</span>
+      
+      
+        <span class='type'>(<tt>Object</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the method/class/object to interrogate</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>protocols</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>one or more protocols to check against the target</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>true if the target satisfies all given protocols else false</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>ArgumentError</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>when no protocols given</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Since:</p>
+<ul class="since">
+  
+    <li>
+      
+      
+      
+      
+        
+        <div class='inline'><p>1.0.0 (formerly &quot;behavior&quot;)</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+74
+75
+76
+77</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/functional/protocol.rb', line 74</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_Satisfy?'>Satisfy?</span><span class='lparen'>(</span><span class='id identifier rubyid_target'>target</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_protocols'>protocols</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>no protocols given</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_protocols'>protocols</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
+  <span class='id identifier rubyid_protocols'>protocols</span><span class='period'>.</span><span class='id identifier rubyid_all?'>all?</span><span class='lbrace'>{</span><span class='op'>|</span><span class='id identifier rubyid_protocol'>protocol</span><span class='op'>|</span> <span class='const'>Protocol</span><span class='period'>.</span><span class='id identifier rubyid_satisfies?'>satisfies?</span><span class='lparen'>(</span><span class='id identifier rubyid_target'>target</span><span class='comma'>,</span> <span class='id identifier rubyid_protocol'>protocol</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="Specified!-class_method">
+  
+    + (<tt>Boolean</tt>) <strong>Specified!</strong>(*protocols) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Have the given protocols been specified?
+Raises a <span class='object_link'><a href="../Functional.html#ProtocolError-constant" title="Functional::ProtocolError (constant)">Functional::ProtocolError</a></span> on failure.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>protocols</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the list of protocols to check</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>true if all given protocols have been specified</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>ArgumentError</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>when no protocols are given</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../Functional.html#ProtocolError-constant" title="Functional::ProtocolError (constant)">Functional::ProtocolError</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>if one or more of the given protocols have
+not been specified</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Since:</p>
+<ul class="since">
+  
+    <li>
+      
+      
+      
+      
+        
+        <div class='inline'><p>1.0.0 (formerly &quot;behavior&quot;)</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+117
+118
+119
+120
+121</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/functional/protocol.rb', line 117</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_Specified!'>Specified!</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_protocols'>protocols</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>no protocols given</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_protocols'>protocols</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
+  <span class='lparen'>(</span><span class='id identifier rubyid_unspecified'>unspecified</span> <span class='op'>=</span> <span class='const'>Protocol</span><span class='period'>.</span><span class='id identifier rubyid_unspecified'>unspecified</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_protocols'>protocols</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span> <span class='kw'>or</span>
+    <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ProtocolError</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>The following protocols are unspecified: :</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_unspecified'>unspecified</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>; :</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='embexpr_end'>}</span><span class='tstring_content'>.</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="Specified?-class_method">
+  
+    + (<tt>Boolean</tt>) <strong>Specified?</strong>(*protocols) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Have the given protocols been specified?</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>protocols</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the list of protocols to check</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>true if all given protocols have been specified else false</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>ArgumentError</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>when no protocols are given</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Since:</p>
+<ul class="since">
+  
+    <li>
+      
+      
+      
+      
+        
+        <div class='inline'><p>1.0.0 (formerly &quot;behavior&quot;)</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+102
+103
+104
+105</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/functional/protocol.rb', line 102</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_Specified?'>Specified?</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_protocols'>protocols</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>no protocols given</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_protocols'>protocols</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
+  <span class='const'>Protocol</span><span class='period'>.</span><span class='id identifier rubyid_unspecified'>unspecified</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_protocols'>protocols</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+    <div id="footer">
+  Generated on Tue Feb 24 22:22:37 2015 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.8.7.4 (ruby-2.2.0).
+</div>
+
+  </body>
+</html>

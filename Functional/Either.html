@@ -1,0 +1,2486 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>
+  Class: Functional::Either
+  
+    &mdash; Functional
+  
+</title>
+
+  <link rel="stylesheet" href="../css/style.css" type="text/css" charset="utf-8" />
+
+  <link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  hasFrames = window.top.frames.main ? true : false;
+  relpath = '../';
+  framesUrl = "../frames.html#!Functional/Either.html";
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div id="header">
+      <div id="menu">
+  
+    <a href="../_index.html">Index (E)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../Functional.html" title="Functional (module)">Functional</a></span></span>
+     &raquo; 
+    <span class="title">Either</span>
+  
+
+  <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
+</div>
+
+      <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../class_list.html">
+      Class List
+    </a>
+  
+    <a class="full_list_link" id="method_list_link"
+        href="../method_list.html">
+      Method List
+    </a>
+  
+    <a class="full_list_link" id="file_list_link"
+        href="../file_list.html">
+      File List
+    </a>
+  
+</div>
+      <div class="clear"></div>
+    </div>
+
+    <iframe id="search_frame"></iframe>
+
+    <div id="content"><h1>Class: Functional::Either
+  
+  
+  
+</h1>
+
+<dl class="box">
+  
+    <dt class="r1">Inherits:</dt>
+    <dd class="r1">
+      <span class="inheritName">Object</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">Functional::Either</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+      </dd>
+    
+  
+  
+    
+  
+    
+      <dt class="r2">Includes:</dt>
+      <dd class="r2"><span class='object_link'><a href="AbstractStruct.html" title="Functional::AbstractStruct (module)">AbstractStruct</a></span></dd>
+      
+    
+  
+  
+  
+    <dt class="r1 last">Defined in:</dt>
+    <dd class="r1 last">lib/functional/either.rb</dd>
+  
+</dl>
+<div class="clear"></div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>This is a write-once, read-many, thread safe object that can be
+used in concurrent systems. Thread safety guarantees <em>cannot</em> be made
+about objects contained <em>within</em> this object, however. Ruby variables
+are mutable references to mutable objects. This cannot be changed. The
+best practice it to only encapsulate immutable, frozen, or thread safe
+objects. Ultimately, thread safety is the responsibility of the
+programmer.</p>
+</div>
+  </div>
+
+<p>The <code>Either</code> type represents a value of one of two possible types (a
+disjoint union). It is an immutable structure that contains one and only one
+value. That value can be stored in one of two virtual position, <code>left</code> or
+<code>right</code>. The position provides context for the encapsulated data.</p>
+
+<p>One of the main uses of <code>Either</code> is as a return value that can indicate
+either success or failure. Object oriented programs generally report errors
+through either state or exception handling, neither of which work well in
+functional programming. In the former case, a method is called on an object
+and when an error occurs the state of the object is updated to reflect the
+error. This does not translate well to functional programming because they
+eschew state and mutable objects. In the latter, an exception handling block
+provides branching logic when an exception is thrown. This does not
+translate well to functional programming because it eschews side effects
+like structured exception handling (and structured exception handling tends
+to be very expensive). <code>Either</code> provides a powerful and easy-to-use
+alternative.</p>
+
+<p>A function that may generate an error can choose to return an immutable
+<code>Either</code> object in which the position of the value (left or right) indicates
+the nature of the data. By convention, a <code>left</code> value indicates an error and
+a <code>right</code> value indicates success. This leaves the caller with no ambiguity
+regarding success or failure, requires no persistent state, and does not
+require expensive exception handling facilities.</p>
+
+<p><code>Either</code> provides several aliases and convenience functions to facilitate
+these failure/success conventions. The <code>left</code> and <code>right</code> functions,
+including their derivatives, are mirrored by <code>reason</code> and <code>value</code>. Failure
+is indicated by the presence of a <code>reason</code> and success is indicated by the
+presence of a <code>value</code>. When an operation has failed the either is in a
+<code>rejected</code> state, and when an operation has successed the either is in a
+<code>fulfilled</code> state. A common convention is to use a Ruby <code>Exception</code> as the
+<code>reason</code>. The factory method <code>error</code> facilitates this. The semantics and
+conventions of <code>reason</code>, <code>value</code>, and their derivatives follow the
+conventions of the Concurrent Ruby gem.</p>
+
+<p>The <code>left</code>/<code>right</code> and <code>reason</code>/<code>value</code> methods are not mutually exclusive.
+They can be commingled and still result in functionally correct code. This
+practice should be avoided, however. Consistent use of either <code>left</code>/<code>right</code>
+or <code>reason</code>/<code>value</code> against each <code>Either</code> instance will result in more
+expressive, intent-revealing code.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <p class="tag_title">Examples:</p>
+    
+      
+      <pre class="example code"><code>
+<span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>uri</span><span class='tstring_end'>&#39;</span></span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_web_host'>web_host</span><span class='lparen'>(</span><span class='id identifier rubyid_url'>url</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_uri'>uri</span> <span class='op'>=</span> <span class='const'>URI</span><span class='lparen'>(</span><span class='id identifier rubyid_url'>url</span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_uri'>uri</span><span class='period'>.</span><span class='id identifier rubyid_scheme'>scheme</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>http</span><span class='tstring_end'>&#39;</span></span>
+    <span class='const'>Functional</span><span class='op'>::</span><span class='const'>Either</span><span class='period'>.</span><span class='id identifier rubyid_left'>left</span><span class='lparen'>(</span><span class='id identifier rubyid_uri'>uri</span><span class='period'>.</span><span class='id identifier rubyid_host'>host</span><span class='rparen'>)</span>
+  <span class='kw'>else</span>
+    <span class='const'>Functional</span><span class='op'>::</span><span class='const'>Either</span><span class='period'>.</span><span class='id identifier rubyid_right'>right</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Invalid HTTP URL</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span>
+
+<span class='id identifier rubyid_good'>good</span> <span class='op'>=</span> <span class='id identifier rubyid_web_host'>web_host</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>http://www.concurrent-ruby.com</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+<span class='id identifier rubyid_good'>good</span><span class='period'>.</span><span class='id identifier rubyid_left?'>left?</span> <span class='comment'>#=&gt; true
+</span><span class='id identifier rubyid_good'>good</span><span class='period'>.</span><span class='id identifier rubyid_left'>left</span>  <span class='comment'>#=&gt; &quot;www.concurrent-ruby&quot;
+</span><span class='id identifier rubyid_good'>good</span><span class='period'>.</span><span class='id identifier rubyid_right'>right</span> <span class='comment'>#=&gt; nil
+</span>
+<span class='id identifier rubyid_good'>good</span> <span class='op'>=</span> <span class='id identifier rubyid_web_host'>web_host</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>bogus</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+<span class='id identifier rubyid_good'>good</span><span class='period'>.</span><span class='id identifier rubyid_left?'>left?</span> <span class='comment'>#=&gt; false
+</span><span class='id identifier rubyid_good'>good</span><span class='period'>.</span><span class='id identifier rubyid_left'>left</span>  <span class='comment'>#=&gt; nil
+</span><span class='id identifier rubyid_good'>good</span><span class='period'>.</span><span class='id identifier rubyid_right'>right</span> <span class='comment'>#=&gt; &quot;Invalid HTTP URL&quot;</span></code></pre>
+    
+  </div>
+
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><a href="http://functionaljava.googlecode.com/svn/artifacts/3.0/javadoc/fj/data/Either.html" target="_parent" title="Functional Java">Functional Java</a></li>
+    
+      <li><a href="https://hackage.haskell.org/package/base-4.2.0.1/docs/Data-Either.html" target="_parent" title="Haskell Data.Either">Haskell Data.Either</a></li>
+    
+      <li><a href="http://ruby-concurrency.github.io/concurrent-ruby/Concurrent/Obligation.html" target="_parent" title="Concurrent Ruby">Concurrent Ruby</a></li>
+    
+  </ul>
+<p class="tag_title">Since:</p>
+<ul class="since">
+  
+    <li>
+      
+      
+      
+      
+        
+        <div class='inline'><p>1.0.0</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div>
+  <h2>Constant Summary</h2>
+  
+
+
+
+
+  <h2>Instance Attribute Summary <small>(<a href="#" class="summary_toggle">collapse</a>)</small></h2>
+  <ul class="summary">
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#values-instance_method" title="#values (instance method)">- (Array) <strong>values</strong> </a>
+    
+
+    
+  </span>
+  
+    <span class="note title not_defined_here">
+      included
+      from <span class='object_link'><a href="AbstractStruct.html#values-instance_method" title="Functional::AbstractStruct#values (method)">AbstractStruct</a></span>
+    </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The values of all record fields in order, frozen.</p>
+</div></span>
+  
+</li>
+
+    
+  </ul>
+
+
+
+
+  
+    <h2>
+      Class Method Summary
+      <small>(<a href="#" class="summary_toggle">collapse</a>)</small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#error-class_method" title="error (class method)">+ (Either) <strong>error</strong>(message = nil, clazz = StandardError) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Create an <code>Either</code> with the left value set to an <code>Exception</code> object complete with message and backtrace.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#iff-class_method" title="iff (class method)">+ (Either) <strong>iff</strong>(lvalue, rvalue, condition = NO_VALUE) { ... }</a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>If the condition satisfies, return the given A in left, otherwise, return the given B in right.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#left-class_method" title="left (class method)">+ (Either) <strong>left</strong>(value) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Construct a left value of either.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#reason-class_method" title="reason (class method)">+ (Either) <strong>reason</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Construct a left value of either.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#right-class_method" title="right (class method)">+ (Either) <strong>right</strong>(value) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Construct a right value of either.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#value-class_method" title="value (class method)">+ (Either) <strong>value</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Construct a right value of either.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+    <h2>
+      Instance Method Summary
+      <small>(<a href="#" class="summary_toggle">collapse</a>)</small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#each-instance_method" title="#each (instance method)">- (Enumerable) <strong>each</strong> {|value| ... }</a>
+    
+
+    
+  </span>
+  
+    <span class="note title not_defined_here">
+      included
+      from <span class='object_link'><a href="AbstractStruct.html#each-instance_method" title="Functional::AbstractStruct#each (method)">AbstractStruct</a></span>
+    </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Yields the value of each record field in order.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#each_pair-instance_method" title="#each_pair (instance method)">- (Enumerable) <strong>each_pair</strong> {|field, value| ... }</a>
+    
+
+    
+  </span>
+  
+    <span class="note title not_defined_here">
+      included
+      from <span class='object_link'><a href="AbstractStruct.html#each_pair-instance_method" title="Functional::AbstractStruct#each_pair (method)">AbstractStruct</a></span>
+    </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Yields the name and value of each record field in order.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#either-instance_method" title="#either (instance method)">- (Object) <strong>either</strong>(lproc, rproc) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The catamorphism for either.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#eql%3F-instance_method" title="#eql? (instance method)">- (Boolean) <strong>eql?</strong>(other) </a>
+    
+
+    
+      (also: #==)
+    
+  </span>
+  
+    <span class="note title not_defined_here">
+      included
+      from <span class='object_link'><a href="AbstractStruct.html#eql%3F-instance_method" title="Functional::AbstractStruct#eql? (method)">AbstractStruct</a></span>
+    </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Equality--Returns <code>true</code> if <code>other</code> has the same record subclass and has equal field values (according to <code>Object#==</code>).</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#fields-instance_method" title="#fields (instance method)">- (Array) <strong>fields</strong> </a>
+    
+
+    
+  </span>
+  
+    <span class="note title not_defined_here">
+      included
+      from <span class='object_link'><a href="AbstractStruct.html#fields-instance_method" title="Functional::AbstractStruct#fields (method)">AbstractStruct</a></span>
+    </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>A frozen array of all record fields.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#inspect-instance_method" title="#inspect (instance method)">- (String) <strong>inspect</strong> </a>
+    
+
+    
+      (also: #to_s)
+    
+  </span>
+  
+    <span class="note title not_defined_here">
+      included
+      from <span class='object_link'><a href="AbstractStruct.html#inspect-instance_method" title="Functional::AbstractStruct#inspect (method)">AbstractStruct</a></span>
+    </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Describe the contents of this struct in a string.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#left-instance_method" title="#left (instance method)">- (Object) <strong>left</strong> </a>
+    
+
+    
+      (also: #reason)
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Projects this either as a left.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#left%3F-instance_method" title="#left? (instance method)">- (Boolean) <strong>left?</strong> </a>
+    
+
+    
+      (also: #reason?, #rejected?)
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns true if this either is a left, false otherwise.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#length-instance_method" title="#length (instance method)">- (Fixnum) <strong>length</strong> </a>
+    
+
+    
+      (also: #size)
+    
+  </span>
+  
+    <span class="note title not_defined_here">
+      included
+      from <span class='object_link'><a href="AbstractStruct.html#length-instance_method" title="Functional::AbstractStruct#length (method)">AbstractStruct</a></span>
+    </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns the number of record fields.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#right-instance_method" title="#right (instance method)">- (Object) <strong>right</strong> </a>
+    
+
+    
+      (also: #value)
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Projects this either as a right.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#right%3F-instance_method" title="#right? (instance method)">- (Boolean) <strong>right?</strong> </a>
+    
+
+    
+      (also: #value?, #fulfilled?)
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns true if this either is a right, false otherwise.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#swap-instance_method" title="#swap (instance method)">- (Either) <strong>swap</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>If this is a left, then return the left value in right, or vice versa.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#to_h-instance_method" title="#to_h (instance method)">- (Hash) <strong>to_h</strong> </a>
+    
+
+    
+  </span>
+  
+    <span class="note title not_defined_here">
+      included
+      from <span class='object_link'><a href="AbstractStruct.html#to_h-instance_method" title="Functional::AbstractStruct#to_h (method)">AbstractStruct</a></span>
+    </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns a Hash containing the names and values for the record’s fields.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  
+  
+  <div id="instance_attr_details" class="attr_details">
+    <h2>Instance Attribute Details</h2>
+    
+      
+      <span id=""></span>
+      <div class="method_details first">
+  <h3 class="signature first" id="values-instance_method">
+  
+    - (<tt>Array</tt>) <strong>values</strong>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+    <span class="not_defined_here">
+      Originally defined in module
+        <span class='object_link'><a href="AbstractStruct.html#values-instance_method" title="Functional::AbstractStruct#values (method)">AbstractStruct</a></span>
+    </span>
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the values of all record fields in order, frozen</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the values of all record fields in order, frozen</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Since:</p>
+<ul class="since">
+  
+    <li>
+      
+      
+      
+      
+        
+        <div class='inline'><p>1.0.0</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div>
+</div>
+    
+  </div>
+
+
+  <div id="class_method_details" class="method_details_list">
+    <h2>Class Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="error-class_method">
+  
+    + (<tt><span class='object_link'><a href="" title="Functional::Either (class)">Either</a></span></tt>) <strong>error</strong>(message = nil, clazz = StandardError) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Create an <code>Either</code> with the left value set to an <code>Exception</code> object
+complete with message and backtrace. This is a convenience method for
+supporting the reason/value convention with the reason always being
+an <code>Exception</code> object. When no exception class is given <code>StandardError</code>
+will be used. When no message is given the default message for the
+given error class will be used.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <p class="tag_title">Examples:</p>
+    
+      
+      <pre class="example code"><code>
+<span class='id identifier rubyid_either'>either</span> <span class='op'>=</span> <span class='const'>Functional</span><span class='op'>::</span><span class='const'>Either</span><span class='period'>.</span><span class='id identifier rubyid_error'>error</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>You&#39;re a bad monkey, Mojo Jojo</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+<span class='id identifier rubyid_either'>either</span><span class='period'>.</span><span class='id identifier rubyid_fulfilled?'>fulfilled?</span> <span class='comment'>#=&gt; false
+</span><span class='id identifier rubyid_either'>either</span><span class='period'>.</span><span class='id identifier rubyid_rejected?'>rejected?</span>  <span class='comment'>#=&gt; true
+</span><span class='id identifier rubyid_either'>either</span><span class='period'>.</span><span class='id identifier rubyid_value'>value</span>      <span class='comment'>#=&gt; nil
+</span><span class='id identifier rubyid_either'>either</span><span class='period'>.</span><span class='id identifier rubyid_reason'>reason</span>     <span class='comment'>#=&gt; #&lt;StandardError: You&#39;re a bad monkey, Mojo Jojo&gt;</span></code></pre>
+    
+  </div>
+<p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>message</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>The message for the new error object.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>clazz</span>
+      
+      
+        <span class='type'>(<tt>Exception</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>StandardError</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>The class for the new error object.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="" title="Functional::Either (class)">Either</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>A new either with an error object as the left value.</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Since:</p>
+<ul class="since">
+  
+    <li>
+      
+      
+      
+      
+        
+        <div class='inline'><p>1.0.0</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+134
+135
+136
+137
+138</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/functional/either.rb', line 134</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_error'>error</span><span class='lparen'>(</span><span class='id identifier rubyid_message'>message</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_clazz'>clazz</span> <span class='op'>=</span> <span class='const'>StandardError</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_ex'>ex</span> <span class='op'>=</span> <span class='id identifier rubyid_clazz'>clazz</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_message'>message</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_ex'>ex</span><span class='period'>.</span><span class='id identifier rubyid_set_backtrace'>set_backtrace</span><span class='lparen'>(</span><span class='id identifier rubyid_caller'>caller</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_left'>left</span><span class='lparen'>(</span><span class='id identifier rubyid_ex'>ex</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="iff-class_method">
+  
+    + (<tt><span class='object_link'><a href="" title="Functional::Either (class)">Either</a></span></tt>) <strong>iff</strong>(lvalue, rvalue, condition = NO_VALUE) { ... }
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>If the condition satisfies, return the given A in left, otherwise, return the given B in right.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>lvalue</span>
+      
+      
+        <span class='type'>(<tt>Object</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The left value to use if the condition satisfies.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>rvalue</span>
+      
+      
+        <span class='type'>(<tt>Object</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The right value to use if the condition does not satisfy.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>condition</span>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>NO_VALUE</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>The condition to test (when no block given).</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Yields:</p>
+<ul class="yield">
+  
+    <li>
+      
+      
+        <span class='type'></span>
+      
+      
+      
+        
+        <div class='inline'><p>The condition to test (when no condition given).</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="" title="Functional::Either (class)">Either</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>A constructed either based on the given condition.</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>ArgumentError</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>When both a condition and a block are given.</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Since:</p>
+<ul class="since">
+  
+    <li>
+      
+      
+      
+      
+        
+        <div class='inline'><p>1.0.0</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+205
+206
+207
+208
+209</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/functional/either.rb', line 205</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_iff'>iff</span><span class='lparen'>(</span><span class='id identifier rubyid_lvalue'>lvalue</span><span class='comma'>,</span> <span class='id identifier rubyid_rvalue'>rvalue</span><span class='comma'>,</span> <span class='id identifier rubyid_condition'>condition</span> <span class='op'>=</span> <span class='const'>NO_VALUE</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>requires either a condition or a block, not both</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_condition'>condition</span> <span class='op'>!=</span> <span class='const'>NO_VALUE</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_block_given?'>block_given?</span>
+  <span class='id identifier rubyid_condition'>condition</span> <span class='op'>=</span> <span class='id identifier rubyid_block_given?'>block_given?</span> <span class='op'>?</span> <span class='kw'>yield</span> <span class='op'>:</span> <span class='op'>!</span><span class='op'>!</span> <span class='id identifier rubyid_condition'>condition</span>
+  <span class='id identifier rubyid_condition'>condition</span> <span class='op'>?</span> <span class='id identifier rubyid_left'>left</span><span class='lparen'>(</span><span class='id identifier rubyid_lvalue'>lvalue</span><span class='rparen'>)</span> <span class='op'>:</span> <span class='id identifier rubyid_right'>right</span><span class='lparen'>(</span><span class='id identifier rubyid_rvalue'>rvalue</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="left-class_method">
+  
+    + (<tt><span class='object_link'><a href="" title="Functional::Either (class)">Either</a></span></tt>) <strong>left</strong>(value) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Construct a left value of either.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>value</span>
+      
+      
+        <span class='type'>(<tt>Object</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The value underlying the either.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="" title="Functional::Either (class)">Either</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>A new either with the given left value.</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Since:</p>
+<ul class="since">
+  
+    <li>
+      
+      
+      
+      
+        
+        <div class='inline'><p>1.0.0</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+102
+103
+104</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/functional/either.rb', line 102</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_left'>left</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='kw'>true</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="reason-class_method">
+  
+    + (<tt><span class='object_link'><a href="" title="Functional::Either (class)">Either</a></span></tt>) <strong>reason</strong> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Construct a left value of either.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>value</span>
+      
+      
+        <span class='type'>(<tt>Object</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The value underlying the either.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="" title="Functional::Either (class)">Either</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>A new either with the given left value.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+105
+106
+107</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/functional/either.rb', line 105</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_left'>left</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='kw'>true</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="right-class_method">
+  
+    + (<tt><span class='object_link'><a href="" title="Functional::Either (class)">Either</a></span></tt>) <strong>right</strong>(value) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Construct a right value of either.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>value</span>
+      
+      
+        <span class='type'>(<tt>Object</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The value underlying the either.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="" title="Functional::Either (class)">Either</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>A new either with the given right value.</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Since:</p>
+<ul class="since">
+  
+    <li>
+      
+      
+      
+      
+        
+        <div class='inline'><p>1.0.0</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+111
+112
+113</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/functional/either.rb', line 111</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_right'>right</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='kw'>false</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="value-class_method">
+  
+    + (<tt><span class='object_link'><a href="" title="Functional::Either (class)">Either</a></span></tt>) <strong>value</strong> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Construct a right value of either.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>value</span>
+      
+      
+        <span class='type'>(<tt>Object</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The value underlying the either.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="" title="Functional::Either (class)">Either</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>A new either with the given right value.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+114
+115
+116</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/functional/either.rb', line 114</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_right'>right</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='kw'>false</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="each-instance_method">
+  
+    - (<tt>Enumerable</tt>) <strong>each</strong> {|value| ... }
+  
+
+  
+
+  
+    <span class="not_defined_here">
+      Originally defined in module
+        <span class='object_link'><a href="AbstractStruct.html#each-instance_method" title="Functional::AbstractStruct#each (method)">AbstractStruct</a></span>
+    </span>
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Yields the value of each record field in order.
+If no block is given an enumerator is returned.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Yield Parameters:</p>
+<ul class="yieldparam">
+  
+    <li>
+      
+        <span class='name'>value</span>
+      
+      
+        <span class='type'>(<tt>Object</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the value of the given field</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Enumerable</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>when no block is given</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Since:</p>
+<ul class="since">
+  
+    <li>
+      
+      
+      
+      
+        
+        <div class='inline'><p>1.0.0</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="each_pair-instance_method">
+  
+    - (<tt>Enumerable</tt>) <strong>each_pair</strong> {|field, value| ... }
+  
+
+  
+
+  
+    <span class="not_defined_here">
+      Originally defined in module
+        <span class='object_link'><a href="AbstractStruct.html#each_pair-instance_method" title="Functional::AbstractStruct#each_pair (method)">AbstractStruct</a></span>
+    </span>
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Yields the name and value of each record field in order.
+If no block is given an enumerator is returned.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Yield Parameters:</p>
+<ul class="yieldparam">
+  
+    <li>
+      
+        <span class='name'>field</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the record field for the current iteration</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>value</span>
+      
+      
+        <span class='type'>(<tt>Object</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the value of the current field</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Enumerable</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>when no block is given</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Since:</p>
+<ul class="since">
+  
+    <li>
+      
+      
+      
+      
+        
+        <div class='inline'><p>1.0.0</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="either-instance_method">
+  
+    - (<tt>Object</tt>) <strong>either</strong>(lproc, rproc) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>The catamorphism for either. Folds over this either breaking into left or right.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>lproc</span>
+      
+      
+        <span class='type'>(<tt>Proc</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The function to call if this is left.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>rproc</span>
+      
+      
+        <span class='type'>(<tt>Proc</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The function to call if this is right.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Object</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The reduced value.</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Since:</p>
+<ul class="since">
+  
+    <li>
+      
+      
+      
+      
+        
+        <div class='inline'><p>1.0.0</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+191
+192
+193</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/functional/either.rb', line 191</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_either'>either</span><span class='lparen'>(</span><span class='id identifier rubyid_lproc'>lproc</span><span class='comma'>,</span> <span class='id identifier rubyid_rproc'>rproc</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_left?'>left?</span> <span class='op'>?</span> <span class='id identifier rubyid_lproc'>lproc</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='id identifier rubyid_left'>left</span><span class='rparen'>)</span> <span class='op'>:</span> <span class='id identifier rubyid_rproc'>rproc</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='id identifier rubyid_right'>right</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="eql?-instance_method">
+  
+    - (<tt>Boolean</tt>) <strong>eql?</strong>(other) 
+  
+
+  
+    <span class="aliases">Also known as:
+    <span class="names"><span id='==-instance_method'>==</span></span>
+    </span>
+  
+
+  
+    <span class="not_defined_here">
+      Originally defined in module
+        <span class='object_link'><a href="AbstractStruct.html#eql%3F-instance_method" title="Functional::AbstractStruct#eql? (method)">AbstractStruct</a></span>
+    </span>
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Equality--Returns <code>true</code> if <code>other</code> has the same record subclass and has equal
+field values (according to <code>Object#==</code>).</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>other</span>
+      
+      
+        <span class='type'>(<tt>Object</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the other record to compare for equality</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>true when equal else false</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Since:</p>
+<ul class="since">
+  
+    <li>
+      
+      
+      
+      
+        
+        <div class='inline'><p>1.0.0</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="fields-instance_method">
+  
+    - (<tt>Array</tt>) <strong>fields</strong> 
+  
+
+  
+
+  
+    <span class="not_defined_here">
+      Originally defined in module
+        <span class='object_link'><a href="AbstractStruct.html#fields-instance_method" title="Functional::AbstractStruct#fields (method)">AbstractStruct</a></span>
+    </span>
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>A frozen array of all record fields.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>all record fields in order, frozen</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Since:</p>
+<ul class="since">
+  
+    <li>
+      
+      
+      
+      
+        
+        <div class='inline'><p>1.0.0</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="inspect-instance_method">
+  
+    - (<tt>String</tt>) <strong>inspect</strong> 
+  
+
+  
+    <span class="aliases">Also known as:
+    <span class="names"><span id='to_s-instance_method'>to_s</span></span>
+    </span>
+  
+
+  
+    <span class="not_defined_here">
+      Originally defined in module
+        <span class='object_link'><a href="AbstractStruct.html#inspect-instance_method" title="Functional::AbstractStruct#inspect (method)">AbstractStruct</a></span>
+    </span>
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Describe the contents of this struct in a string. Will include the name of the
+record class, all fields, and all values.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the class and contents of this record</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Since:</p>
+<ul class="since">
+  
+    <li>
+      
+      
+      
+      
+        
+        <div class='inline'><p>1.0.0</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="left-instance_method">
+  
+    - (<tt>Object</tt>) <strong>left</strong> 
+  
+
+  
+    <span class="aliases">Also known as:
+    <span class="names"><span id='reason-instance_method'>reason</span></span>
+    </span>
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Projects this either as a left.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Object</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The left value or <code>nil</code> when <code>right</code>.</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Since:</p>
+<ul class="since">
+  
+    <li>
+      
+      
+      
+      
+        
+        <div class='inline'><p>1.0.0</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+144
+145
+146</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/functional/either.rb', line 144</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_left'>left</span>
+  <span class='id identifier rubyid_left?'>left?</span> <span class='op'>?</span> <span class='id identifier rubyid_to_h'>to_h</span><span class='lbracket'>[</span><span class='symbol'>:left</span><span class='rbracket'>]</span> <span class='op'>:</span> <span class='kw'>nil</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="left?-instance_method">
+  
+    - (<tt>Boolean</tt>) <strong>left?</strong> 
+  
+
+  
+    <span class="aliases">Also known as:
+    <span class="names"><span id='reason?-instance_method'>reason?</span>, <span id='rejected?-instance_method'>rejected?</span></span>
+    </span>
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns true if this either is a left, false otherwise.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p><code>true</code> if this either is a left, <code>false</code> otherwise.</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Since:</p>
+<ul class="since">
+  
+    <li>
+      
+      
+      
+      
+        
+        <div class='inline'><p>1.0.0</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+160
+161
+162</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/functional/either.rb', line 160</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_left?'>left?</span>
+  <span class='ivar'>@is_left</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="length-instance_method">
+  
+    - (<tt>Fixnum</tt>) <strong>length</strong> 
+  
+
+  
+    <span class="aliases">Also known as:
+    <span class="names"><span id='size-instance_method'>size</span></span>
+    </span>
+  
+
+  
+    <span class="not_defined_here">
+      Originally defined in module
+        <span class='object_link'><a href="AbstractStruct.html#length-instance_method" title="Functional::AbstractStruct#length (method)">AbstractStruct</a></span>
+    </span>
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the number of record fields.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Fixnum</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the number of record fields</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Since:</p>
+<ul class="since">
+  
+    <li>
+      
+      
+      
+      
+        
+        <div class='inline'><p>1.0.0</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="right-instance_method">
+  
+    - (<tt>Object</tt>) <strong>right</strong> 
+  
+
+  
+    <span class="aliases">Also known as:
+    <span class="names"><span id='value-instance_method'>value</span></span>
+    </span>
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Projects this either as a right.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Object</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The right value or <code>nil</code> when <code>left</code>.</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Since:</p>
+<ul class="since">
+  
+    <li>
+      
+      
+      
+      
+        
+        <div class='inline'><p>1.0.0</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+152
+153
+154</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/functional/either.rb', line 152</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_right'>right</span>
+  <span class='id identifier rubyid_right?'>right?</span> <span class='op'>?</span> <span class='id identifier rubyid_to_h'>to_h</span><span class='lbracket'>[</span><span class='symbol'>:right</span><span class='rbracket'>]</span> <span class='op'>:</span> <span class='kw'>nil</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="right?-instance_method">
+  
+    - (<tt>Boolean</tt>) <strong>right?</strong> 
+  
+
+  
+    <span class="aliases">Also known as:
+    <span class="names"><span id='value?-instance_method'>value?</span>, <span id='fulfilled?-instance_method'>fulfilled?</span></span>
+    </span>
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns true if this either is a right, false otherwise.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p><code>true</code> if this either is a right, <code>false</code> otherwise.</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Since:</p>
+<ul class="since">
+  
+    <li>
+      
+      
+      
+      
+        
+        <div class='inline'><p>1.0.0</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+169
+170
+171</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/functional/either.rb', line 169</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_right?'>right?</span>
+  <span class='op'>!</span> <span class='id identifier rubyid_left?'>left?</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="swap-instance_method">
+  
+    - (<tt><span class='object_link'><a href="" title="Functional::Either (class)">Either</a></span></tt>) <strong>swap</strong> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>If this is a left, then return the left value in right, or vice versa.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="" title="Functional::Either (class)">Either</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The value of this either swapped to the opposing side.</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Since:</p>
+<ul class="since">
+  
+    <li>
+      
+      
+      
+      
+        
+        <div class='inline'><p>1.0.0</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+178
+179
+180
+181
+182
+183
+184</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/functional/either.rb', line 178</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_swap'>swap</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_left?'>left?</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_send'>send</span><span class='lparen'>(</span><span class='symbol'>:new</span><span class='comma'>,</span> <span class='id identifier rubyid_left'>left</span><span class='comma'>,</span> <span class='kw'>false</span><span class='rparen'>)</span>
+  <span class='kw'>else</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_send'>send</span><span class='lparen'>(</span><span class='symbol'>:new</span><span class='comma'>,</span> <span class='id identifier rubyid_right'>right</span><span class='comma'>,</span> <span class='kw'>true</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="to_h-instance_method">
+  
+    - (<tt>Hash</tt>) <strong>to_h</strong> 
+  
+
+  
+
+  
+    <span class="not_defined_here">
+      Originally defined in module
+        <span class='object_link'><a href="AbstractStruct.html#to_h-instance_method" title="Functional::AbstractStruct#to_h (method)">AbstractStruct</a></span>
+    </span>
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns a Hash containing the names and values for the record’s fields.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>collection of all fields and their associated values</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Since:</p>
+<ul class="since">
+  
+    <li>
+      
+      
+      
+      
+        
+        <div class='inline'><p>1.0.0</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div>
+</div>
+    
+  </div>
+
+</div>
+
+    <div id="footer">
+  Generated on Tue Feb 24 22:22:37 2015 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.8.7.4 (ruby-2.2.0).
+</div>
+
+  </body>
+</html>
