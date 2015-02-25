@@ -30,7 +30,7 @@ Our goal is to implement various functional programming patterns in Ruby. Specif
 
 ## Features
 
-Complete API documentation can be found at [Rubydoc.info](http://rubydoc.info/github/jdantonio/functional-ruby/master/frames).
+The primary site for documentation is the automatically generated [API documentation](http://jdantonio.github.io/functional-ruby/).
 
 * Protocol specifications inspired by Clojure [protocol](http://clojure.org/protocols),
   Erlang [behavior](http://www.erlang.org/doc/design_principles/des_princ.html#id60128),
