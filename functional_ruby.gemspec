@@ -24,7 +24,5 @@ Gem::Specification.new do |s|
   s.extra_rdoc_files += Dir['{doc}/**/*.{txt,md}']
   s.require_paths     = ['lib']
 
-  s.required_ruby_version = '>= 1.9.3'
-
-  s.add_development_dependency 'bundler'
+  s.required_ruby_version = '>= 2.0.0'
 end
