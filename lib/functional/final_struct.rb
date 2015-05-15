@@ -1,4 +1,4 @@
-require_relative 'final_var'
+require 'functional/final_var'
 require 'functional/synchronization'
 
 module Functional
@@ -41,9 +41,6 @@ module Functional
   #
   #   name.first = 'Sam'   #=> Functional::FinalityError: final accessor 'first' has already been set
   #
-  # @since 1.1.0
-  #
-  # @see Functional::FinalVar
   # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/ostruct/rdoc/OpenStruct.html
   # @see http://en.wikipedia.org/wiki/Final_(Java) Java `final` keyword
   #

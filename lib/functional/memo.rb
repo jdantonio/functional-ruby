@@ -15,8 +15,6 @@ module Functional
   # @note Memoized method calls are thread safe and can safely be used in
   #   concurrent systems. Declaring memoization on a function is *not* thread
   #   safe and should only be done during application initialization.
-  #
-  # @since 1.0.0
   module Memo
 
     # @!visibility private

@@ -1,4 +1,4 @@
-require_relative 'protocol_info'
+require 'functional/protocol_info'
 
 module Functional
 
@@ -57,8 +57,6 @@ module Functional
   # It is a logical extension of the `respond_to?` method, but vastly more powerful.
   #
   # {include:file:doc/protocol.md}
-  #
-  # @since 1.0.0 (formerly "behavior")
   module Protocol
 
     # The global registry of specified protocols.

@@ -1,4 +1,5 @@
-require_relative 'abstract_struct'
+require 'functional/abstract_struct'
+require 'functional/synchronization'
 
 module Functional
 
@@ -51,8 +52,6 @@ module Functional
   # @see Functional::Union
   # @see http://www.ruby-doc.org/core-2.1.2/Struct.html Ruby `Struct` class
   # @see http://en.wikipedia.org/wiki/Union_type "Union type" on Wikipedia
-  #
-  # @since 1.0.0
   #
   # @!macro thread_safe_immutable_object
   module Union
@@ -127,6 +126,7 @@ module Functional
     # @return [Functional::AbstractStruct] the union class
     def define_initializer(union)
       union.send(:define_method, :initialize) do |field, value|
+        super()
         @field = field
         @value = value
         data = fields.reduce({}) do |memo, field|
@@ -135,6 +135,8 @@ module Functional
         end
         set_data_hash(data)
         set_values_array(data.values)
+        ensure_ivar_visibility!
+        self.freeze
       end
       union
     end

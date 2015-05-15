@@ -30,8 +30,6 @@ module Functional
   #   f.set?       #=> true
   #   f.value      #=> 42
   #
-  # @since 1.1.0
-  #
   # @see Functional::FinalStruct
   # @see http://en.wikipedia.org/wiki/Final_(Java) Java `final` keyword
   #

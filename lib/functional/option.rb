@@ -1,6 +1,7 @@
-require_relative 'abstract_struct'
-require_relative 'either'
-require_relative 'protocol'
+require 'functional/abstract_struct'
+require 'functional/either'
+require 'functional/protocol'
+require 'functional/synchronization'
 
 Functional::SpecifyProtocol(:Option) do
   instance_method :some?, 0
@@ -17,10 +18,8 @@ module Functional
   # @see Functional::AbstractStruct
   # @see http://functionaljava.googlecode.com/svn/artifacts/3.0/javadoc/index.html Functional Java
   #
-  # @since 1.0.0
-  #
   # @!macro thread_safe_immutable_object
-  class Option
+  class Option < Synchronization::Object
     include AbstractStruct
 
     # @!visibility private 
@@ -201,11 +200,13 @@ module Functional
     #
     # @!visibility private 
     def initialize(value, none, reason = nil)
+      super
       @none = none
       @reason = none ? reason : nil
       hsh = none ? {some: nil} : {some: value}
       set_data_hash(hsh)
       set_values_array(hsh.values)
+      ensure_ivar_visibility!
     end
   end
 end
