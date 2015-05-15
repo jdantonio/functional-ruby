@@ -1,5 +1,5 @@
 require_relative 'final_var'
-require 'thread'
+require 'functional/synchronization'
 
 module Functional
 
@@ -48,7 +48,7 @@ module Functional
   # @see http://en.wikipedia.org/wiki/Final_(Java) Java `final` keyword
   #
   # @!macro thread_safe_final_object
-  class FinalStruct
+  class FinalStruct < Synchronization::Object
 
     # Creates a new `FinalStruct` object. By default, the resulting `FinalStruct`
     # object will have no attributes. The optional hash, if given, will generate
@@ -57,10 +57,12 @@ module Functional
     # @param [Hash] attributes the field/value pairs to set on creation
     def initialize(attributes = {})
       raise ArgumentError.new('attributes must be given as a hash or not at all') unless attributes.respond_to?(:to_h)
-      @mutex = Mutex.new
-      @attribute_hash = {}
-      attributes.to_h.each_pair do |field, value|
-        set_attribute(field, value)
+      super
+      synchronize do
+        @attribute_hash = {}
+        attributes.to_h.each_pair do |field, value|
+          ns_set_attribute(field, value)
+        end
       end
     end
 
@@ -71,9 +73,7 @@ module Functional
     #   @param [Symbol] field the field to retrieve the value for
     #   @return [Object] the value of the field is set else nil
     def get(field)
-      @mutex.synchronize {
-        get_attribute(field)
-      }
+      synchronize { ns_get_attribute(field) }
     end
     alias_method :[], :get
 
@@ -91,13 +91,13 @@ module Functional
     #
     # @raise [Functional::FinalityError] if the given field has already been set
     def set(field, value)
-      @mutex.synchronize {
-        if attribute_has_been_set?(field)
+      synchronize do
+        if ns_attribute_has_been_set?(field)
           raise FinalityError.new("final accessor '#{field}' has already been set")
         else
-          set_attribute(field, value)
+          ns_set_attribute(field, value)
         end
-      }
+      end
     end
     alias_method :[]=, :set
 
@@ -109,9 +109,7 @@ module Functional
     #   @param [Symbol] field the field to get the value for
     #   @return [Boolean] true if the field has been set else false
     def set?(field)
-      @mutex.synchronize {
-        attribute_has_been_set?(field)
-      }
+      synchronize { ns_attribute_has_been_set?(field) }
     end
 
     # Get the current value of the given field if already set else set the value of
@@ -121,9 +119,7 @@ module Functional
     # @param [Object] value the value to set the field to when not previously set
     # @return [Object] the final value of the given field
     def get_or_set(field, value)
-      @mutex.synchronize {
-        attribute_has_been_set?(field) ? get_attribute(field) : set_attribute(field, value)
-      }
+      synchronize { ns_attribute_has_been_set?(field) ? ns_get_attribute(field) : ns_set_attribute(field, value) }
     end
 
     # Get the current value of the given field if already set else return the given
@@ -133,9 +129,7 @@ module Functional
     # @param [Object] default the value to return if the field has not been set
     # @return [Object] the value of the given field else the given default value
     def fetch(field, default)
-      @mutex.synchronize {
-        attribute_has_been_set?(field) ? get_attribute(field) : default
-      }
+      synchronize { ns_attribute_has_been_set?(field) ? ns_get_attribute(field) : default }
     end
 
     # Calls the block once for each attribute, passing the key/value pair as parameters.
@@ -147,11 +141,11 @@ module Functional
     # @return [Enumerable] when no block is given
     def each_pair
       return enum_for(:each_pair) unless block_given?
-      @mutex.synchronize {
+      synchronize do
         @attribute_hash.each do |field, value|
           yield(field, value)
         end
-      }
+      end
     end
 
     # Converts the `FinalStruct` to a `Hash` with keys representing each attribute
@@ -159,9 +153,7 @@ module Functional
     # 
     # @return [Hash] a `Hash` representing this struct
     def to_h
-      @mutex.synchronize {
-        @attribute_hash.dup
-      }
+      synchronize { @attribute_hash.dup }
     end
 
     # Compares this object and other for equality. A `FinalStruct` is `eql?` to
@@ -190,19 +182,19 @@ module Functional
 
     # @!macro final_struct_get_method
     # @!visibility private
-    def get_attribute(field)
+    def ns_get_attribute(field)
       @attribute_hash[field.to_sym]
     end
 
     # @!macro final_struct_set_method
     # @!visibility private
-    def set_attribute(field, value)
+    def ns_set_attribute(field, value)
       @attribute_hash[field.to_sym] = value
     end
 
     # @!macro final_struct_set_predicate
     # @!visibility private
-    def attribute_has_been_set?(field)
+    def ns_attribute_has_been_set?(field)
       @attribute_hash.has_key?(field.to_sym)
     end
 
