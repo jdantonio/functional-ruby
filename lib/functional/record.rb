@@ -17,7 +17,6 @@ module Functional
   #
   # {include:file:doc/record.md}
   #
-  # @see Functional::AbstractStruct
   # @see Functional::Union
   # @see Functional::Protocol
   # @see Functional::TypeCheck

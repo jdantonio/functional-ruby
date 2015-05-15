@@ -15,7 +15,6 @@ module Functional
   # This type is a replacement for the use of nil with better type checks. 
   # It is an immutable data structure that extends `AbstractStruct`.
   #
-  # @see Functional::AbstractStruct
   # @see http://functionaljava.googlecode.com/svn/artifacts/3.0/javadoc/index.html Functional Java
   #
   # @!macro thread_safe_immutable_object

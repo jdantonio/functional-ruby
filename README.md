@@ -43,6 +43,7 @@ The primary site for documentation is the automatically generated [API documenta
 * Thread safe, immutable `Either` and `Option` classes based on [Functional Java](http://functionaljava.org/) and [Haskell](https://hackage.haskell.org/package/base-4.2.0.1/docs/Data-Either.html).
 * [Memoization](http://en.wikipedia.org/wiki/Memoization) of class methods based on Clojure [memoize](http://clojuredocs.org/clojure_core/clojure.core/memoize).
 * Lazy execution with a `Delay` class based on Clojure [delay](http://clojuredocs.org/clojure_core/clojure.core/delay).
+* `ValueStruct`, a simple, thread safe, immutable variation of Ruby's [OpenStruct](http://ruby-doc.org/stdlib-2.0/libdoc/ostruct/rdoc/OpenStruct.html) class.
 * Thread safe data structures, such as `FinalStruct` and `FinalVar`, which can be written to at most once
   before becoming immutable. Based on [Java's `final` keyword](http://en.wikipedia.org/wiki/Final_(Java)).
 

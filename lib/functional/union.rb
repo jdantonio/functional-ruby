@@ -48,7 +48,6 @@ module Functional
   #   Functional::Union::Suit.hearts('Queen')
   #    #=> #<union Functional::Union::Suit :clubs=>nil, :diamonds=>nil, :hearts=>"Queen", :spades=>nil>
   #
-  # @see Functional::AbstractStruct
   # @see Functional::Union
   # @see http://www.ruby-doc.org/core-2.1.2/Struct.html Ruby `Struct` class
   # @see http://en.wikipedia.org/wiki/Union_type "Union type" on Wikipedia
