@@ -161,30 +161,29 @@ module Functional
 
     context 'thread safety' do
 
-      let(:mutex){ Mutex.new }
+      let(:memoizer_factory){ Functional::Memo::ClassMethods.const_get(:Memoizer) }
+      let(:memoizer){ memoizer_factory.new(:func, 0) }
 
       before(:each) do
-        allow(Mutex).to receive(:new).with(no_args).and_return(mutex)
-        allow(mutex).to receive(:lock).with(no_args).and_return(mutex)
-        allow(mutex).to receive(:unlock).with(no_args).and_return(mutex)
+        allow(memoizer_factory).to receive(:new).with(any_args).and_return(memoizer)
       end
 
       it 'locks a mutex whenever a memoized function is called' do
-        expect(mutex).to receive(:lock).exactly(:once).with(no_args)
+        expect(memoizer).to receive(:synchronize).exactly(:once).with(no_args)
 
         subject.memoize(:increment)
         subject.increment(0)
       end
 
       it 'unlocks the mutex whenever a memoized function is called' do
-        expect(mutex).to receive(:unlock).exactly(:once).with(no_args)
+        expect(memoizer).to receive(:synchronize).exactly(:once).with(no_args)
 
         subject.memoize(:increment)
         subject.increment(0)
       end
 
       it 'unlocks the mutex when the method call raises an exception' do
-        expect(mutex).to receive(:unlock).exactly(:once).with(no_args)
+        expect(memoizer).to receive(:synchronize).exactly(:once).with(no_args)
 
         subject.memoize(:exception)
         begin
@@ -195,7 +194,7 @@ module Functional
       end
 
       it 'uses different mutexes for different functions' do
-        expect(Mutex).to receive(:new).with(no_args).exactly(3).times.and_return(mutex)
+        expect(memoizer_factory).to receive(:new).with(any_args).exactly(3).times.and_return(memoizer)
         # once for memoize(:add) in the definition
         subject.memoize(:increment)
         subject.memoize(:exception)

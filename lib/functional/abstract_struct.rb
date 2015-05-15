@@ -1,4 +1,5 @@
-require_relative 'protocol'
+require 'functional/protocol'
+require 'functional/synchronization'
 
 Functional::SpecifyProtocol(:Struct) do
   instance_method :fields
@@ -11,8 +12,6 @@ end
 module Functional
 
   # An abstract base class for immutable struct classes.
-  #
-  # @since 1.0.0
   module AbstractStruct
 
     # @return [Array] the values of all record fields in order, frozen
@@ -119,7 +118,7 @@ module Functional
     #
     # @!visibility private
     def self.define_class(parent, datatype, fields)
-      struct = Class.new{ include AbstractStruct }
+      struct = Class.new(Functional::Synchronization::Object){ include AbstractStruct }
       if fields.first.is_a? String
         parent.const_set(fields.first, struct)
         fields = fields[1, fields.length-1]

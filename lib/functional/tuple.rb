@@ -1,3 +1,5 @@
+require 'functional/synchronization'
+
 module Functional
 
   # A tuple is a pure functional data strcture that is similar to an array but is
@@ -9,8 +11,6 @@ module Functional
   #   contains, the less efficient it will become. A future version will use a fast,
   #   immutable, persistent data structure such as a finger tree or a trie.
   #
-  # @since 1.1.0
-  # 
   # @see http://en.wikipedia.org/wiki/Tuple
   # @see http://msdn.microsoft.com/en-us/library/system.tuple.aspx
   # @see http://www.tutorialspoint.com/python/python_tuples.htm
@@ -20,8 +20,16 @@ module Functional
   # @see http://www.erlang.org/doc/man/erlang.html#make_tuple-2
   # @see http://en.wikibooks.org/wiki/Haskell/Lists_and_tuples#Tuples
   #
-  # @!macro thread_safe_immutable_object
-  class Tuple
+  # @!macro [new] thread_safe_immutable_object
+  #
+  #    @note This is a write-once, read-many, thread safe object that can be
+  #      used in concurrent systems. Thread safety guarantees *cannot* be made
+  #      about objects contained *within* this object, however. Ruby variables
+  #      are mutable references to mutable objects. This cannot be changed. The
+  #      best practice it to only encapsulate immutable, frozen, or thread safe
+  #      objects. Ultimately, thread safety is the responsibility of the
+  #      programmer.
+  class Tuple < Synchronization::Object
 
     # Create a new tuple with the given data items in the given order.
     #
@@ -29,8 +37,10 @@ module Functional
     # @raise [ArgumentError] if data is not an array or does not implement `to_a`
     def initialize(data = [])
       raise ArgumentError.new('data is not an array') unless data.respond_to?(:to_a)
+      super
       @data = data.to_a.dup.freeze
       self.freeze
+      ensure_ivar_visibility!
     end
 
     # Retrieve the item at the given index. Indices begin at zero and increment

@@ -1,4 +1,4 @@
-require 'thread'
+require 'functional/synchronization'
 
 module Functional
 
@@ -15,8 +15,6 @@ module Functional
   # @note Memoized method calls are thread safe and can safely be used in
   #   concurrent systems. Declaring memoization on a function is *not* thread
   #   safe and should only be done during application initialization.
-  #
-  # @since 1.0.0
   module Memo
 
     # @!visibility private
@@ -37,11 +35,22 @@ module Functional
     module ClassMethods
 
       # @!visibility private
-      Memo = Struct.new(:function, :mutex, :cache, :max_cache) do
+      class Memoizer < Synchronization::Object
+        attr_reader :function, :cache, :max_cache
+        def initialize(function, max_cache)
+          super
+          synchronize do
+            @function = function
+            @max_cache = max_cache
+            @cache = {}
+          end
+        end
         def max_cache?
           max_cache > 0 && cache.size >= max_cache
         end
+        public :synchronize
       end
+      private_constant :Memoizer
 
       # @!visibility private
       attr_accessor :__method_memos__
@@ -64,7 +73,7 @@ module Functional
         max_cache = opts[:at_most].to_i
         raise ArgumentError.new("method :#{func} has already been memoized") if __method_memos__.has_key?(func)
         raise ArgumentError.new(':max_cache must be > 0') if max_cache < 0
-        __method_memos__[func] = Memo.new(method(func), Mutex.new, {}, max_cache.to_i)
+        __method_memos__[func] = Memoizer.new(method(func), max_cache.to_i)
         __define_memo_proxy__(func)
         nil
       end
@@ -81,17 +90,16 @@ module Functional
       # @!visibility private
       def __proxy_memoized_method__(func, *args, &block)
         memo = self.__method_memos__[func]
-        memo.mutex.lock
-        if block_given?
-          memo.function.call(*args, &block)
-        elsif memo.cache.has_key?(args)
-          memo.cache[args]
-        else
-          result = memo.function.call(*args)
-          memo.cache[args] = result unless memo.max_cache?
+        memo.synchronize do
+          if block_given?
+            memo.function.call(*args, &block)
+          elsif memo.cache.has_key?(args)
+            memo.cache[args]
+          else
+            result = memo.function.call(*args)
+            memo.cache[args] = result unless memo.max_cache?
+          end
         end
-      ensure
-        memo.mutex.unlock
       end
     end
   end

@@ -1,4 +1,4 @@
-require_relative 'method_signature'
+require 'functional/method_signature'
 
 module Functional
 
@@ -40,9 +40,11 @@ module Functional
         self
       end
     end
+    private_constant :GuardClause
 
     # @!visibility private
     FunctionPattern = Struct.new(:function, :args, :body, :guard)
+    private_constant :FunctionPattern
 
     # @!visibility private
     def __unbound_args__(match, args)

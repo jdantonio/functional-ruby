@@ -1,4 +1,4 @@
-require 'thread'
+require 'functional/synchronization'
 
 module Functional
 
@@ -16,20 +16,10 @@ module Functional
   # This means that any side effects created by the operation will only happen
   # once as well.
   #
+  # @!macro thread_safe_immutable_object
+  #
   # @see http://clojuredocs.org/clojure_core/clojure.core/delay Clojure delay
-  #
-  # @since 1.0.0
-  #
-  # @!macro [new] thread_safe_immutable_object
-  #
-  #    @note This is a write-once, read-many, thread safe object that can be
-  #      used in concurrent systems. Thread safety guarantees *cannot* be made
-  #      about objects contained *within* this object, however. Ruby variables
-  #      are mutable references to mutable objects. This cannot be changed. The
-  #      best practice it to only encapsulate immutable, frozen, or thread safe
-  #      objects. Ultimately, thread safety is the responsibility of the
-  #      programmer.
-  class Delay
+  class Delay < Synchronization::Object
 
     # Create a new `Delay` in the `:pending` state.
     #
@@ -38,19 +28,18 @@ module Functional
     # @raise [ArgumentError] if no block is given
     def initialize(&block)
       raise ArgumentError.new('no block given') unless block_given?
-      @mutex = Mutex.new
-      @state = :pending
-      @task  = block
+      super
+      synchronize do
+        @state = :pending
+        @task  = block
+      end
     end
 
     # Current state of block processing.
     #
     # @return [Symbol] the current state of block processing
     def state
-      @mutex.lock
-      @state
-    ensure
-      @mutex.unlock
+      synchronize{ @state }
     end
 
     # The exception raised when processing the block. Returns `nil` if the
@@ -59,10 +48,7 @@ module Functional
     # @return [StandardError] the exception raised when processing the block
     #   else nil.
     def reason
-      @mutex.lock
-      @reason
-    ensure
-      @mutex.unlock
+      synchronize{ @reason }
     end
 
     # Return the (possibly memoized) value of the delayed operation.
@@ -79,31 +65,27 @@ module Functional
     #
     # @return [Object] the (possibly memoized) result of the block operation
     def value
-      @mutex.lock
-      execute_task_once
-      @value
-    ensure
-      @mutex.unlock
+      synchronize{ execute_task_once }
     end
 
     # Has the delay been fulfilled?
     # @return [Boolean]
     def fulfilled?
-      state == :fulfilled
+      synchronize{ @state == :fulfilled }
     end
     alias_method :value?, :fulfilled?
 
     # Has the delay been rejected?
     # @return [Boolean]
     def rejected?
-      state == :rejected
+      synchronize{ @state == :rejected }
     end
     alias_method :reason?, :rejected?
 
     # Is delay completion still pending?
     # @return [Boolean]
     def pending?
-      state == :pending
+      synchronize{ @state == :pending }
     end
 
     protected
@@ -124,6 +106,7 @@ module Functional
           @state  = :rejected
         end
       end
+      @value
     end
   end
 end

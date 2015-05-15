@@ -1,6 +1,6 @@
-require_relative 'abstract_struct'
-require_relative 'protocol'
-require_relative 'type_check'
+require 'functional/abstract_struct'
+require 'functional/protocol'
+require 'functional/type_check'
 
 module Functional
 
@@ -21,8 +21,6 @@ module Functional
   # @see Functional::Union
   # @see Functional::Protocol
   # @see Functional::TypeCheck
-  #
-  # @since 1.0.0
   #
   # @!macro thread_safe_immutable_object
   module Record
@@ -160,6 +158,7 @@ module Functional
         Type? object, NilClass, TrueClass, FalseClass, Fixnum, Bignum, Float
       end
     end
+    private_constant :Restrictions
 
     # Validate the given type/protocol specification.
     #
@@ -195,6 +194,7 @@ module Functional
     # @return [Functional::AbstractStruct] the record class
     def define_initializer(record)
       record.send(:define_method, :initialize) do |data = {}|
+        super()
         restrictions = record.class_variable_get(:@@restrictions)
         data = record.fields.reduce({}) do |memo, field|
           memo[field] = data.fetch(field, restrictions.clone_default(field))
@@ -203,6 +203,7 @@ module Functional
         restrictions.validate!(data)
         set_data_hash(data)
         set_values_array(data.values)
+        ensure_ivar_visibility!
         self.freeze
       end
       record

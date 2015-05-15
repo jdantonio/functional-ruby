@@ -1,3 +1,5 @@
+require 'functional/synchronization'
+
 module Functional
 
   # A variation on Ruby's `OpenStruct` in which all fields are immutable and
@@ -18,22 +20,22 @@ module Functional
   #   name.last?   #=> true
   #   name.middle? #=> false
   #
-  # @since 1.1.0
-  #
   # @see Functional::Record
   # @see Functional::FinalStruct
   # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/ostruct/rdoc/OpenStruct.html
   #
   # @!macro thread_safe_immutable_object
-  class ValueStruct
+  class ValueStruct < Synchronization::Object
 
     def initialize(attributes)
       raise ArgumentError.new('attributes must be given as a hash') unless attributes.respond_to?(:each_pair)
+      super
       @attribute_hash = {}
       attributes.each_pair do |field, value|
         set_attribute(field, value)
       end
       @attribute_hash.freeze
+      ensure_ivar_visibility!
       self.freeze
     end
 

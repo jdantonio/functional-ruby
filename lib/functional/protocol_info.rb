@@ -1,12 +1,12 @@
+require 'functional/synchronization'
+
 module Functional
 
   # An immutable object describing a single protocol and capable of building
   # itself from a block. Used by {Functional#SpecifyProtocol}.
   # 
   # @see Functional::Protocol
-  #
-  # @since 1.0.0
-  class ProtocolInfo
+  class ProtocolInfo < Synchronization::Object
 
     # The symbolic name of the protocol
     attr_reader :name
@@ -22,11 +22,13 @@ module Functional
     def initialize(name, &specification)
       raise ArgumentError.new('no block given') unless block_given?
       raise ArgumentError.new('no name given') if name.nil? || name.empty?
+      super
       @name = name.to_sym
       @info = Info.new({}, {}, [])
       self.instance_eval(&specification)
       @info.each_pair{|col, _| col.freeze}
       @info.freeze
+      ensure_ivar_visibility!
       self.freeze
     end
 

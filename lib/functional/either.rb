@@ -1,5 +1,6 @@
-require_relative 'abstract_struct'
-require_relative 'protocol'
+require 'functional/abstract_struct'
+require 'functional/protocol'
+require 'functional/synchronization'
 
 Functional::SpecifyProtocol(:Either) do
   instance_method :left, 0
@@ -79,10 +80,8 @@ module Functional
   # @see https://hackage.haskell.org/package/base-4.2.0.1/docs/Data-Either.html Haskell Data.Either
   # @see http://ruby-concurrency.github.io/concurrent-ruby/Concurrent/Obligation.html Concurrent Ruby
   #
-  # @since 1.0.0
-  #
   # @!macro thread_safe_immutable_object
-  class Either
+  class Either < Synchronization::Object
     include AbstractStruct
 
     self.datatype = :either
@@ -217,10 +216,12 @@ module Functional
     #
     # @!visibility private
     def initialize(value, is_left)
+      super
       @is_left = is_left
       hsh = is_left ? {left: value, right: nil} : {left: nil, right: value}
       set_data_hash(hsh)
       set_values_array(hsh.values)
+      ensure_ivar_visibility!
     end
   end
 end

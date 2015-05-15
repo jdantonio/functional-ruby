@@ -1,4 +1,4 @@
-require 'thread'
+require 'functional/synchronization'
 
 module Functional
 
@@ -30,8 +30,6 @@ module Functional
   #   f.set?       #=> true
   #   f.value      #=> 42
   #
-  # @since 1.1.0
-  #
   # @see Functional::FinalStruct
   # @see http://en.wikipedia.org/wiki/Final_(Java) Java `final` keyword
   #
@@ -43,7 +41,7 @@ module Functional
   #     mutable references to mutable objects. This cannot be changed. The best
   #     practice it to only encapsulate immutable, frozen, or thread safe objects.
   #     Ultimately, thread safety is the responsibility of the programmer.
-  class FinalVar
+  class FinalVar < Synchronization::Object
 
     # @!visibility private
     NO_VALUE = Object.new.freeze
@@ -53,17 +51,15 @@ module Functional
     #
     # @param [Object] value if given, the immutable value of the object
     def initialize(value = NO_VALUE)
-      @mutex = Mutex.new
-      @value = value
+      super
+      synchronize{ @value = value }
     end
 
     # Get the current value or nil if unset.
     #
     # @return [Object] the current value or nil
     def get
-      @mutex.synchronize {
-        has_been_set? ? @value : nil
-      }
+      synchronize { has_been_set? ? @value : nil }
     end
     alias_method :value, :get
 
@@ -73,13 +69,13 @@ module Functional
     # @return [Object] the new value
     # @raise [Functional::FinalityError] if the value has already been set
     def set(value)
-      @mutex.synchronize {
+      synchronize do
         if has_been_set?
           raise FinalityError.new('value has already been set')
         else
           @value = value
         end
-      }
+      end
     end
     alias_method :value=, :set
 
@@ -87,9 +83,7 @@ module Functional
     #
     # @return [Boolean] true when the value has been set else false
     def set?
-      @mutex.synchronize {
-        has_been_set?
-      }
+      synchronize { has_been_set? }
     end
     alias_method :value?, :set?
 
@@ -98,13 +92,13 @@ module Functional
     # @param [Object] value the value to set
     # @return [Object] the current value if already set else the new value
     def get_or_set(value)
-      @mutex.synchronize {
+      synchronize do
         if has_been_set?
           @value
         else
           @value = value
         end
-      }
+      end
     end
 
     # Get the value if set else return the given default value.
@@ -112,9 +106,7 @@ module Functional
     # @param [Object] default the value to return if currently unset
     # @return [Object] the current value when set else the given default
     def fetch(default)
-      @mutex.synchronize {
-        has_been_set? ? @value : default
-      }
+      synchronize { has_been_set? ? @value : default }
     end
 
     # Compares this object and other for equality. A `FinalVar` that is unset
