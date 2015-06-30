@@ -94,7 +94,7 @@ describe 'protocol specification' do
         end
 
         expect(
-          Functional::Protocol.Satisfy?('object', :foo)
+          Functional::Protocol.Satisfy?(clazz.new, :foo)
         ).to be false
       end
 
