@@ -1,8 +1,12 @@
-### Upcoming Release v1.2.0 (TBD)
+## Current Release v1.2.0 (July 10, 2015)
 
 * `Record` classes can be declared with a type/protocol specification for type safety.
+* Improved documentation
+* Improved tests
+* Better synchronization (thread safety) on all platforms
+* Continuous integration run on both Linux (Travis CI) and Windows (AppVeyor)
 
-## Current Release v1.1.0 (August 12, 2014)
+### Release v1.1.0 (August 12, 2014)
 
 * A simple implementation of [tuple](http://en.wikipedia.org/wiki/Tuple), an
   immutable, fixed-length list/array/vector-like data structure.
@@ -11,7 +15,7 @@
 * `FinalVar`, a thread safe object that holds a single value and is "final" (meaning
   that the value can be set at most once after which it becomes immutable).
 
-### Previous Release v1.0.0 (July 30, 2014)
+### Release v1.0.0 (July 30, 2014)
 
 * Protocol specifications inspired by Clojure [protocol](http://clojure.org/protocols),
   Erlang [behavior](http://www.erlang.org/doc/design_principles/des_princ.html#id60128),
