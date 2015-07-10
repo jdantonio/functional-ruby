@@ -1,5 +1,12 @@
 # Functional Ruby
-[![Gem Version](https://badge.fury.io/rb/functional-ruby.svg)](http://badge.fury.io/rb/functional-ruby) [![Build Status](https://secure.travis-ci.org/jdantonio/functional-ruby.png)](https://travis-ci.org/jdantonio/functional-ruby?branch=master) [![Coverage Status](https://coveralls.io/repos/jdantonio/functional-ruby/badge.png)](https://coveralls.io/r/jdantonio/functional-ruby) [![Code Climate](https://codeclimate.com/github/jdantonio/functional-ruby.png)](https://codeclimate.com/github/jdantonio/functional-ruby) [![Inline docs](http://inch-ci.org/github/jdantonio/functional-ruby.png)](http://inch-ci.org/github/jdantonio/functional-ruby) [![Dependency Status](https://gemnasium.com/jdantonio/functional-ruby.png)](https://gemnasium.com/jdantonio/functional-ruby) [![License](http://img.shields.io/license/MIT.png?color=green)](http://opensource.org/licenses/MIT)
+[![Gem Version](https://badge.fury.io/rb/functional-ruby.svg)](http://badge.fury.io/rb/functional-ruby)
+[![Travis CI Build Status](https://secure.travis-ci.org/jdantonio/functional-ruby.png)](https://travis-ci.org/jdantonio/functional-ruby?branch=master)
+[![AppVeyor Build status](https://ci.appveyor.com/api/projects/status/8xfy4a8lmc26112e/branch/master?svg=true)](https://ci.appveyor.com/project/jdantonio/functional-ruby/branch/master)
+[![Coverage Status](https://coveralls.io/repos/jdantonio/functional-ruby/badge.png)](https://coveralls.io/r/jdantonio/functional-ruby)
+[![Code Climate](https://codeclimate.com/github/jdantonio/functional-ruby.png)](https://codeclimate.com/github/jdantonio/functional-ruby)
+[![Inline docs](http://inch-ci.org/github/jdantonio/functional-ruby.png)](http://inch-ci.org/github/jdantonio/functional-ruby)
+[![Dependency Status](https://gemnasium.com/jdantonio/functional-ruby.png)](https://gemnasium.com/jdantonio/functional-ruby)
+[![License](http://img.shields.io/license/MIT.png?color=green)](http://opensource.org/licenses/MIT)
 
 **A gem for adding functional programming tools to Ruby. Inspired by [Erlang](http://www.erlang.org/),
 [Clojure](http://clojure.org/), and [Functional Java](http://functionaljava.org/).**
