@@ -51,7 +51,9 @@ module Functional
       argv = []
       match.args.each_with_index do |p, i|
         if p == ALL && i == match.args.length-1
-          argv << args[(i..args.length)].reduce([]){|memo, arg| memo << arg }
+          # when got ALL, then push all to the end to the list of args,
+          # so we can get them as usual *args in matched method
+          argv.concat args[(i..args.length)]
         elsif p.is_a?(Hash) && p.values.include?(UNBOUND)
           p.each do |key, value|
             argv << args[i][key] if value == UNBOUND
@@ -98,6 +100,13 @@ module Functional
           raise ArgumentError.new("block missing for definition of function `#{function}` on class #{self}")
         end
 
+        # Check that number of free variables in pattern match method's arity
+        pat_arity = __pattern_arity__(args)
+        unless pat_arity == block.arity
+          raise ArgumentError.new("Pattern and block arity mismatch: "\
+                                    "#{pat_arity}, #{block.arity}")
+        end
+
         # add a new pattern for this function
         pattern = __register_pattern__(function, *args, &block)
 
@@ -123,13 +132,13 @@ module Functional
               # call the matched function
               argv = __unbound_args__(match, args)
               self.instance_exec(*argv, &match.body)
-            else
+            elsif defined?(super)
               # delegate to the superclass
               super(*args, &block)
+            else
+              raise NoMethodError.new("no method `#{function}` matching "\
+                "#{args} found for class #{self.class}")
             end
-          rescue NoMethodError, ArgumentError
-            # raise a custom error
-            raise NoMethodError.new("no method `#{function}` matching #{args} found for class #{self.class}")
           end
         end
       end
@@ -148,6 +157,24 @@ module Functional
         self.__function_pattern_matches__[function] = patterns
         pattern
       end
+
+      # @!visibility private
+      def __pattern_arity__(pat)
+        r = pat.reduce(0) do |acc, v|
+          if v.is_a?(Hash) 
+            ub = v.values.count { |e| e == UNBOUND }
+            # if hash have UNBOUND then treat each unbound as separate arg
+            # alse all hash is one arg
+            ub > 0 ? acc + ub : acc + 1
+          elsif v == ALL || v == UNBOUND || v.is_a?(Class)
+            acc + 1
+          else
+            acc
+          end
+        end
+        pat.last == ALL ? -r : r
+      end
+
     end
   end
 end

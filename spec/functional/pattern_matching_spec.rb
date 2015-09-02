@@ -46,9 +46,9 @@ module Functional
       it 'can pattern match the constructor' do
 
         unless RUBY_VERSION == '1.9.2'
-          subject.defn(:initialize, PatternMatching::UNBOUND, PatternMatching::UNBOUND, PatternMatching::UNBOUND) { 'three args' }
-          subject.defn(:initialize, PatternMatching::UNBOUND, PatternMatching::UNBOUND) { 'two args' }
-          subject.defn(:initialize, PatternMatching::UNBOUND) { 'one arg' }
+          subject.defn(:initialize, PatternMatching::UNBOUND, PatternMatching::UNBOUND, PatternMatching::UNBOUND) { |_,_,_| 'three args' }
+          subject.defn(:initialize, PatternMatching::UNBOUND, PatternMatching::UNBOUND) { |_,_| 'two args' }
+          subject.defn(:initialize, PatternMatching::UNBOUND) { |_| 'one arg' }
 
           expect { subject.new(1) }.not_to raise_error
           expect { subject.new(1, 2) }.not_to raise_error
@@ -101,8 +101,8 @@ module Functional
 
       it 'can call another match from within a match' do
 
-        subject.defn(:foo, :bar) { |arg| foo(:baz) }
-        subject.defn(:foo, :baz) { |arg| 'expected' }
+        subject.defn(:foo, :bar) { foo(:baz) }
+        subject.defn(:foo, :baz) { 'expected' }
 
         expect(subject.new.foo(:bar)).to eq 'expected'
       end
@@ -129,7 +129,7 @@ module Functional
 
       it 'matches an argument of the class given in the match parameter' do
 
-        subject.defn(:foo, Integer) { 'expected' }
+        subject.defn(:foo, Integer) { |_| 'expected' }
         expect(subject.new.foo(100)).to eq 'expected'
 
         expect {
@@ -239,7 +239,7 @@ module Functional
 
       it 'matches a hash parameter' do
 
-        subject.defn(:foo, bar: 1, baz: 2) { 'expected' }
+        subject.defn(:foo, bar: 1, baz: 2) { |_| 'expected' }
         expect(subject.new.foo(bar: 1, baz: 2)).to eq 'expected'
 
         expect {
@@ -305,7 +305,7 @@ module Functional
 
       it 'matches an empty argument hash with an empty parameter hash' do
 
-        subject.defn(:foo, {}) { true }
+        subject.defn(:foo, {}) { |_| true }
         expect(subject.new.foo({})).to be true
 
         expect {
@@ -315,7 +315,7 @@ module Functional
 
       it 'matches when all hash keys and values match' do
 
-        subject.defn(:foo, {bar: :baz}) { true }
+        subject.defn(:foo, {bar: :baz}) { |_| true }
         expect(subject.new.foo(bar: :baz)).to be true
 
         expect {
@@ -325,13 +325,13 @@ module Functional
 
       it 'matches when every pattern key/value are in the argument' do
 
-        subject.defn(:foo, {bar: :baz}) { true }
+        subject.defn(:foo, {bar: :baz}) { |_| true }
         expect(subject.new.foo(foo: :bar, bar: :baz)).to be true
       end
 
       it 'matches when all keys with unbound values in the pattern have an argument' do
 
-        subject.defn(:foo, {bar: PatternMatching::UNBOUND}) { true }
+        subject.defn(:foo, {bar: PatternMatching::UNBOUND}) { |_| true }
         expect(subject.new.foo(bar: :baz)).to be true
       end
 
@@ -349,7 +349,7 @@ module Functional
 
       it 'does not match a non-hash argument' do
 
-        subject.defn(:foo, {}) { true }
+        subject.defn(:foo, {}) { |_| true }
 
         expect {
           subject.new.foo(:bar)
@@ -367,7 +367,7 @@ module Functional
 
       it 'supports ALL as the last parameter' do
 
-        subject.defn(:foo, 1, 2, PatternMatching::ALL) { |args| args }
+        subject.defn(:foo, 1, 2, PatternMatching::ALL) { |*args| args }
         expect(subject.new.foo(1, 2, 3)).to eq([3])
         expect(subject.new.foo(1, 2, :foo, :bar)).to eq([:foo, :bar])
         expect(subject.new.foo(1, 2, :foo, :bar, one: 1, two: 2)).to eq([:foo, :bar, {one: 1, two: 2}])
@@ -378,7 +378,7 @@ module Functional
 
       it 'matches when the guard clause returns true' do
 
-        subject.defn(:old_enough, PatternMatching::UNBOUND){
+        subject.defn(:old_enough, PatternMatching::UNBOUND){ |_|
           true
         }.when{|x| x > 16 }
 
@@ -387,7 +387,7 @@ module Functional
 
       it 'does not match when the guard clause returns false' do
 
-        subject.defn(:old_enough, PatternMatching::UNBOUND){
+        subject.defn(:old_enough, PatternMatching::UNBOUND){ |_|
           true
         }.when{|x| x > 16 }
 
@@ -398,11 +398,11 @@ module Functional
 
       it 'continues pattern matching when the guard clause returns false' do
 
-        subject.defn(:old_enough, PatternMatching::UNBOUND){
+        subject.defn(:old_enough, PatternMatching::UNBOUND){ |_|
           true
         }.when{|x| x > 16 }
 
-        subject.defn(:old_enough, PatternMatching::UNBOUND) { false }
+        subject.defn(:old_enough, PatternMatching::UNBOUND) { |_| false }
 
         expect(subject.new.old_enough(10)).to be false
       end
@@ -412,6 +412,53 @@ module Functional
         expect {
           subject.defn(:initialize, PatternMatching::UNBOUND) { 'one arg' }.when
         }.to raise_error(ArgumentError)
+      end
+    end
+
+    context "NoMethodError" do
+      let (:parent) do
+        Class.new { include PatternMatching; def tst; :test end }
+      end
+      let (:child) { Class.new(parent) }
+
+      # let (:child_inst) { child.new }
+
+      it "throws if pattern don't match and no super" do
+        child.defn(:no_method) { }
+        expect { child.new.no_method(1) }.to raise_error(NoMethodError)
+      end
+
+      it "calls super if pattern don't match and there is super" do
+        child.defn(:tst, PatternMatching::UNBOUND) { |_| }
+        expect(child.new.tst).to eq(:test)
+      end
+
+      it "throws if it raised inside method body" do
+        child.defn(:raiser) { raise NoMethodError, "no_method" }
+        expect { child.new.raiser }.to raise_error(NoMethodError, "no_method")
+      end
+    end
+
+    context "ArgumentError" do
+      it "throws error if block and pattern args missmatch" do
+        expect do
+          subject.defn(:raise) { |_| }
+        end.to raise_error(ArgumentError)
+
+        expect do
+          subject.defn(:raise, PatternMatching::UNBOUND) { }
+        end.to raise_error(ArgumentError)
+
+        expect do
+          subject.defn(:raise, PatternMatching::ANY) { }
+        end
+
+        expect do
+          subject.defn(:imok,
+            PatternMatching::UNBOUND,
+            { k: _},
+            PatternMatching::ANY) { |_, _, *args| }
+        end
       end
     end
   end
