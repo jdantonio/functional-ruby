@@ -7,7 +7,7 @@ module Functional
   # called the result is caches with reference to the given parameters.
   # Subsequent calls to the function that use the same parameters will return
   # the cached result. As a result the response time for frequently called
-  # functions is vastly incresed (after the first call with any given set of)
+  # functions is vastly increased (after the first call with any given set of)
   # arguments, at the cost of increased memory usage (the cache).
   #
   # {include:file:doc/memo.md}
