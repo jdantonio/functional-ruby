@@ -59,22 +59,22 @@ module Functional
   #
   #   def web_host(url)
   #     uri = URI(url)
-  #     if uri.scheme == 'http'
-  #       Functional::Either.left(uri.host)
+  #     if uri.scheme != 'http'
+  #       Functional::Either.left('Invalid HTTP URL')
   #     else
-  #       Functional::Either.right('Invalid HTTP URL')
+  #       Functional::Either.right(uri.host)
   #     end
   #   end
   #
   #   good = web_host('http://www.concurrent-ruby.com')
-  #   good.left? #=> true
-  #   good.left  #=> "www.concurrent-ruby"
-  #   good.right #=> nil
+  #   good.right? #=> true
+  #   good.right  #=> "www.concurrent-ruby"
+  #   good.left #=> nil
   #
   #   good = web_host('bogus')
-  #   good.left? #=> false
-  #   good.left  #=> nil
-  #   good.right #=> "Invalid HTTP URL"
+  #   good.right? #=> false
+  #   good.right  #=> nil
+  #   good.left #=> "Invalid HTTP URL"
   #
   # @see http://functionaljava.googlecode.com/svn/artifacts/3.0/javadoc/fj/data/Either.html Functional Java
   # @see https://hackage.haskell.org/package/base-4.2.0.1/docs/Data-Either.html Haskell Data.Either
