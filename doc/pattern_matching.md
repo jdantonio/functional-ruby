@@ -214,8 +214,8 @@
    Ruby:
 
    ```ruby
-   defn(:old_enough, _){ true }.when{|x| x >= 16 }
-   defn(:old_enough, _){ false }
+   defn(:old_enough, _){ |_| true }.when{|x| x >= 16 }
+   defn(:old_enough, _){ |_| false }
    ```
 
 #####    Order Matters
@@ -382,7 +382,7 @@
         must appear AFTER the prior match or it will override that one
        f
      }
-     defn(:hashable, {}) { ||
+     defn(:hashable, {}) { |_|
         matches an empty hash
        :empty
      }
@@ -411,10 +411,10 @@
    defn(:all, :one, Integer, ALL) { |int, args|
      [int, args]
    }
-   defn(:all, 1, _, ALL) { |var, args|
+   defn(:all, 1, _, ALL) { |var, _, *args|
      [var, args]
    }
-   defn(:all, ALL) { | args|
+   defn(:all, ALL) { |*args|
      args
    }
 
@@ -450,22 +450,22 @@
    ```
 
    ```ruby
-   defn(:old_enough, _){ true }.when{|x| x >= 16 }
-   defn(:old_enough, _){ false }
+   defn(:old_enough, _){ |_| true }.when{|x| x >= 16 }
+   defn(:old_enough, _){ |_| false }
 
-   defn(:right_age, _) {
+   defn(:right_age, _) { |_|
      true
    }.when{|x| x >= 16 && x <= 104 }
 
-   defn(:right_age, _) {
+   defn(:right_age, _) { |_|
      false
    }
 
-   defn(:wrong_age, _) {
+   defn(:wrong_age, _) { |_|
      false
    }.when{|x| x < 16 || x > 104 }
 
-   defn(:wrong_age, _) {
+   defn(:wrong_age, _) { |_|
      true
    }
    ```
