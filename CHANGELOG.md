@@ -1,4 +1,10 @@
-## Current Release v1.2.0 (July 10, 2015)
+## Current Release v1.3.0 (October 4, 2015)
+
+* Pattern match now check arity of pattern and block
+* `PatternMatching::ALL` pattern now should be presented as variable length args (*args)
+* `NoMethodError` and `ArgumentError` raised from method block won't be catched anymore by lib
+
+### Release v1.2.0 (July 10, 2015)
 
 * `Record` classes can be declared with a type/protocol specification for type safety.
 * Improved documentation
