@@ -16,7 +16,15 @@ module Functional
   # This means that any side effects created by the operation will only happen
   # once as well.
   #
-  # @!macro thread_safe_immutable_object
+  # @!macro [new] thread_safe_immutable_object
+  #
+  #    @note This is a write-once, read-many, thread safe object that can be
+  #      used in concurrent systems. Thread safety guarantees *cannot* be made
+  #      about objects contained *within* this object, however. Ruby variables
+  #      are mutable references to mutable objects. This cannot be changed. The
+  #      best practice it to only encapsulate immutable, frozen, or thread safe
+  #      objects. Ultimately, thread safety is the responsibility of the
+  #      programmer.
   #
   # @see http://clojuredocs.org/clojure_core/clojure.core/delay Clojure delay
   class Delay < Synchronization::Object

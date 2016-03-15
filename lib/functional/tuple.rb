@@ -11,6 +11,8 @@ module Functional
   #   contains, the less efficient it will become. A future version will use a fast,
   #   immutable, persistent data structure such as a finger tree or a trie.
   #
+  # @!macro thread_safe_immutable_object
+  #
   # @see http://en.wikipedia.org/wiki/Tuple
   # @see http://msdn.microsoft.com/en-us/library/system.tuple.aspx
   # @see http://www.tutorialspoint.com/python/python_tuples.htm
@@ -19,16 +21,6 @@ module Functional
   # @see http://www.erlang.org/doc/reference_manual/data_types.html
   # @see http://www.erlang.org/doc/man/erlang.html#make_tuple-2
   # @see http://en.wikibooks.org/wiki/Haskell/Lists_and_tuples#Tuples
-  #
-  # @!macro [new] thread_safe_immutable_object
-  #
-  #    @note This is a write-once, read-many, thread safe object that can be
-  #      used in concurrent systems. Thread safety guarantees *cannot* be made
-  #      about objects contained *within* this object, however. Ruby variables
-  #      are mutable references to mutable objects. This cannot be changed. The
-  #      best practice it to only encapsulate immutable, frozen, or thread safe
-  #      objects. Ultimately, thread safety is the responsibility of the
-  #      programmer.
   class Tuple < Synchronization::Object
 
     # Create a new tuple with the given data items in the given order.
@@ -133,7 +125,7 @@ module Functional
     alias_method :*, :repeat
 
     # Returns a new tuple by removing duplicate values in self.
-    # 
+    #
     # @return [Functional::Tuple] the new tuple with only unique items
     def uniq
       Tuple.new(@data.uniq)
