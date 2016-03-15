@@ -100,21 +100,6 @@
       <li><a href="http://ruby-concurrency.github.io/concurrent-ruby/Concurrent/Actor/TypeCheck.html" target="_parent" title="TypeCheck in Concurrent Ruby">TypeCheck in Concurrent Ruby</a></li>
     
   </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div>
 
@@ -365,21 +350,6 @@ of the modules and/or classes in the given list?</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -387,14 +357,14 @@ of the modules and/or classes in the given list?</p>
       <pre class="lines">
 
 
+90
+91
 92
 93
-94
-95
-96</pre>
+94</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/type_check.rb', line 92</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/type_check.rb', line 90</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_Child!'>Child!</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_types'>types</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_Child?'>Child?</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_types'>types</span><span class='rparen'>)</span> <span class='kw'>or</span>
@@ -477,21 +447,6 @@ the value against</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -499,13 +454,13 @@ the value against</p>
       <pre class="lines">
 
 
+76
+77
 78
-79
-80
-81</pre>
+79</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/type_check.rb', line 78</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/type_check.rb', line 76</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_Child?'>Child?</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_types'>types</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_Type?'>Type?</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='const'>Class</span><span class='rparen'>)</span> <span class='op'>&amp;&amp;</span>
@@ -607,21 +562,6 @@ the value against</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -629,14 +569,14 @@ the value against</p>
       <pre class="lines">
 
 
+62
+63
 64
 65
-66
-67
-68</pre>
+66</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/type_check.rb', line 64</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/type_check.rb', line 62</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_Match!'>Match!</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_types'>types</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_Match?'>Match?</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_types'>types</span><span class='rparen'>)</span> <span class='kw'>or</span>
@@ -721,21 +661,6 @@ the value against</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -743,12 +668,12 @@ the value against</p>
       <pre class="lines">
 
 
-47
-48
-49</pre>
+45
+46
+47</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/type_check.rb', line 47</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/type_check.rb', line 45</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_Match?'>Match?</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_types'>types</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_types'>types</span><span class='period'>.</span><span class='id identifier rubyid_any?'>any?</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_t'>t</span><span class='op'>|</span> <span class='id identifier rubyid_t'>t</span> <span class='op'>===</span> <span class='id identifier rubyid_value'>value</span> <span class='rbrace'>}</span>
@@ -846,21 +771,6 @@ the value against</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -868,14 +778,14 @@ the value against</p>
       <pre class="lines">
 
 
+29
+30
 31
 32
-33
-34
-35</pre>
+33</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/type_check.rb', line 31</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/type_check.rb', line 29</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_Type!'>Type!</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_types'>types</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_Type?'>Type?</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_types'>types</span><span class='rparen'>)</span> <span class='kw'>or</span>
@@ -958,21 +868,6 @@ the value against</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -980,12 +875,12 @@ the value against</p>
       <pre class="lines">
 
 
-17
-18
-19</pre>
+15
+16
+17</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/type_check.rb', line 17</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/type_check.rb', line 15</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_Type?'>Type?</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_types'>types</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_types'>types</span><span class='period'>.</span><span class='id identifier rubyid_any?'>any?</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_t'>t</span><span class='op'>|</span> <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='id identifier rubyid_t'>t</span> <span class='rbrace'>}</span>
@@ -1000,9 +895,9 @@ the value against</p>
 </div>
 
     <div id="footer">
-  Generated on Tue Feb 24 22:22:37 2015 by
+  Generated on Tue Mar 15 04:59:11 2016 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.8.7.4 (ruby-2.2.0).
+  0.8.7.6 (ruby-2.2.3).
 </div>
 
   </body>

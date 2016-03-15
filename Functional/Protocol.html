@@ -316,21 +316,6 @@ It is a logical extension of the <code>respond_to?</code> method, but vastly mor
 </div>
 <div class="tags">
   
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0 (formerly &quot;behavior&quot;)</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div>
   <h2>Constant Summary</h2>
@@ -347,21 +332,6 @@ It is a logical extension of the <code>respond_to?</code> method, but vastly mor
 </div>
 <div class="tags">
   
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0 (formerly &quot;behavior&quot;)</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div>
         </dt>
@@ -561,19 +531,6 @@ Raises a <span class='object_link'><a href="../Functional.html#ProtocolError-con
     <li>
       
       
-        <span class='type'>(<tt>ArgumentError</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>when no protocols given</p>
-</div>
-      
-    </li>
-  
-    <li>
-      
-      
         <span class='type'>(<tt><span class='object_link'><a href="../Functional.html#ProtocolError-constant" title="Functional::ProtocolError (constant)">Functional::ProtocolError</a></span></tt>)</span>
       
       
@@ -584,17 +541,15 @@ Raises a <span class='object_link'><a href="../Functional.html#ProtocolError-con
       
     </li>
   
-</ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
     <li>
       
       
+        <span class='type'>(<tt>ArgumentError</tt>)</span>
       
       
-        
-        <div class='inline'><p>1.0.0 (formerly &quot;behavior&quot;)</p>
+      
+        &mdash;
+        <div class='inline'><p>when no protocols given</p>
 </div>
       
     </li>
@@ -607,14 +562,14 @@ Raises a <span class='object_link'><a href="../Functional.html#ProtocolError-con
       <pre class="lines">
 
 
+87
+88
 89
 90
-91
-92
-93</pre>
+91</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/protocol.rb', line 89</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/protocol.rb', line 87</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_Satisfy!'>Satisfy!</span><span class='lparen'>(</span><span class='id identifier rubyid_target'>target</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_protocols'>protocols</span><span class='rparen'>)</span>
   <span class='const'>Protocol</span><span class='op'>::</span><span class='id identifier rubyid_Satisfy?'>Satisfy?</span><span class='lparen'>(</span><span class='id identifier rubyid_target'>target</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_protocols'>protocols</span><span class='rparen'>)</span> <span class='kw'>or</span>
@@ -712,21 +667,6 @@ Raises a <span class='object_link'><a href="../Functional.html#ProtocolError-con
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0 (formerly &quot;behavior&quot;)</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -734,13 +674,13 @@ Raises a <span class='object_link'><a href="../Functional.html#ProtocolError-con
       <pre class="lines">
 
 
+72
+73
 74
-75
-76
-77</pre>
+75</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/protocol.rb', line 74</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/protocol.rb', line 72</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_Satisfy?'>Satisfy?</span><span class='lparen'>(</span><span class='id identifier rubyid_target'>target</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_protocols'>protocols</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>no protocols given</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_protocols'>protocols</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
@@ -812,19 +752,6 @@ Raises a <span class='object_link'><a href="../Functional.html#ProtocolError-con
     <li>
       
       
-        <span class='type'>(<tt>ArgumentError</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>when no protocols are given</p>
-</div>
-      
-    </li>
-  
-    <li>
-      
-      
         <span class='type'>(<tt><span class='object_link'><a href="../Functional.html#ProtocolError-constant" title="Functional::ProtocolError (constant)">Functional::ProtocolError</a></span></tt>)</span>
       
       
@@ -836,17 +763,15 @@ not been specified</p>
       
     </li>
   
-</ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
     <li>
       
       
+        <span class='type'>(<tt>ArgumentError</tt>)</span>
       
       
-        
-        <div class='inline'><p>1.0.0 (formerly &quot;behavior&quot;)</p>
+      
+        &mdash;
+        <div class='inline'><p>when no protocols are given</p>
 </div>
       
     </li>
@@ -859,14 +784,14 @@ not been specified</p>
       <pre class="lines">
 
 
+115
+116
 117
 118
-119
-120
-121</pre>
+119</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/protocol.rb', line 117</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/protocol.rb', line 115</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_Specified!'>Specified!</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_protocols'>protocols</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>no protocols given</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_protocols'>protocols</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
@@ -949,21 +874,6 @@ not been specified</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0 (formerly &quot;behavior&quot;)</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -971,13 +881,13 @@ not been specified</p>
       <pre class="lines">
 
 
+100
+101
 102
-103
-104
-105</pre>
+103</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/protocol.rb', line 102</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/protocol.rb', line 100</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_Specified?'>Specified?</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_protocols'>protocols</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>no protocols given</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_protocols'>protocols</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
@@ -993,9 +903,9 @@ not been specified</p>
 </div>
 
     <div id="footer">
-  Generated on Tue Feb 24 22:22:37 2015 by
+  Generated on Tue Mar 15 04:59:11 2016 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.8.7.4 (ruby-2.2.0).
+  0.8.7.6 (ruby-2.2.3).
 </div>
 
   </body>

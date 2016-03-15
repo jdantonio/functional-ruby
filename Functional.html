@@ -80,7 +80,7 @@
   
     <dt class="r1 last">Defined in:</dt>
     <dd class="r1 last">lib/functional.rb<span class="defines">,<br />
-  lib/functional/memo.rb,<br /> lib/functional/union.rb,<br /> lib/functional/tuple.rb,<br /> lib/functional/delay.rb,<br /> lib/functional/either.rb,<br /> lib/functional/option.rb,<br /> lib/functional/record.rb,<br /> lib/functional/version.rb,<br /> lib/functional/protocol.rb,<br /> lib/functional/final_var.rb,<br /> lib/functional/type_check.rb,<br /> lib/functional/final_struct.rb,<br /> lib/functional/value_struct.rb,<br /> lib/functional/protocol_info.rb,<br /> lib/functional/abstract_struct.rb,<br /> lib/functional/pattern_matching.rb,<br /> lib/functional/method_signature.rb</span>
+  lib/functional/memo.rb,<br /> lib/functional/delay.rb,<br /> lib/functional/tuple.rb,<br /> lib/functional/union.rb,<br /> lib/functional/record.rb,<br /> lib/functional/either.rb,<br /> lib/functional/option.rb,<br /> lib/functional/version.rb,<br /> lib/functional/protocol.rb,<br /> lib/functional/final_var.rb,<br /> lib/functional/type_check.rb,<br /> lib/functional/final_struct.rb,<br /> lib/functional/value_struct.rb,<br /> lib/functional/protocol_info.rb,<br /> lib/functional/abstract_struct.rb,<br /> lib/functional/synchronization.rb,<br /> lib/functional/pattern_matching.rb,<br /> lib/functional/method_signature.rb</span>
 </dd>
   
 </dl>
@@ -100,7 +100,7 @@
 <p class="children">
   
     
-      <strong class="modules">Modules:</strong> <span class='object_link'><a href="Functional/AbstractStruct.html" title="Functional::AbstractStruct (module)">AbstractStruct</a></span>, <span class='object_link'><a href="Functional/Memo.html" title="Functional::Memo (module)">Memo</a></span>, <span class='object_link'><a href="Functional/PatternMatching.html" title="Functional::PatternMatching (module)">PatternMatching</a></span>, <span class='object_link'><a href="Functional/Protocol.html" title="Functional::Protocol (module)">Protocol</a></span>, <span class='object_link'><a href="Functional/Record.html" title="Functional::Record (module)">Record</a></span>, <span class='object_link'><a href="Functional/TypeCheck.html" title="Functional::TypeCheck (module)">TypeCheck</a></span>, <span class='object_link'><a href="Functional/Union.html" title="Functional::Union (module)">Union</a></span>
+      <strong class="modules">Modules:</strong> <span class='object_link'><a href="Functional/Memo.html" title="Functional::Memo (module)">Memo</a></span>, <span class='object_link'><a href="Functional/PatternMatching.html" title="Functional::PatternMatching (module)">PatternMatching</a></span>, <span class='object_link'><a href="Functional/Protocol.html" title="Functional::Protocol (module)">Protocol</a></span>, <span class='object_link'><a href="Functional/Record.html" title="Functional::Record (module)">Record</a></span>, <span class='object_link'><a href="Functional/TypeCheck.html" title="Functional::TypeCheck (module)">TypeCheck</a></span>, <span class='object_link'><a href="Functional/Union.html" title="Functional::Union (module)">Union</a></span>
     
   
     
@@ -156,7 +156,7 @@
 
 </div>
         </dt>
-        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>1.1.0</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>1.3.0</span><span class='tstring_end'>&#39;</span></span></pre></dd>
       
         <dt id="ProtocolError-constant" class="">ProtocolError =
           <div class="docstring">
@@ -209,29 +209,6 @@ immutable object or attribute.</p>
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#configure-class_method" title="configure (class method)">+ (Object) <strong>configure</strong> {|the| ... }</a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>Perform gem-level configuration.</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
       <a href="#SpecifyProtocol-class_method" title="SpecifyProtocol (class method)">+ (Functional::ProtocolInfo) <strong>SpecifyProtocol</strong>(name) { ... }</a>
     
 
@@ -262,83 +239,7 @@ immutable object or attribute.</p>
 
     
       <div class="method_details first">
-  <h3 class="signature first" id="configure-class_method">
-  
-    + (<tt>Object</tt>) <strong>configure</strong> {|the| ... }
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Perform gem-level configuration.</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-<p class="tag_title">Yields:</p>
-<ul class="yield">
-  
-    <li>
-      
-      
-        <span class='type'></span>
-      
-      
-      
-        
-        <div class='inline'><p>the configuration commands</p>
-</div>
-      
-    </li>
-  
-</ul>
-<p class="tag_title">Yield Parameters:</p>
-<ul class="yieldparam">
-  
-    <li>
-      
-        <span class='name'>the</span>
-      
-      
-        <span class='type'>(<tt><span class='object_link'>Functional::Configuration</span></tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>current configuration object</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-57
-58
-59</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/functional.rb', line 57</span>
-
-<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_configure'>configure</span>
-  <span class='kw'>yield</span><span class='lparen'>(</span><span class='id identifier rubyid_configuration'>configuration</span><span class='rparen'>)</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="SpecifyProtocol-class_method">
+  <h3 class="signature first" id="SpecifyProtocol-class_method">
   
     + (<tt><span class='object_link'><a href="Functional/ProtocolInfo.html" title="Functional::ProtocolInfo (class)">Functional::ProtocolInfo</a></span></tt>) <strong>SpecifyProtocol</strong>(name) { ... }
   
@@ -505,9 +406,9 @@ that has already been specified.</p>
 </div>
 
     <div id="footer">
-  Generated on Tue Feb 24 22:22:37 2015 by
+  Generated on Tue Mar 15 04:59:11 2016 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.8.7.4 (ruby-2.2.0).
+  0.8.7.6 (ruby-2.2.3).
 </div>
 
   </body>

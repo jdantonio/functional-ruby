@@ -73,10 +73,12 @@
   
     <dt class="r1">Inherits:</dt>
     <dd class="r1">
-      <span class="inheritName">Object</span>
+      <span class="inheritName"><span class='object_link'>Synchronization::Object</span></span>
       
         <ul class="fullTree">
           <li>Object</li>
+          
+            <li class="next"><span class='object_link'>Synchronization::Object</span></li>
           
             <li class="next">Functional::Option</li>
           
@@ -90,15 +92,11 @@
     
   
     
-      <dt class="r2">Includes:</dt>
-      <dd class="r2"><span class='object_link'><a href="AbstractStruct.html" title="Functional::AbstractStruct (module)">AbstractStruct</a></span></dd>
-      
-    
   
   
   
-    <dt class="r1 last">Defined in:</dt>
-    <dd class="r1 last">lib/functional/option.rb</dd>
+    <dt class="r2 last">Defined in:</dt>
+    <dd class="r2 last">lib/functional/option.rb</dd>
   
 </dl>
 <div class="clear"></div>
@@ -131,26 +129,9 @@ It is an immutable data structure that extends <code>AbstractStruct</code>.</p>
   <p class="tag_title">See Also:</p>
   <ul class="see">
     
-      <li><span class='object_link'><a href="AbstractStruct.html" title="Functional::AbstractStruct (module)">AbstractStruct</a></span></li>
-    
       <li><a href="http://functionaljava.googlecode.com/svn/artifacts/3.0/javadoc/index.html" target="_parent" title="Functional Java">Functional Java</a></li>
     
   </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div>
   <h2>Constant Summary</h2>
@@ -656,6 +637,8 @@ It is an immutable data structure that extends <code>AbstractStruct</code>.</p>
 
   
   
+  
+  
   <div id="instance_attr_details" class="attr_details">
     <h2>Instance Attribute Details</h2>
     
@@ -680,21 +663,6 @@ defaults to nil</p>
 </div>
 <div class="tags">
   
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -702,12 +670,12 @@ defaults to nil</p>
       <pre class="lines">
 
 
-36
-37
-38</pre>
+34
+35
+36</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/option.rb', line 36</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/option.rb', line 34</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_reason'>reason</span>
   <span class='ivar'>@reason</span>
@@ -754,21 +722,6 @@ defaults to nil</p>
       
         &mdash;
         <div class='inline'><p>the values of all record fields in order, frozen</p>
-</div>
-      
-    </li>
-  
-</ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
 </div>
       
     </li>
@@ -890,21 +843,6 @@ defaults to nil</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -912,14 +850,14 @@ defaults to nil</p>
       <pre class="lines">
 
 
+180
+181
 182
 183
-184
-185
-186</pre>
+184</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/option.rb', line 182</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/option.rb', line 180</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_iff'>iff</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='id identifier rubyid_condition'>condition</span> <span class='op'>=</span> <span class='const'>NO_OPTION</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>requires either a condition or a block, not both</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_condition'>condition</span> <span class='op'>!=</span> <span class='const'>NO_OPTION</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_block_given?'>block_given?</span>
@@ -966,21 +904,6 @@ defaults to nil</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -988,12 +911,12 @@ defaults to nil</p>
       <pre class="lines">
 
 
-43
-44
-45</pre>
+41
+42
+43</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/option.rb', line 43</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/option.rb', line 41</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_none'>none</span><span class='lparen'>(</span><span class='id identifier rubyid_reason'>reason</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='kw'>nil</span><span class='comma'>,</span> <span class='kw'>true</span><span class='comma'>,</span> <span class='id identifier rubyid_reason'>reason</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span>
@@ -1057,21 +980,6 @@ defaults to nil</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -1079,12 +987,12 @@ defaults to nil</p>
       <pre class="lines">
 
 
-51
-52
-53</pre>
+49
+50
+51</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/option.rb', line 51</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/option.rb', line 49</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_some'>some</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='kw'>false</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span>
@@ -1204,21 +1112,6 @@ block are both provided.</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -1226,6 +1119,8 @@ block are both provided.</p>
       <pre class="lines">
 
 
+106
+107
 108
 109
 110
@@ -1235,12 +1130,10 @@ block are both provided.</p>
 114
 115
 116
-117
-118
-119</pre>
+117</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/option.rb', line 108</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/option.rb', line 106</span>
 
 <span class='kw'>def</span> <span class='kw'>and</span><span class='lparen'>(</span><span class='id identifier rubyid_other'>other</span> <span class='op'>=</span> <span class='const'>NO_OPTION</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>cannot give both an option and a block</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_other'>other</span> <span class='op'>!=</span> <span class='const'>NO_OPTION</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_block_given?'>block_given?</span>
@@ -1314,21 +1207,6 @@ If no block is given an enumerator is returned.</p>
       
         &mdash;
         <div class='inline'><p>when no block is given</p>
-</div>
-      
-    </li>
-  
-</ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
 </div>
       
     </li>
@@ -1408,21 +1286,6 @@ If no block is given an enumerator is returned.</p>
       
         &mdash;
         <div class='inline'><p>when no block is given</p>
-</div>
-      
-    </li>
-  
-</ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
 </div>
       
     </li>
@@ -1511,21 +1374,6 @@ both provided.</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -1533,6 +1381,8 @@ both provided.</p>
       <pre class="lines">
 
 
+158
+159
 160
 161
 162
@@ -1542,12 +1392,10 @@ both provided.</p>
 166
 167
 168
-169
-170
-171</pre>
+169</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/option.rb', line 160</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/option.rb', line 158</span>
 
 <span class='kw'>def</span> <span class='kw'>else</span><span class='lparen'>(</span><span class='id identifier rubyid_other'>other</span> <span class='op'>=</span> <span class='const'>NO_OPTION</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>cannot give both an option and a block</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_other'>other</span> <span class='op'>!=</span> <span class='const'>NO_OPTION</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_block_given?'>block_given?</span>
@@ -1630,21 +1478,6 @@ field values (according to <code>Object#==</code>).</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div>
 </div>
@@ -1684,21 +1517,6 @@ field values (according to <code>Object#==</code>).</p>
       
         &mdash;
         <div class='inline'><p>all record fields in order, frozen</p>
-</div>
-      
-    </li>
-  
-</ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
 </div>
       
     </li>
@@ -1748,21 +1566,6 @@ record class, all fields, and all values.</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -1770,12 +1573,12 @@ record class, all fields, and all values.</p>
       <pre class="lines">
 
 
-189
-190
-191</pre>
+187
+188
+189</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/option.rb', line 189</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/option.rb', line 187</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_inspect'>inspect</span>
   <span class='kw'>super</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'> :some</span><span class='regexp_end'>/</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> (</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_some?'>some?</span> <span class='op'>?</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>some</span><span class='tstring_end'>&#39;</span></span> <span class='op'>:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>none</span><span class='tstring_end'>&#39;</span></span><span class='embexpr_end'>}</span><span class='tstring_content'>) :some</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
@@ -1826,21 +1629,6 @@ record class, all fields, and all values.</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -1848,12 +1636,12 @@ record class, all fields, and all values.</p>
       <pre class="lines">
 
 
-87
-88
-89</pre>
+85
+86
+87</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/option.rb', line 87</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/option.rb', line 85</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_length'>length</span>
   <span class='id identifier rubyid_none?'>none?</span> <span class='op'>?</span> <span class='int'>0</span> <span class='op'>:</span> <span class='int'>1</span>
@@ -1902,21 +1690,6 @@ record class, all fields, and all values.</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -1924,12 +1697,12 @@ record class, all fields, and all values.</p>
       <pre class="lines">
 
 
-68
-69
-70</pre>
+66
+67
+68</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/option.rb', line 68</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/option.rb', line 66</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_none?'>none?</span>
   <span class='ivar'>@none</span>
@@ -2024,21 +1797,6 @@ if an other value and a block are both provided.</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -2046,6 +1804,8 @@ if an other value and a block are both provided.</p>
       <pre class="lines">
 
 
+134
+135
 136
 137
 138
@@ -2055,12 +1815,10 @@ if an other value and a block are both provided.</p>
 142
 143
 144
-145
-146
-147</pre>
+145</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/option.rb', line 136</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/option.rb', line 134</span>
 
 <span class='kw'>def</span> <span class='kw'>or</span><span class='lparen'>(</span><span class='id identifier rubyid_other'>other</span> <span class='op'>=</span> <span class='const'>NO_OPTION</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>cannot give both an option and a block</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_other'>other</span> <span class='op'>!=</span> <span class='const'>NO_OPTION</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_block_given?'>block_given?</span>
@@ -2118,21 +1876,6 @@ if an other value and a block are both provided.</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -2140,12 +1883,12 @@ if an other value and a block are both provided.</p>
       <pre class="lines">
 
 
-77
-78
-79</pre>
+75
+76
+77</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/option.rb', line 77</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/option.rb', line 75</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_some'>some</span>
   <span class='id identifier rubyid_to_h'>to_h</span><span class='lbracket'>[</span><span class='symbol'>:some</span><span class='rbracket'>]</span>
@@ -2194,21 +1937,6 @@ if an other value and a block are both provided.</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -2216,12 +1944,12 @@ if an other value and a block are both provided.</p>
       <pre class="lines">
 
 
-59
-60
-61</pre>
+57
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/option.rb', line 59</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/option.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_some?'>some?</span>
   <span class='op'>!</span> <span class='id identifier rubyid_none?'>none?</span>
@@ -2271,21 +1999,6 @@ if an other value and a block are both provided.</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div>
 </div>
@@ -2295,9 +2008,9 @@ if an other value and a block are both provided.</p>
 </div>
 
     <div id="footer">
-  Generated on Tue Feb 24 22:22:38 2015 by
+  Generated on Tue Mar 15 04:59:12 2016 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.8.7.4 (ruby-2.2.0).
+  0.8.7.6 (ruby-2.2.3).
 </div>
 
   </body>

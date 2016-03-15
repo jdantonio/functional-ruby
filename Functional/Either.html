@@ -73,10 +73,12 @@
   
     <dt class="r1">Inherits:</dt>
     <dd class="r1">
-      <span class="inheritName">Object</span>
+      <span class="inheritName"><span class='object_link'>Synchronization::Object</span></span>
       
         <ul class="fullTree">
           <li>Object</li>
+          
+            <li class="next"><span class='object_link'>Synchronization::Object</span></li>
           
             <li class="next">Functional::Either</li>
           
@@ -90,15 +92,11 @@
     
   
     
-      <dt class="r2">Includes:</dt>
-      <dd class="r2"><span class='object_link'><a href="AbstractStruct.html" title="Functional::AbstractStruct (module)">AbstractStruct</a></span></dd>
-      
-    
   
   
   
-    <dt class="r1 last">Defined in:</dt>
-    <dd class="r1 last">lib/functional/either.rb</dd>
+    <dt class="r2 last">Defined in:</dt>
+    <dd class="r2 last">lib/functional/either.rb</dd>
   
 </dl>
 <div class="clear"></div>
@@ -174,22 +172,22 @@ expressive, intent-revealing code.</p>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_web_host'>web_host</span><span class='lparen'>(</span><span class='id identifier rubyid_url'>url</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_uri'>uri</span> <span class='op'>=</span> <span class='const'>URI</span><span class='lparen'>(</span><span class='id identifier rubyid_url'>url</span><span class='rparen'>)</span>
-  <span class='kw'>if</span> <span class='id identifier rubyid_uri'>uri</span><span class='period'>.</span><span class='id identifier rubyid_scheme'>scheme</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>http</span><span class='tstring_end'>&#39;</span></span>
-    <span class='const'>Functional</span><span class='op'>::</span><span class='const'>Either</span><span class='period'>.</span><span class='id identifier rubyid_left'>left</span><span class='lparen'>(</span><span class='id identifier rubyid_uri'>uri</span><span class='period'>.</span><span class='id identifier rubyid_host'>host</span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_uri'>uri</span><span class='period'>.</span><span class='id identifier rubyid_scheme'>scheme</span> <span class='op'>!=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>http</span><span class='tstring_end'>&#39;</span></span>
+    <span class='const'>Functional</span><span class='op'>::</span><span class='const'>Either</span><span class='period'>.</span><span class='id identifier rubyid_left'>left</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Invalid HTTP URL</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
   <span class='kw'>else</span>
-    <span class='const'>Functional</span><span class='op'>::</span><span class='const'>Either</span><span class='period'>.</span><span class='id identifier rubyid_right'>right</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Invalid HTTP URL</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+    <span class='const'>Functional</span><span class='op'>::</span><span class='const'>Either</span><span class='period'>.</span><span class='id identifier rubyid_right'>right</span><span class='lparen'>(</span><span class='id identifier rubyid_uri'>uri</span><span class='period'>.</span><span class='id identifier rubyid_host'>host</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 <span class='kw'>end</span>
 
 <span class='id identifier rubyid_good'>good</span> <span class='op'>=</span> <span class='id identifier rubyid_web_host'>web_host</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>http://www.concurrent-ruby.com</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
-<span class='id identifier rubyid_good'>good</span><span class='period'>.</span><span class='id identifier rubyid_left?'>left?</span> <span class='comment'>#=&gt; true
-</span><span class='id identifier rubyid_good'>good</span><span class='period'>.</span><span class='id identifier rubyid_left'>left</span>  <span class='comment'>#=&gt; &quot;www.concurrent-ruby&quot;
-</span><span class='id identifier rubyid_good'>good</span><span class='period'>.</span><span class='id identifier rubyid_right'>right</span> <span class='comment'>#=&gt; nil
+<span class='id identifier rubyid_good'>good</span><span class='period'>.</span><span class='id identifier rubyid_right?'>right?</span> <span class='comment'>#=&gt; true
+</span><span class='id identifier rubyid_good'>good</span><span class='period'>.</span><span class='id identifier rubyid_right'>right</span>  <span class='comment'>#=&gt; &quot;www.concurrent-ruby&quot;
+</span><span class='id identifier rubyid_good'>good</span><span class='period'>.</span><span class='id identifier rubyid_left'>left</span> <span class='comment'>#=&gt; nil
 </span>
 <span class='id identifier rubyid_good'>good</span> <span class='op'>=</span> <span class='id identifier rubyid_web_host'>web_host</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>bogus</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
-<span class='id identifier rubyid_good'>good</span><span class='period'>.</span><span class='id identifier rubyid_left?'>left?</span> <span class='comment'>#=&gt; false
-</span><span class='id identifier rubyid_good'>good</span><span class='period'>.</span><span class='id identifier rubyid_left'>left</span>  <span class='comment'>#=&gt; nil
-</span><span class='id identifier rubyid_good'>good</span><span class='period'>.</span><span class='id identifier rubyid_right'>right</span> <span class='comment'>#=&gt; &quot;Invalid HTTP URL&quot;</span></code></pre>
+<span class='id identifier rubyid_good'>good</span><span class='period'>.</span><span class='id identifier rubyid_right?'>right?</span> <span class='comment'>#=&gt; false
+</span><span class='id identifier rubyid_good'>good</span><span class='period'>.</span><span class='id identifier rubyid_right'>right</span>  <span class='comment'>#=&gt; nil
+</span><span class='id identifier rubyid_good'>good</span><span class='period'>.</span><span class='id identifier rubyid_left'>left</span> <span class='comment'>#=&gt; &quot;Invalid HTTP URL&quot;</span></code></pre>
     
   </div>
 
@@ -204,21 +202,6 @@ expressive, intent-revealing code.</p>
       <li><a href="http://ruby-concurrency.github.io/concurrent-ruby/Concurrent/Obligation.html" target="_parent" title="Concurrent Ruby">Concurrent Ruby</a></li>
     
   </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div>
   <h2>Constant Summary</h2>
@@ -777,6 +760,8 @@ expressive, intent-revealing code.</p>
 
   
   
+  
+  
   <div id="instance_attr_details" class="attr_details">
     <h2>Instance Attribute Details</h2>
     
@@ -817,21 +802,6 @@ expressive, intent-revealing code.</p>
       
         &mdash;
         <div class='inline'><p>the values of all record fields in order, frozen</p>
-</div>
-      
-    </li>
-  
-</ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
 </div>
       
     </li>
@@ -939,21 +909,6 @@ given error class will be used.</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -961,14 +916,14 @@ given error class will be used.</p>
       <pre class="lines">
 
 
+133
 134
 135
 136
-137
-138</pre>
+137</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/either.rb', line 134</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/either.rb', line 133</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_error'>error</span><span class='lparen'>(</span><span class='id identifier rubyid_message'>message</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_clazz'>clazz</span> <span class='op'>=</span> <span class='const'>StandardError</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_ex'>ex</span> <span class='op'>=</span> <span class='id identifier rubyid_clazz'>clazz</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_message'>message</span><span class='rparen'>)</span>
@@ -1100,21 +1055,6 @@ given error class will be used.</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -1122,14 +1062,14 @@ given error class will be used.</p>
       <pre class="lines">
 
 
+204
 205
 206
 207
-208
-209</pre>
+208</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/either.rb', line 205</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/either.rb', line 204</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_iff'>iff</span><span class='lparen'>(</span><span class='id identifier rubyid_lvalue'>lvalue</span><span class='comma'>,</span> <span class='id identifier rubyid_rvalue'>rvalue</span><span class='comma'>,</span> <span class='id identifier rubyid_condition'>condition</span> <span class='op'>=</span> <span class='const'>NO_VALUE</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>requires either a condition or a block, not both</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_condition'>condition</span> <span class='op'>!=</span> <span class='const'>NO_VALUE</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_block_given?'>block_given?</span>
@@ -1195,21 +1135,6 @@ given error class will be used.</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -1217,12 +1142,12 @@ given error class will be used.</p>
       <pre class="lines">
 
 
+101
 102
-103
-104</pre>
+103</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/either.rb', line 102</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/either.rb', line 101</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_left'>left</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='kw'>true</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span>
@@ -1293,12 +1218,12 @@ given error class will be used.</p>
       <pre class="lines">
 
 
+104
 105
-106
-107</pre>
+106</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/either.rb', line 105</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/either.rb', line 104</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_left'>left</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='kw'>true</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span>
@@ -1362,21 +1287,6 @@ given error class will be used.</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -1384,12 +1294,12 @@ given error class will be used.</p>
       <pre class="lines">
 
 
+110
 111
-112
-113</pre>
+112</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/either.rb', line 111</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/either.rb', line 110</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_right'>right</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='kw'>false</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span>
@@ -1460,12 +1370,12 @@ given error class will be used.</p>
       <pre class="lines">
 
 
+113
 114
-115
-116</pre>
+115</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/either.rb', line 114</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/either.rb', line 113</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_right'>right</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='kw'>false</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span>
@@ -1536,21 +1446,6 @@ If no block is given an enumerator is returned.</p>
       
         &mdash;
         <div class='inline'><p>when no block is given</p>
-</div>
-      
-    </li>
-  
-</ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
 </div>
       
     </li>
@@ -1635,21 +1530,6 @@ If no block is given an enumerator is returned.</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div>
 </div>
@@ -1723,21 +1603,6 @@ If no block is given an enumerator is returned.</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -1745,12 +1610,12 @@ If no block is given an enumerator is returned.</p>
       <pre class="lines">
 
 
+190
 191
-192
-193</pre>
+192</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/either.rb', line 191</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/either.rb', line 190</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_either'>either</span><span class='lparen'>(</span><span class='id identifier rubyid_lproc'>lproc</span><span class='comma'>,</span> <span class='id identifier rubyid_rproc'>rproc</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_left?'>left?</span> <span class='op'>?</span> <span class='id identifier rubyid_lproc'>lproc</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='id identifier rubyid_left'>left</span><span class='rparen'>)</span> <span class='op'>:</span> <span class='id identifier rubyid_rproc'>rproc</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='id identifier rubyid_right'>right</span><span class='rparen'>)</span>
@@ -1824,21 +1689,6 @@ field values (according to <code>Object#==</code>).</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div>
 </div>
@@ -1878,21 +1728,6 @@ field values (according to <code>Object#==</code>).</p>
       
         &mdash;
         <div class='inline'><p>all record fields in order, frozen</p>
-</div>
-      
-    </li>
-  
-</ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
 </div>
       
     </li>
@@ -1947,21 +1782,6 @@ record class, all fields, and all values.</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div>
 </div>
@@ -2005,21 +1825,6 @@ record class, all fields, and all values.</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -2027,12 +1832,12 @@ record class, all fields, and all values.</p>
       <pre class="lines">
 
 
+143
 144
-145
-146</pre>
+145</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/either.rb', line 144</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/either.rb', line 143</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_left'>left</span>
   <span class='id identifier rubyid_left?'>left?</span> <span class='op'>?</span> <span class='id identifier rubyid_to_h'>to_h</span><span class='lbracket'>[</span><span class='symbol'>:left</span><span class='rbracket'>]</span> <span class='op'>:</span> <span class='kw'>nil</span>
@@ -2081,21 +1886,6 @@ record class, all fields, and all values.</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -2103,12 +1893,12 @@ record class, all fields, and all values.</p>
       <pre class="lines">
 
 
+159
 160
-161
-162</pre>
+161</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/either.rb', line 160</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/either.rb', line 159</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_left?'>left?</span>
   <span class='ivar'>@is_left</span>
@@ -2162,21 +1952,6 @@ record class, all fields, and all values.</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div>
 </div>
@@ -2220,21 +1995,6 @@ record class, all fields, and all values.</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -2242,12 +2002,12 @@ record class, all fields, and all values.</p>
       <pre class="lines">
 
 
+151
 152
-153
-154</pre>
+153</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/either.rb', line 152</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/either.rb', line 151</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_right'>right</span>
   <span class='id identifier rubyid_right?'>right?</span> <span class='op'>?</span> <span class='id identifier rubyid_to_h'>to_h</span><span class='lbracket'>[</span><span class='symbol'>:right</span><span class='rbracket'>]</span> <span class='op'>:</span> <span class='kw'>nil</span>
@@ -2296,21 +2056,6 @@ record class, all fields, and all values.</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -2318,12 +2063,12 @@ record class, all fields, and all values.</p>
       <pre class="lines">
 
 
+168
 169
-170
-171</pre>
+170</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/either.rb', line 169</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/either.rb', line 168</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_right?'>right?</span>
   <span class='op'>!</span> <span class='id identifier rubyid_left?'>left?</span>
@@ -2368,21 +2113,6 @@ record class, all fields, and all values.</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -2390,16 +2120,16 @@ record class, all fields, and all values.</p>
       <pre class="lines">
 
 
+177
 178
 179
 180
 181
 182
-183
-184</pre>
+183</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/either.rb', line 178</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/either.rb', line 177</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_swap'>swap</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_left?'>left?</span>
@@ -2453,21 +2183,6 @@ record class, all fields, and all values.</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div>
 </div>
@@ -2477,9 +2192,9 @@ record class, all fields, and all values.</p>
 </div>
 
     <div id="footer">
-  Generated on Tue Feb 24 22:22:37 2015 by
+  Generated on Tue Mar 15 04:59:11 2016 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.8.7.4 (ruby-2.2.0).
+  0.8.7.6 (ruby-2.2.3).
 </div>
 
   </body>

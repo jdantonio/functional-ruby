@@ -63,7 +63,14 @@
 
     <div id="content"><div id='filecontents'><h1>Functional Ruby</h1>
 
-<p><a href="http://badge.fury.io/rb/functional-ruby"><img src="https://badge.fury.io/rb/functional-ruby.svg" alt="Gem Version"></a> <a href="https://travis-ci.org/jdantonio/functional-ruby?branch=master"><img src="https://secure.travis-ci.org/jdantonio/functional-ruby.png" alt="Build Status"></a> <a href="https://coveralls.io/r/jdantonio/functional-ruby"><img src="https://coveralls.io/repos/jdantonio/functional-ruby/badge.png" alt="Coverage Status"></a> <a href="https://codeclimate.com/github/jdantonio/functional-ruby"><img src="https://codeclimate.com/github/jdantonio/functional-ruby.png" alt="Code Climate"></a> <a href="http://inch-ci.org/github/jdantonio/functional-ruby"><img src="http://inch-ci.org/github/jdantonio/functional-ruby.png" alt="Inline docs"></a> <a href="https://gemnasium.com/jdantonio/functional-ruby"><img src="https://gemnasium.com/jdantonio/functional-ruby.png" alt="Dependency Status"></a> <a href="http://opensource.org/licenses/MIT"><img src="http://img.shields.io/license/MIT.png?color=green" alt="License"></a></p>
+<p><a href="http://badge.fury.io/rb/functional-ruby"><img src="https://badge.fury.io/rb/functional-ruby.svg" alt="Gem Version"></a>
+<a href="https://travis-ci.org/jdantonio/functional-ruby?branch=master"><img src="https://secure.travis-ci.org/jdantonio/functional-ruby.png" alt="Travis CI Build Status"></a>
+<a href="https://ci.appveyor.com/project/jdantonio/functional-ruby/branch/master"><img src="https://ci.appveyor.com/api/projects/status/8xfy4a8lmc26112e/branch/master?svg=true" alt="AppVeyor Build status"></a>
+<a href="https://coveralls.io/r/jdantonio/functional-ruby"><img src="https://coveralls.io/repos/jdantonio/functional-ruby/badge.png" alt="Coverage Status"></a>
+<a href="https://codeclimate.com/github/jdantonio/functional-ruby"><img src="https://codeclimate.com/github/jdantonio/functional-ruby.png" alt="Code Climate"></a>
+<a href="http://inch-ci.org/github/jdantonio/functional-ruby"><img src="http://inch-ci.org/github/jdantonio/functional-ruby.png" alt="Inline docs"></a>
+<a href="https://gemnasium.com/jdantonio/functional-ruby"><img src="https://gemnasium.com/jdantonio/functional-ruby.png" alt="Dependency Status"></a>
+<a href="http://opensource.org/licenses/MIT"><img src="http://img.shields.io/license/MIT.png?color=green" alt="License"></a></p>
 
 <p><strong>A gem for adding functional programming tools to Ruby. Inspired by <a href="http://www.erlang.org/">Erlang</a>,
 <a href="http://clojure.org/">Clojure</a>, and <a href="http://functionaljava.org/">Functional Java</a>.</strong></p>
@@ -96,7 +103,7 @@ and Ruby is easily one of the most powerful languages in common use today.</p>
 
 <h2>Features</h2>
 
-<p>Complete API documentation can be found at <a href="http://rubydoc.info/github/jdantonio/functional-ruby/master/frames">Rubydoc.info</a>.</p>
+<p>The primary site for documentation is the automatically generated <a href="http://jdantonio.github.io/functional-ruby/">API documentation</a>.</p>
 
 <ul>
 <li>Protocol specifications inspired by Clojure <a href="http://clojure.org/protocols">protocol</a>,
@@ -110,6 +117,7 @@ and other functional languages.</li>
 <li>Thread safe, immutable <code>Either</code> and <code>Option</code> classes based on <a href="http://functionaljava.org/">Functional Java</a> and <a href="https://hackage.haskell.org/package/base-4.2.0.1/docs/Data-Either.html">Haskell</a>.</li>
 <li><a href="http://en.wikipedia.org/wiki/Memoization">Memoization</a> of class methods based on Clojure <a href="http://clojuredocs.org/clojure_core/clojure.core/memoize">memoize</a>.</li>
 <li>Lazy execution with a <code>Delay</code> class based on Clojure <a href="http://clojuredocs.org/clojure_core/clojure.core/delay">delay</a>.</li>
+<li><code>ValueStruct</code>, a simple, thread safe, immutable variation of Ruby&#39;s <a href="http://ruby-doc.org/stdlib-2.0/libdoc/ostruct/rdoc/OpenStruct.html">OpenStruct</a> class.</li>
 <li>Thread safe data structures, such as <code>FinalStruct</code> and <code>FinalVar</code>, which can be written to at most once
 before becoming immutable. Based on <a href="http://en.wikipedia.org/wiki/Final_(Java)">Java&#39;s <code>final</code> keyword</a>.</li>
 </ul>
@@ -242,9 +250,9 @@ and other options:</p>
 </div></div>
 
     <div id="footer">
-  Generated on Tue Feb 24 22:22:37 2015 by
+  Generated on Tue Mar 15 04:59:11 2016 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.8.7.4 (ruby-2.2.0).
+  0.8.7.6 (ruby-2.2.3).
 </div>
 
   </body>

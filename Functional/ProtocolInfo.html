@@ -73,10 +73,12 @@
   
     <dt class="r1">Inherits:</dt>
     <dd class="r1">
-      <span class="inheritName">Object</span>
+      <span class="inheritName"><span class='object_link'>Synchronization::Object</span></span>
       
         <ul class="fullTree">
           <li>Object</li>
+          
+            <li class="next"><span class='object_link'>Synchronization::Object</span></li>
           
             <li class="next">Functional::ProtocolInfo</li>
           
@@ -116,21 +118,6 @@ itself from a block. Used by <span class='object_link'>#SpecifyProtocol</span>.<
       <li><span class='object_link'><a href="Protocol.html" title="Functional::Protocol (module)">Protocol</a></span></li>
     
   </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div>
 
@@ -300,7 +287,9 @@ itself from a block. Used by <span class='object_link'>#SpecifyProtocol</span>.<
     </ul>
   
 
-<div id="constructor_details" class="method_details_list">
+
+  
+  <div id="constructor_details" class="method_details_list">
   <h2>Constructor Details</h2>
   
     <div class="method_details first">
@@ -387,21 +376,6 @@ itself from a block. Used by <span class='object_link'>#SpecifyProtocol</span>.<
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -418,7 +392,9 @@ itself from a block. Used by <span class='object_link'>#SpecifyProtocol</span>.<
 28
 29
 30
-31</pre>
+31
+32
+33</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/functional/protocol_info.rb', line 22</span>
@@ -426,11 +402,13 @@ itself from a block. Used by <span class='object_link'>#SpecifyProtocol</span>.<
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_specification'>specification</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>no block given</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='id identifier rubyid_block_given?'>block_given?</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>no name given</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_name'>name</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>||</span> <span class='id identifier rubyid_name'>name</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
+  <span class='kw'>super</span>
   <span class='ivar'>@name</span> <span class='op'>=</span> <span class='id identifier rubyid_name'>name</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span>
   <span class='ivar'>@info</span> <span class='op'>=</span> <span class='const'>Info</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='rparen'>)</span>
   <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_instance_eval'>instance_eval</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='id identifier rubyid_specification'>specification</span><span class='rparen'>)</span>
   <span class='ivar'>@info</span><span class='period'>.</span><span class='id identifier rubyid_each_pair'>each_pair</span><span class='lbrace'>{</span><span class='op'>|</span><span class='id identifier rubyid_col'>col</span><span class='comma'>,</span> <span class='id identifier rubyid__'>_</span><span class='op'>|</span> <span class='id identifier rubyid_col'>col</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span><span class='rbrace'>}</span>
   <span class='ivar'>@info</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span>
+  <span class='id identifier rubyid_ensure_ivar_visibility!'>ensure_ivar_visibility!</span>
   <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -463,21 +441,6 @@ itself from a block. Used by <span class='object_link'>#SpecifyProtocol</span>.<
 </div>
 <div class="tags">
   
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -543,21 +506,6 @@ expected arity for this protocol</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -565,12 +513,12 @@ expected arity for this protocol</p>
       <pre class="lines">
 
 
-45
-46
-47</pre>
+47
+48
+49</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/protocol_info.rb', line 45</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/protocol_info.rb', line 47</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_class_methods'>class_methods</span>
   <span class='ivar'>@info</span><span class='period'>.</span><span class='id identifier rubyid_class_methods'>class_methods</span>
@@ -615,21 +563,6 @@ expected arity for this protocol</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -637,12 +570,12 @@ expected arity for this protocol</p>
       <pre class="lines">
 
 
-52
-53
-54</pre>
+54
+55
+56</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/protocol_info.rb', line 52</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/protocol_info.rb', line 54</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_constants'>constants</span>
   <span class='ivar'>@info</span><span class='period'>.</span><span class='id identifier rubyid_constants'>constants</span>
@@ -688,21 +621,6 @@ expected arity for this protocol</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -710,12 +628,12 @@ expected arity for this protocol</p>
       <pre class="lines">
 
 
-37
-38
-39</pre>
+39
+40
+41</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/protocol_info.rb', line 37</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/protocol_info.rb', line 39</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_instance_methods'>instance_methods</span>
   <span class='ivar'>@info</span><span class='period'>.</span><span class='id identifier rubyid_instance_methods'>instance_methods</span>
@@ -760,21 +678,6 @@ expected arity for this protocol</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -782,14 +685,14 @@ expected arity for this protocol</p>
       <pre class="lines">
 
 
-59
-60
 61
 62
-63</pre>
+63
+64
+65</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/protocol_info.rb', line 59</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/protocol_info.rb', line 61</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_satisfies?'>satisfies?</span><span class='lparen'>(</span><span class='id identifier rubyid_target'>target</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_satisfies_constants?'>satisfies_constants?</span><span class='lparen'>(</span><span class='id identifier rubyid_target'>target</span><span class='rparen'>)</span> <span class='op'>&amp;&amp;</span>
@@ -806,9 +709,9 @@ expected arity for this protocol</p>
 </div>
 
     <div id="footer">
-  Generated on Tue Feb 24 22:22:38 2015 by
+  Generated on Tue Mar 15 04:59:12 2016 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.8.7.4 (ruby-2.2.0).
+  0.8.7.6 (ruby-2.2.3).
 </div>
 
   </body>

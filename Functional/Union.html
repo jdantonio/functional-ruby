@@ -94,7 +94,20 @@
 
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
-    <p>An immutable data structure with multiple fields, only one of which
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>This is a write-once, read-many, thread safe object that can be
+used in concurrent systems. Thread safety guarantees <em>cannot</em> be made
+about objects contained <em>within</em> this object, however. Ruby variables
+are mutable references to mutable objects. This cannot be changed. The
+best practice it to only encapsulate immutable, frozen, or thread safe
+objects. Ultimately, thread safety is the responsibility of the
+programmer.</p>
+</div>
+  </div>
+
+<p>An immutable data structure with multiple fields, only one of which
 can be set at any given time. A <code>Union</code> is a convenient way to bundle a
 number of field attributes together, using accessor methods, without having
 to write an explicit class.</p>
@@ -159,8 +172,6 @@ two core differences.</p>
   <p class="tag_title">See Also:</p>
   <ul class="see">
     
-      <li><span class='object_link'><a href="AbstractStruct.html" title="Functional::AbstractStruct (module)">AbstractStruct</a></span></li>
-    
       <li><span class='object_link'><a href="" title="Functional::Union (module)">Union</a></span></li>
     
       <li><a href="http://www.ruby-doc.org/core-2.1.2/Struct.html" target="_parent" title="Ruby `Struct` class">Ruby `Struct` class</a></li>
@@ -168,21 +179,6 @@ two core differences.</p>
       <li><a href="http://en.wikipedia.org/wiki/Union_type" target="_parent" title="&quot;Union type&quot; on Wikipedia">"Union type" on Wikipedia</a></li>
     
   </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div>
 
@@ -266,7 +262,7 @@ two core differences.</p>
       <div class="method_details first">
   <h3 class="signature first" id="new-class_method">
   
-    + (<tt><span class='object_link'><a href="AbstractStruct.html" title="Functional::AbstractStruct (module)">Functional::AbstractStruct</a></span></tt>) <strong>new</strong>(*fields) 
+    + (<tt><span class='object_link'>Functional::AbstractStruct</span></tt>) <strong>new</strong>(*fields) 
   
 
   
@@ -287,7 +283,7 @@ two core differences.</p>
     <li>
       
       
-        <span class='type'>(<tt><span class='object_link'><a href="AbstractStruct.html" title="Functional::AbstractStruct (module)">Functional::AbstractStruct</a></span></tt>)</span>
+        <span class='type'>(<tt><span class='object_link'>Functional::AbstractStruct</span></tt>)</span>
       
       
       
@@ -315,21 +311,6 @@ two core differences.</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -337,13 +318,13 @@ two core differences.</p>
       <pre class="lines">
 
 
+63
+64
 65
-66
-67
-68</pre>
+66</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/union.rb', line 65</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/union.rb', line 63</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_fields'>fields</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>no fields provided</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_fields'>fields</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
@@ -363,7 +344,7 @@ two core differences.</p>
       <div class="method_details first">
   <h3 class="signature first" id="new-instance_method">
   
-    - (<tt><span class='object_link'><a href="AbstractStruct.html" title="Functional::AbstractStruct (module)">Functional::AbstractStruct</a></span></tt>) <strong>new</strong>(*fields) 
+    - (<tt><span class='object_link'>Functional::AbstractStruct</span></tt>) <strong>new</strong>(*fields) 
   
 
   
@@ -384,7 +365,7 @@ two core differences.</p>
     <li>
       
       
-        <span class='type'>(<tt><span class='object_link'><a href="AbstractStruct.html" title="Functional::AbstractStruct (module)">Functional::AbstractStruct</a></span></tt>)</span>
+        <span class='type'>(<tt><span class='object_link'>Functional::AbstractStruct</span></tt>)</span>
       
       
       
@@ -412,21 +393,6 @@ two core differences.</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -434,13 +400,13 @@ two core differences.</p>
       <pre class="lines">
 
 
+63
+64
 65
-66
-67
-68</pre>
+66</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/union.rb', line 65</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/union.rb', line 63</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_fields'>fields</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>no fields provided</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_fields'>fields</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
@@ -456,9 +422,9 @@ two core differences.</p>
 </div>
 
     <div id="footer">
-  Generated on Tue Feb 24 22:22:37 2015 by
+  Generated on Tue Mar 15 04:59:11 2016 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.8.7.4 (ruby-2.2.0).
+  0.8.7.6 (ruby-2.2.3).
 </div>
 
   </body>

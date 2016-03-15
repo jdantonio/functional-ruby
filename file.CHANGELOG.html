@@ -61,13 +61,25 @@
 
     <iframe id="search_frame"></iframe>
 
-    <div id="content"><div id='filecontents'><h3>Upcoming Release v1.2.0 (TBD)</h3>
+    <div id="content"><div id='filecontents'><h2>Current Release v1.3.0 (October 4, 2015)</h2>
+
+<ul>
+<li>Pattern match now check arity of pattern and block</li>
+<li><code>PatternMatching::ALL</code> pattern now should be presented as variable length args (*args)</li>
+<li><code>NoMethodError</code> and <code>ArgumentError</code> raised from method block won&#39;t be catched anymore by lib</li>
+</ul>
+
+<h3>Release v1.2.0 (July 10, 2015)</h3>
 
 <ul>
 <li><code>Record</code> classes can be declared with a type/protocol specification for type safety.</li>
+<li>Improved documentation</li>
+<li>Improved tests</li>
+<li>Better synchronization (thread safety) on all platforms</li>
+<li>Continuous integration run on both Linux (Travis CI) and Windows (AppVeyor)</li>
 </ul>
 
-<h2>Current Release v1.1.0 (August 12, 2014)</h2>
+<h3>Release v1.1.0 (August 12, 2014)</h3>
 
 <ul>
 <li>A simple implementation of <a href="http://en.wikipedia.org/wiki/Tuple">tuple</a>, an
@@ -78,7 +90,7 @@ that new fields can be arbitrarily added but once set each field becomes immutab
 that the value can be set at most once after which it becomes immutable).</li>
 </ul>
 
-<h3>Previous Release v1.0.0 (July 30, 2014)</h3>
+<h3>Release v1.0.0 (July 30, 2014)</h3>
 
 <ul>
 <li>Protocol specifications inspired by Clojure <a href="http://clojure.org/protocols">protocol</a>,
@@ -96,9 +108,9 @@ and <a href="http://en.wikipedia.org/wiki/Union_type">others</a></li>
 </div></div>
 
     <div id="footer">
-  Generated on Tue Feb 24 22:22:37 2015 by
+  Generated on Tue Mar 15 04:59:11 2016 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.8.7.4 (ruby-2.2.0).
+  0.8.7.6 (ruby-2.2.3).
 </div>
 
   </body>

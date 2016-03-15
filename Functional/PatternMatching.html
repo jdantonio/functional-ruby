@@ -301,8 +301,8 @@ to see Erlang-stype pattern matching in Ruby and one of my friends responded
 
 <p>Ruby:</p>
 
-<pre class="code ruby"><code class="ruby">   <span class='id identifier rubyid_defn'>defn</span><span class='lparen'>(</span><span class='symbol'>:old_enough</span><span class='comma'>,</span> <span class='id identifier rubyid__'>_</span><span class='rparen'>)</span><span class='lbrace'>{</span> <span class='kw'>true</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_when'>when</span><span class='lbrace'>{</span><span class='op'>|</span><span class='id identifier rubyid_x'>x</span><span class='op'>|</span> <span class='id identifier rubyid_x'>x</span> <span class='op'>&gt;=</span> <span class='int'>16</span> <span class='rbrace'>}</span>
-   <span class='id identifier rubyid_defn'>defn</span><span class='lparen'>(</span><span class='symbol'>:old_enough</span><span class='comma'>,</span> <span class='id identifier rubyid__'>_</span><span class='rparen'>)</span><span class='lbrace'>{</span> <span class='kw'>false</span> <span class='rbrace'>}</span>
+<pre class="code ruby"><code class="ruby">   <span class='id identifier rubyid_defn'>defn</span><span class='lparen'>(</span><span class='symbol'>:old_enough</span><span class='comma'>,</span> <span class='id identifier rubyid__'>_</span><span class='rparen'>)</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid__'>_</span><span class='op'>|</span> <span class='kw'>true</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_when'>when</span><span class='lbrace'>{</span><span class='op'>|</span><span class='id identifier rubyid_x'>x</span><span class='op'>|</span> <span class='id identifier rubyid_x'>x</span> <span class='op'>&gt;=</span> <span class='int'>16</span> <span class='rbrace'>}</span>
+   <span class='id identifier rubyid_defn'>defn</span><span class='lparen'>(</span><span class='symbol'>:old_enough</span><span class='comma'>,</span> <span class='id identifier rubyid__'>_</span><span class='rparen'>)</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid__'>_</span><span class='op'>|</span> <span class='kw'>false</span> <span class='rbrace'>}</span>
 </code></pre>
 
 <h5>Order Matters</h5>
@@ -466,7 +466,7 @@ to see Erlang-stype pattern matching in Ruby and one of my friends responded
         must appear AFTER the prior match or it will override that one
        f
      }
-     defn(:hashable, {}) { ||
+     defn(:hashable, {}) { |_|
         matches an empty hash
        :empty
      }
@@ -495,10 +495,10 @@ to see Erlang-stype pattern matching in Ruby and one of my friends responded
    defn(:all, :one, Integer, ALL) { |int, args|
      [int, args]
    }
-   defn(:all, 1, _, ALL) { |var, args|
+   defn(:all, 1, _, ALL) { |var, _, *args|
      [var, args]
    }
-   defn(:all, ALL) { | args|
+   defn(:all, ALL) { |*args|
      args
    }
 
@@ -532,22 +532,22 @@ to see Erlang-stype pattern matching in Ruby and one of my friends responded
      false.
 </code></pre>
 
-<pre class="code ruby"><code class="ruby">   <span class='id identifier rubyid_defn'>defn</span><span class='lparen'>(</span><span class='symbol'>:old_enough</span><span class='comma'>,</span> <span class='id identifier rubyid__'>_</span><span class='rparen'>)</span><span class='lbrace'>{</span> <span class='kw'>true</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_when'>when</span><span class='lbrace'>{</span><span class='op'>|</span><span class='id identifier rubyid_x'>x</span><span class='op'>|</span> <span class='id identifier rubyid_x'>x</span> <span class='op'>&gt;=</span> <span class='int'>16</span> <span class='rbrace'>}</span>
-   <span class='id identifier rubyid_defn'>defn</span><span class='lparen'>(</span><span class='symbol'>:old_enough</span><span class='comma'>,</span> <span class='id identifier rubyid__'>_</span><span class='rparen'>)</span><span class='lbrace'>{</span> <span class='kw'>false</span> <span class='rbrace'>}</span>
+<pre class="code ruby"><code class="ruby">   <span class='id identifier rubyid_defn'>defn</span><span class='lparen'>(</span><span class='symbol'>:old_enough</span><span class='comma'>,</span> <span class='id identifier rubyid__'>_</span><span class='rparen'>)</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid__'>_</span><span class='op'>|</span> <span class='kw'>true</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_when'>when</span><span class='lbrace'>{</span><span class='op'>|</span><span class='id identifier rubyid_x'>x</span><span class='op'>|</span> <span class='id identifier rubyid_x'>x</span> <span class='op'>&gt;=</span> <span class='int'>16</span> <span class='rbrace'>}</span>
+   <span class='id identifier rubyid_defn'>defn</span><span class='lparen'>(</span><span class='symbol'>:old_enough</span><span class='comma'>,</span> <span class='id identifier rubyid__'>_</span><span class='rparen'>)</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid__'>_</span><span class='op'>|</span> <span class='kw'>false</span> <span class='rbrace'>}</span>
 
-   <span class='id identifier rubyid_defn'>defn</span><span class='lparen'>(</span><span class='symbol'>:right_age</span><span class='comma'>,</span> <span class='id identifier rubyid__'>_</span><span class='rparen'>)</span> <span class='lbrace'>{</span>
+   <span class='id identifier rubyid_defn'>defn</span><span class='lparen'>(</span><span class='symbol'>:right_age</span><span class='comma'>,</span> <span class='id identifier rubyid__'>_</span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid__'>_</span><span class='op'>|</span>
      <span class='kw'>true</span>
    <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_when'>when</span><span class='lbrace'>{</span><span class='op'>|</span><span class='id identifier rubyid_x'>x</span><span class='op'>|</span> <span class='id identifier rubyid_x'>x</span> <span class='op'>&gt;=</span> <span class='int'>16</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_x'>x</span> <span class='op'>&lt;=</span> <span class='int'>104</span> <span class='rbrace'>}</span>
 
-   <span class='id identifier rubyid_defn'>defn</span><span class='lparen'>(</span><span class='symbol'>:right_age</span><span class='comma'>,</span> <span class='id identifier rubyid__'>_</span><span class='rparen'>)</span> <span class='lbrace'>{</span>
+   <span class='id identifier rubyid_defn'>defn</span><span class='lparen'>(</span><span class='symbol'>:right_age</span><span class='comma'>,</span> <span class='id identifier rubyid__'>_</span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid__'>_</span><span class='op'>|</span>
      <span class='kw'>false</span>
    <span class='rbrace'>}</span>
 
-   <span class='id identifier rubyid_defn'>defn</span><span class='lparen'>(</span><span class='symbol'>:wrong_age</span><span class='comma'>,</span> <span class='id identifier rubyid__'>_</span><span class='rparen'>)</span> <span class='lbrace'>{</span>
+   <span class='id identifier rubyid_defn'>defn</span><span class='lparen'>(</span><span class='symbol'>:wrong_age</span><span class='comma'>,</span> <span class='id identifier rubyid__'>_</span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid__'>_</span><span class='op'>|</span>
      <span class='kw'>false</span>
    <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_when'>when</span><span class='lbrace'>{</span><span class='op'>|</span><span class='id identifier rubyid_x'>x</span><span class='op'>|</span> <span class='id identifier rubyid_x'>x</span> <span class='op'>&lt;</span> <span class='int'>16</span> <span class='op'>||</span> <span class='id identifier rubyid_x'>x</span> <span class='op'>&gt;</span> <span class='int'>104</span> <span class='rbrace'>}</span>
 
-   <span class='id identifier rubyid_defn'>defn</span><span class='lparen'>(</span><span class='symbol'>:wrong_age</span><span class='comma'>,</span> <span class='id identifier rubyid__'>_</span><span class='rparen'>)</span> <span class='lbrace'>{</span>
+   <span class='id identifier rubyid_defn'>defn</span><span class='lparen'>(</span><span class='symbol'>:wrong_age</span><span class='comma'>,</span> <span class='id identifier rubyid__'>_</span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid__'>_</span><span class='op'>|</span>
      <span class='kw'>true</span>
    <span class='rbrace'>}</span>
 </code></pre>
@@ -586,9 +586,9 @@ to see Erlang-stype pattern matching in Ruby and one of my friends responded
 </div>
 
     <div id="footer">
-  Generated on Tue Feb 24 22:22:37 2015 by
+  Generated on Tue Mar 15 04:59:11 2016 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.8.7.4 (ruby-2.2.0).
+  0.8.7.6 (ruby-2.2.3).
 </div>
 
   </body>

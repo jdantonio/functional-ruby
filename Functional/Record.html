@@ -367,8 +367,6 @@ classes derive from this core difference.</p>
   <p class="tag_title">See Also:</p>
   <ul class="see">
     
-      <li><span class='object_link'><a href="AbstractStruct.html" title="Functional::AbstractStruct (module)">AbstractStruct</a></span></li>
-    
       <li><span class='object_link'><a href="Union.html" title="Functional::Union (module)">Union</a></span></li>
     
       <li><span class='object_link'><a href="Protocol.html" title="Functional::Protocol (module)">Protocol</a></span></li>
@@ -376,21 +374,6 @@ classes derive from this core difference.</p>
       <li><span class='object_link'><a href="TypeCheck.html" title="Functional::TypeCheck (module)">TypeCheck</a></span></li>
     
   </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div>
 
@@ -474,7 +457,7 @@ classes derive from this core difference.</p>
       <div class="method_details first">
   <h3 class="signature first" id="new-class_method">
   
-    + (<tt><span class='object_link'><a href="AbstractStruct.html" title="Functional::AbstractStruct (module)">Functional::AbstractStruct</a></span></tt>) <strong>new</strong>(*fields, &amp;block) 
+    + (<tt><span class='object_link'>Functional::AbstractStruct</span></tt>) <strong>new</strong>(*fields, &amp;block) 
   
 
   
@@ -495,7 +478,7 @@ classes derive from this core difference.</p>
     <li>
       
       
-        <span class='type'>(<tt><span class='object_link'><a href="AbstractStruct.html" title="Functional::AbstractStruct (module)">Functional::AbstractStruct</a></span></tt>)</span>
+        <span class='type'>(<tt><span class='object_link'>Functional::AbstractStruct</span></tt>)</span>
       
       
       
@@ -524,21 +507,6 @@ specification is given</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -546,6 +514,9 @@ specification is given</p>
       <pre class="lines">
 
 
+33
+34
+35
 36
 37
 38
@@ -565,13 +536,10 @@ specification is given</p>
 52
 53
 54
-55
-56
-57
-58</pre>
+55</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/record.rb', line 36</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/record.rb', line 33</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_fields'>fields</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>no fields provided</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_fields'>fields</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
@@ -610,7 +578,7 @@ specification is given</p>
       <div class="method_details first">
   <h3 class="signature first" id="new-instance_method">
   
-    - (<tt><span class='object_link'><a href="AbstractStruct.html" title="Functional::AbstractStruct (module)">Functional::AbstractStruct</a></span></tt>) <strong>new</strong>(*fields, &amp;block) 
+    - (<tt><span class='object_link'>Functional::AbstractStruct</span></tt>) <strong>new</strong>(*fields, &amp;block) 
   
 
   
@@ -631,7 +599,7 @@ specification is given</p>
     <li>
       
       
-        <span class='type'>(<tt><span class='object_link'><a href="AbstractStruct.html" title="Functional::AbstractStruct (module)">Functional::AbstractStruct</a></span></tt>)</span>
+        <span class='type'>(<tt><span class='object_link'>Functional::AbstractStruct</span></tt>)</span>
       
       
       
@@ -660,21 +628,6 @@ specification is given</p>
     </li>
   
 </ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -682,6 +635,9 @@ specification is given</p>
       <pre class="lines">
 
 
+33
+34
+35
 36
 37
 38
@@ -701,13 +657,10 @@ specification is given</p>
 52
 53
 54
-55
-56
-57
-58</pre>
+55</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/functional/record.rb', line 36</span>
+      <pre class="code"><span class="info file"># File 'lib/functional/record.rb', line 33</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_fields'>fields</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>no fields provided</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_fields'>fields</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
@@ -742,9 +695,9 @@ specification is given</p>
 </div>
 
     <div id="footer">
-  Generated on Tue Feb 24 22:22:37 2015 by
+  Generated on Tue Mar 15 04:59:11 2016 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.8.7.4 (ruby-2.2.0).
+  0.8.7.6 (ruby-2.2.3).
 </div>
 
   </body>
