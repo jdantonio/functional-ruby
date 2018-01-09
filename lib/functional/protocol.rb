@@ -50,8 +50,8 @@ module Functional
   end
   module_function :SpecifyProtocol
 
-  # Protocols provide a polymorphism and method-dispatch mechanism that exchews
-  # stong typing and embraces the dynamic duck typing of Ruby. Rather than
+  # Protocols provide a polymorphism and method-dispatch mechanism that eschews
+  # strong typing and embraces the dynamic duck typing of Ruby. Rather than
   # interrogate a module, class, or object for its type and ancestry, protocols
   # allow modules, classes, and methods to be interrogated based on their behavior.
   # It is a logical extension of the `respond_to?` method, but vastly more powerful.
